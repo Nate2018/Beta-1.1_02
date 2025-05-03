@@ -2,7 +2,7 @@ package net.minecraft.src;
 
 import java.io.File;
 import java.util.List;
-import org.lwjgl.Sys;
+//import org.lwjgl.Sys;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -36,7 +36,7 @@ public class GuiTexturePacks extends GuiScreen {
 	protected void actionPerformed(GuiButton var1) {
 		if(var1.enabled) {
 			if(var1.id == 5) {
-				Sys.openURL("file://" + this.field_6453_p);
+				//Sys.openURL("file://" + this.field_6453_p);
 			}
 
 			if(var1.id == 6) {
