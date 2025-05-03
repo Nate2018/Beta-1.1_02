@@ -37,7 +37,7 @@ public class EaglerProfile {
 		username = str;
 		Minecraft mc = Minecraft.getMinecraft();
 		if(mc != null && mc.session != null) {
-			mc.session.username = str;
+			mc.session.playerName = str;
 		}
 	}
 

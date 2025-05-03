@@ -1,9 +1,9 @@
-package net.minecraft.src;
-
-public enum EnumOS2 {
-	a,
-	b,
-	c,
-	d,
-	e;
-}
+//package net.minecraft.src;
+//
+//public enum EnumOS2 {
+//	a,
+//	b,
+//	c,
+//	d,
+//	e;
+//}

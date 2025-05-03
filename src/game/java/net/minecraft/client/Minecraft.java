@@ -10,8 +10,6 @@ import net.minecraft.src.EntityClientPlayerMP;
 import net.minecraft.src.EntityPlayer;
 import net.minecraft.src.EntityPlayerSP;
 import net.minecraft.src.EntityRenderer;
-import net.minecraft.src.EnumOS2;
-import net.minecraft.src.EnumOSMappingHelper;
 import net.minecraft.src.EnumOptions;
 import net.minecraft.src.FontRenderer;
 import net.minecraft.src.GLAllocation;
@@ -59,7 +57,6 @@ import net.minecraft.src.TextureWaterFX;
 import net.minecraft.src.TexureWaterFlowFX;
 import net.minecraft.src.ThreadSleepForever;
 import net.minecraft.src.Timer;
-import net.minecraft.src.UnexpectedThrowable;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
@@ -72,7 +69,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
-public abstract class Minecraft implements Runnable {
+public class Minecraft {
 	public PlayerController playerController;
 	private boolean a = false;
 	public int displayWidth;
@@ -121,15 +118,16 @@ public abstract class Minecraft implements Runnable {
 	public boolean isFancyGraphics = false;
 	long systemTime = System.currentTimeMillis();
 	private int field_6300_ab = 0;
+	
+	private static Minecraft minecraft;
 
 	public Minecraft() {
 		this.a = false;
 		new ThreadSleepForever(this, "Timer hack thread");
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
+		minecraft = this;
 	}
-
-	public abstract void displayUnexpectedThrowable(UnexpectedThrowable var1);
 
 	public void setServer(String var1, int var2) {
 		this.serverName = var1;
@@ -249,45 +247,10 @@ public abstract class Minecraft implements Runnable {
 
 	public static File getMinecraftDir() {
 		if(minecraftDir == null) {
-			minecraftDir = getAppDir("minecraft");
+			minecraftDir = new File("minecraft");
 		}
 
 		return minecraftDir;
-	}
-
-	public static File getAppDir(String var0) {
-		String var1 = System.getProperty("user.home", ".");
-		File var2;
-		switch(EnumOSMappingHelper.field_1585_a[getOs().ordinal()]) {
-		case 1:
-		case 2:
-			var2 = new File(var1, '.' + var0 + '/');
-			break;
-		case 3:
-			String var3 = System.getenv("APPDATA");
-			if(var3 != null) {
-				var2 = new File(var3, "." + var0 + '/');
-			} else {
-				var2 = new File(var1, '.' + var0 + '/');
-			}
-			break;
-		case 4:
-			var2 = new File(var1, "Library/Application Support/" + var0);
-			break;
-		default:
-			var2 = new File(var1, var0 + '/');
-		}
-
-		if(!var2.exists() && !var2.mkdirs()) {
-			throw new RuntimeException("The working directory could not be created: " + var2);
-		} else {
-			return var2;
-		}
-	}
-
-	private static EnumOS2 getOs() {
-		String var0 = System.getProperty("os.name").toLowerCase();
-		return var0.contains("win") ? EnumOS2.c : (var0.contains("mac") ? EnumOS2.d : (var0.contains("solaris") ? EnumOS2.b : (var0.contains("sunos") ? EnumOS2.b : (var0.contains("linux") ? EnumOS2.a : (var0.contains("unix") ? EnumOS2.a : EnumOS2.e)))));
 	}
 
 	public void displayGuiScreen(GuiScreen var1) {
@@ -354,8 +317,7 @@ public abstract class Minecraft implements Runnable {
 			this.startGame();
 		} catch (Exception var15) {
 			var15.printStackTrace();
-			this.displayUnexpectedThrowable(new UnexpectedThrowable("Failed to start game", var15));
-			return;
+			throw new RuntimeException("Failed to start game", var15);
 		}
 
 		try {
@@ -468,7 +430,7 @@ public abstract class Minecraft implements Runnable {
 			} catch (Throwable var17) {
 				this.theWorld = null;
 				var17.printStackTrace();
-				this.displayUnexpectedThrowable(new UnexpectedThrowable("Unexpected error", var17));
+				throw new RuntimeException("Unexpected error", var17);
 			}
 
 		} finally {
@@ -1162,5 +1124,9 @@ public abstract class Minecraft implements Runnable {
 
 	public NetClientHandler func_20001_q() {
 		return this.thePlayer instanceof EntityClientPlayerMP ? ((EntityClientPlayerMP)this.thePlayer).field_797_bg : null;
+	}
+
+	public static Minecraft getMinecraft() {
+		return minecraft;
 	}
 }
