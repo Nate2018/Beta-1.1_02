@@ -127,6 +127,7 @@ public class Minecraft {
 		new ThreadSleepForever(this, "Timer hack thread");
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
+		this.session = new Session("Player", "mcpass");
 		minecraft = this;
 	}
 
