@@ -1,9 +1,8 @@
 package net.minecraft.src;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.Arrays;
-import javax.imageio.ImageIO;
+
+import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class TerrainTextureManager {
 	private float[] field_1181_a = new float[768];
@@ -16,7 +15,7 @@ public class TerrainTextureManager {
 
 	public TerrainTextureManager() {
 		try {
-			BufferedImage var1 = ImageIO.read(TerrainTextureManager.class.getResource("/terrain.png"));
+			ImageData var1 = ImageData.loadImageFile("/terrain.png");
 			int[] var2 = new int[65536];
 			var1.getRGB(0, 0, 256, 256, var2, 0, 256);
 
@@ -49,7 +48,7 @@ public class TerrainTextureManager {
 					this.field_1181_a[var3 * 3 + 2] = (float)(var6 / var9);
 				}
 			}
-		} catch (IOException var14) {
+		} catch (Exception var14) {
 			var14.printStackTrace();
 		}
 
@@ -181,7 +180,7 @@ public class TerrainTextureManager {
 
 				this.func_800_a();
 				if(var1.field_1348_a == null) {
-					var1.field_1348_a = new BufferedImage(32, 160, 2);
+					var1.field_1348_a = new ImageData(32, 160, false);
 				}
 
 				var1.field_1348_a.setRGB(0, 0, 32, 160, this.field_1180_b, 0, 32);

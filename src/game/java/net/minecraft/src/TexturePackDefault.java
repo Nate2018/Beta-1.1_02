@@ -1,22 +1,22 @@
 package net.minecraft.src;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+
+import net.lax1dude.eaglercraft.opengl.ImageData;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
 public class TexturePackDefault extends TexturePackBase {
 	private int texturePackName = -1;
-	private BufferedImage texturePackThumbnail;
+	private ImageData texturePackThumbnail;
 
 	public TexturePackDefault() {
 		this.texturePackFileName = "Default";
 		this.firstDescriptionLine = "The default look of Minecraft";
 
 		try {
-			this.texturePackThumbnail = ImageIO.read(TexturePackDefault.class.getResource("/pack.png"));
-		} catch (IOException var2) {
+			this.texturePackThumbnail = ImageData.loadImageFile("/pack.png");
+		} catch (Exception var2) {
 			var2.printStackTrace();
 		}
 

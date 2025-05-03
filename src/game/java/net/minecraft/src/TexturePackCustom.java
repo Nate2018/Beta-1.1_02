@@ -1,6 +1,5 @@
 package net.minecraft.src;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -8,14 +7,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.imageio.ImageIO;
+
+import net.lax1dude.eaglercraft.opengl.ImageData;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
 
 public class TexturePackCustom extends TexturePackBase {
 	private ZipFile texturePackZipFile;
 	private int texturePackName = -1;
-	private BufferedImage texturePackThumbnail;
+	private ImageData texturePackThumbnail;
 	private File texturePackFile;
 
 	public TexturePackCustom(File var1) {
@@ -50,7 +50,7 @@ public class TexturePackCustom extends TexturePackBase {
 
 			try {
 				var3 = var2.getInputStream(var2.getEntry("pack.png"));
-				this.texturePackThumbnail = ImageIO.read(var3);
+				this.texturePackThumbnail = ImageData.loadImageFile(var3);
 				var3.close();
 			} catch (Exception var19) {
 			}

@@ -1,21 +1,14 @@
 package net.minecraft.src;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Panel;
-import java.awt.TextArea;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.lwjgl.Sys;
 import org.lwjgl.opengl.GL11;
 
-public class PanelCrashReport extends Panel {
+//TODO: Make vanilla crash reports
+public class PanelCrashReport {
 	public PanelCrashReport(UnexpectedThrowable var1) {
-		this.setBackground(new Color(3028036));
-		this.setLayout(new BorderLayout());
 		StringWriter var2 = new StringWriter();
 		var1.exception.printStackTrace(new PrintWriter(var2));
 		String var3 = var2.toString();
@@ -29,7 +22,6 @@ public class PanelCrashReport extends Panel {
 			var5 = var5 + "OS: " + System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version") + "\n";
 			var5 = var5 + "Java: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor") + "\n";
 			var5 = var5 + "VM: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor") + "\n";
-			var5 = var5 + "LWJGL: " + Sys.getVersion() + "\n";
 			var4 = GL11.glGetString(GL11.GL_VENDOR);
 			var5 = var5 + "OpenGL: " + GL11.glGetString(GL11.GL_RENDERER) + " version " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR) + "\n";
 		} catch (Throwable var8) {
@@ -74,12 +66,12 @@ public class PanelCrashReport extends Panel {
 		var6 = var6 + "--- END ERROR REPORT " + Integer.toHexString(var6.hashCode()) + " ----------\n";
 		var6 = var6 + "\n";
 		var6 = var6 + "\n";
-		TextArea var7 = new TextArea(var6, 0, 0, 1);
-		var7.setFont(new Font("Monospaced", 0, 12));
-		this.add(new CanvasMajongLogo(), "North");
-		this.add(new CanvasCrashReport(80), "East");
-		this.add(new CanvasCrashReport(80), "West");
-		this.add(new CanvasCrashReport(100), "South");
-		this.add(var7, "Center");
+//		TextArea var7 = new TextArea(var6, 0, 0, 1);
+//		var7.setFont(new Font("Monospaced", 0, 12));
+//		this.add(new CanvasMajongLogo(), "North");
+//		this.add(new CanvasCrashReport(80), "East");
+//		this.add(new CanvasCrashReport(80), "West");
+//		this.add(new CanvasCrashReport(100), "South");
+//		this.add(var7, "Center");
 	}
 }

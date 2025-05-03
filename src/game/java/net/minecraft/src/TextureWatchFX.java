@@ -1,8 +1,8 @@
 package net.minecraft.src;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+
+import net.lax1dude.eaglercraft.opengl.ImageData;
 import net.minecraft.client.Minecraft;
 
 public class TextureWatchFX extends TextureFX {
@@ -18,13 +18,13 @@ public class TextureWatchFX extends TextureFX {
 		this.field_1128_f = 1;
 
 		try {
-			BufferedImage var2 = ImageIO.read(Minecraft.class.getResource("/gui/items.png"));
+			ImageData var2 = ImageData.loadImageFile("/gui/items.png");
 			int var3 = this.field_1126_b % 16 * 16;
 			int var4 = this.field_1126_b / 16 * 16;
 			var2.getRGB(var3, var4, 16, 16, this.field_4224_h, 0, 16);
-			var2 = ImageIO.read(Minecraft.class.getResource("/misc/dial.png"));
+			var2 = ImageData.loadImageFile("/misc/dial.png");
 			var2.getRGB(0, 0, 16, 16, this.field_4223_i, 0, 16);
-		} catch (IOException var5) {
+		} catch (Exception var5) {
 			var5.printStackTrace();
 		}
 

@@ -1,7 +1,6 @@
 package net.minecraft.src;
 
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
+import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class ColorizerFoliage {
 	private static final int[] field_6529_a = new int[65536];
@@ -15,7 +14,7 @@ public class ColorizerFoliage {
 
 	static {
 		try {
-			BufferedImage var0 = ImageIO.read(ColorizerFoliage.class.getResource("/misc/foliagecolor.png"));
+			ImageData var0 = ImageData.loadImageFile("/misc/foliagecolor.png");
 			var0.getRGB(0, 0, 256, 256, field_6529_a, 0, 256);
 		} catch (Exception var1) {
 			var1.printStackTrace();

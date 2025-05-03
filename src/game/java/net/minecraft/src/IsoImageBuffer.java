@@ -1,9 +1,9 @@
 package net.minecraft.src;
 
-import java.awt.image.BufferedImage;
+import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class IsoImageBuffer {
-	public BufferedImage field_1348_a;
+	public ImageData field_1348_a;
 	public World worldObj;
 	public int field_1354_c;
 	public int field_1353_d;

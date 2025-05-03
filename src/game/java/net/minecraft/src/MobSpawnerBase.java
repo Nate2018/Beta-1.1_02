@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import java.awt.Color;
+import net.peyton.java.awt.Color;
 
 public class MobSpawnerBase {
 	public static final MobSpawnerBase rainforest = (new MobSpawnerBase()).func_4123_b(588342).setBiomeName("Rainforest").func_4124_a(2094168);

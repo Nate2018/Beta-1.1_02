@@ -1,10 +1,10 @@
 package net.minecraft.src;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.IntBuffer;
-import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
+
+import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class FontRenderer {
 	private int[] charWidth = new int[256];
@@ -13,9 +13,9 @@ public class FontRenderer {
 	private IntBuffer buffer = GLAllocation.createDirectIntBuffer(1024);
 
 	public FontRenderer(GameSettings var1, String var2, RenderEngine var3) {
-		BufferedImage var4;
+		ImageData var4;
 		try {
-			var4 = ImageIO.read(RenderEngine.class.getResourceAsStream(var2));
+			var4 = ImageData.loadImageFile(var2);
 		} catch (IOException var18) {
 			throw new RuntimeException(var18);
 		}

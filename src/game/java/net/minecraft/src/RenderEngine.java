@@ -1,8 +1,5 @@
 package net.minecraft.src;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -12,8 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.imageio.ImageIO;
 import org.lwjgl.opengl.GL11;
+
+import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class RenderEngine {
 	public static boolean useMipmaps = false;
@@ -64,21 +62,19 @@ public class RenderEngine {
 			}
 		}
 	}
-
-	private BufferedImage unwrapImageByColumns(BufferedImage var1) {
+	
+	private ImageData unwrapImageByColumns(ImageData var1) {
 		int var2 = var1.getWidth() / 16;
-		BufferedImage var3 = new BufferedImage(16, var1.getHeight() * var2, 2);
-		Graphics var4 = var3.getGraphics();
+		ImageData var3 = new ImageData(16, var1.getHeight(), var1.alpha);
 
-		for(int var5 = 0; var5 < var2; ++var5) {
-			var4.drawImage(var1, -var5 * 16, var5 * var1.getHeight(), (ImageObserver)null);
+		for (int var5 = 0; var5 < var2; ++var5) {
+			var3.drawLayer(var1, 0, var5 * var1.getHeight(), 16, (var5 + 1) * var1.getHeight(), var5 * 16, 0, (var5 + 1) * 16, var1.getHeight());
 		}
 
-		var4.dispose();
 		return var3;
 	}
 
-	public int allocateAndSetupTexture(BufferedImage var1) {
+	public int allocateAndSetupTexture(ImageData var1) {
 		this.singleIntBuffer.clear();
 		GLAllocation.generateTextureNames(this.singleIntBuffer);
 		int var2 = this.singleIntBuffer.get(0);
@@ -87,7 +83,7 @@ public class RenderEngine {
 		return var2;
 	}
 
-	public void setupTexture(BufferedImage var1, int var2) {
+	public void setupTexture(ImageData var1, int var2) {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, var2);
 		if(useMipmaps) {
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
@@ -337,10 +333,10 @@ public class RenderEngine {
 		TexturePackBase var1 = this.field_6527_k.selectedTexturePack;
 		Iterator var2 = this.textureNameToImageMap.keySet().iterator();
 
-		BufferedImage var4;
+		ImageData var4;
 		while(var2.hasNext()) {
 			int var3 = ((Integer)var2.next()).intValue();
-			var4 = (BufferedImage)this.textureNameToImageMap.get(Integer.valueOf(var3));
+			var4 = (ImageData)this.textureNameToImageMap.get(Integer.valueOf(var3));
 			this.setupTexture(var4, var3);
 		}
 
@@ -378,8 +374,8 @@ public class RenderEngine {
 
 	}
 
-	private BufferedImage readTextureImage(InputStream var1) throws IOException {
-		BufferedImage var2 = ImageIO.read(var1);
+	private ImageData readTextureImage(InputStream var1) throws IOException {
+		ImageData var2 = ImageData.loadImageFile(var1);
 		var1.close();
 		return var2;
 	}

@@ -1,10 +1,11 @@
 package net.minecraft.src;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
+import net.peyton.java.awt.Color;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
