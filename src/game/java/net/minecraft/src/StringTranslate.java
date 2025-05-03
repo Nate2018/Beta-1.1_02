@@ -3,13 +3,15 @@ package net.minecraft.src;
 import java.io.IOException;
 import java.util.Properties;
 
+import net.lax1dude.eaglercraft.EagRuntime;
+
 public class StringTranslate {
 	private static StringTranslate field_20165_a = new StringTranslate();
 	private Properties field_20164_b = new Properties();
 
 	private StringTranslate() {
 		try {
-			this.field_20164_b.load(StringTranslate.class.getResourceAsStream("/lang/en_US.lang"));
+			this.field_20164_b.load(EagRuntime.getRequiredResourceStream("/lang/en_US.lang"));
 		} catch (IOException var2) {
 			var2.printStackTrace();
 		}

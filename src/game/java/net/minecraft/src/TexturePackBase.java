@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.minecraft.client.Minecraft;
 
 public abstract class TexturePackBase {
@@ -26,6 +28,6 @@ public abstract class TexturePackBase {
 	}
 
 	public InputStream func_6481_a(String var1) {
-		return TexturePackBase.class.getResourceAsStream(var1);
+		return EagRuntime.getRequiredResourceStream(var1);
 	}
 }
