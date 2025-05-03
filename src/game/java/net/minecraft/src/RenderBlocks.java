@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class RenderBlocks {
 	private IBlockAccess blockAccess;
 	private int overrideBlockTexture = -1;

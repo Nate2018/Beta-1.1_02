@@ -3,6 +3,8 @@ package net.minecraft.src;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class RenderSnowball extends Render {
 	private int field_20003_a;
 

@@ -3,6 +3,8 @@ package net.minecraft.src;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class RenderFireball extends Render {
 	public void a(EntityFireball var1, double var2, double var4, double var6, float var8, float var9) {
 		GL11.glPushMatrix();

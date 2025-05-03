@@ -4,6 +4,8 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class RenderItem extends Render {
 	private RenderBlocks renderBlocks = new RenderBlocks();
 	private Random random = new Random();

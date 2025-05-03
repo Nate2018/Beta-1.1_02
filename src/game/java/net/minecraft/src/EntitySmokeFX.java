@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class EntitySmokeFX extends EntityFX {
 	float field_671_a;
 

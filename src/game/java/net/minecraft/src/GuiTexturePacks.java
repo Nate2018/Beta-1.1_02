@@ -6,6 +6,8 @@ import java.util.List;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class GuiTexturePacks extends GuiScreen {
 	protected GuiScreen field_6461_a;
 	private int field_6460_h = 0;

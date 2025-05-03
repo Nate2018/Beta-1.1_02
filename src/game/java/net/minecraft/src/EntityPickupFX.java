@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class EntityPickupFX extends EntityFX {
 	private Entity field_675_a;
 	private Entity field_679_o;

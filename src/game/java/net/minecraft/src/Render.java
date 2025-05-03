@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public abstract class Render {
 	protected RenderManager renderManager;
 	private ModelBase unusedModelBiped = new ModelBiped();

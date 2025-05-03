@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Random;
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class EffectRenderer {
 	protected World worldObj;
 	private List[] field_1728_b = new List[4];

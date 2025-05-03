@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class TexturedQuad {
 	public PositionTexureVertex[] field_1195_a;
 	public int field_1194_b;

@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class EntityDiggingFX extends EntityFX {
 	private Block field_4082_a;
 

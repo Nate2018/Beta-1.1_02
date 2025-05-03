@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.Tessellator;
+
 public class RenderPlayer extends RenderLiving {
 	private ModelBiped field_209_f = (ModelBiped)this.e;
 	private ModelBiped field_208_g = new ModelBiped(1.0F);

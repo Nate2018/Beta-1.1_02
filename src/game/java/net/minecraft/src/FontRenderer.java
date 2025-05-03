@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 import net.lax1dude.eaglercraft.opengl.ImageData;
+import net.peyton.eagler.minecraft.Tessellator;
 
 public class FontRenderer {
 	private int[] charWidth = new int[256];
