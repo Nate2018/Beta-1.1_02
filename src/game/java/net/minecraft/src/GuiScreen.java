@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.minecraft.client.Minecraft;
+import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
 
 import org.lwjgl.input.Keyboard;

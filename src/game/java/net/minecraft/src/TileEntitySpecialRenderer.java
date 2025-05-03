@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.FontRenderer;
+
 public abstract class TileEntitySpecialRenderer {
 	protected TileEntityRenderer tileEntityRenderer;
 
