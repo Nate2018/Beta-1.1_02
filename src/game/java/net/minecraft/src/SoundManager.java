@@ -6,7 +6,6 @@ import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
 import paulscode.sound.codecs.CodecJOrbis;
 import paulscode.sound.codecs.CodecWav;
-import paulscode.sound.libraries.LibraryLWJGLOpenAL;
 
 public class SoundManager {
 	private static SoundSystem sndSystem;
@@ -35,9 +34,7 @@ public class SoundManager {
 			this.options.soundVolume = 0.0F;
 			this.options.musicVolume = 0.0F;
 			this.options.saveOptions();
-			SoundSystemConfig.addLibrary(LibraryLWJGLOpenAL.class);
 			SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
-			SoundSystemConfig.setCodec("mus", CodecMus.class);
 			SoundSystemConfig.setCodec("wav", CodecWav.class);
 			sndSystem = new SoundSystem();
 			this.options.soundVolume = var1;

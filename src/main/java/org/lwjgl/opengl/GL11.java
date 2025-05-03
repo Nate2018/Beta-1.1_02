@@ -1,9 +1,6 @@
 package org.lwjgl.opengl;
 
 import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
-
-import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
-
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 
@@ -25,13 +22,13 @@ public class GL11 extends EaglercraftGPU {
 		case GL_TEXTURE_2D:
 			GL11.enableTexture2D();
 			break;
-		//case GL_LIGHTING:
-			//GL11.enableLighting();
-			//break;
-		//case GL_LIGHT0:
-			//GL11.enableMCLight(0);
-		//case GL_LIGHT1:
-			//GL11.enableMCLight(1);
+		case GL_LIGHTING:
+			GL11.enableLighting();
+			break;
+		case GL_LIGHT0:
+			GL11.enableMCLight(0);
+		case GL_LIGHT1:
+			GL11.enableMCLight(1);
 		case GL_ALPHA_TEST:
 			GL11.enableAlpha();
 			break;
@@ -71,13 +68,13 @@ public class GL11 extends EaglercraftGPU {
 		case GL_TEXTURE_2D:
 			GL11.disableTexture2D();
 			break;
-		//case GL_LIGHTING:
-			//GL11.disableLighting();
-			//break;
-		//case GL_LIGHT0:
-			//GL11.disableMCLight(0);
-		//case GL_LIGHT1:
-			//GL11.disableMCLight(1);
+		case GL_LIGHTING:
+			GL11.disableLighting();
+			break;
+		case GL_LIGHT0:
+			GL11.disableMCLight(0);
+		case GL_LIGHT1:
+			GL11.disableMCLight(1);
 		case GL_ALPHA_TEST:
 			GL11.disableAlpha();
 			break;
@@ -221,5 +218,41 @@ public class GL11 extends EaglercraftGPU {
 
 	public static void glScaled(double f, double f1, double f2) {
 		glScalef((float)f, (float)f1, (float)f2);
+	}
+	
+	public static void glDeleteTexture(int texture) {
+		deleteTexture(texture);
+	}
+
+	public static void glDeleteTextures(IntBuffer buffer) {
+		while (buffer.hasRemaining()) {
+			glDeleteTexture(buffer.get());
+		}
+	}
+
+	public static void glFogf(int type, float param) {
+		switch(type) {
+		case GL_FOG_DENSITY:
+			setFogDensity(param);
+			return;
+		case GL_FOG_START:
+			setFogStart(param);
+			return;
+		case GL_FOG_END:
+			setFogEnd(param);
+			return;
+		default:
+			return; //?
+		}
+	}
+
+	public static void glFogi(int type, int param) {
+		switch(type) {
+		case GL_FOG_MODE:
+			setFog(param);
+			return;
+		default:
+			return; //?
+		}
 	}
 }

@@ -37,7 +37,6 @@ import net.minecraft.src.MouseHelper;
 import net.minecraft.src.MovementInputFromOptions;
 import net.minecraft.src.MovingObjectPosition;
 import net.minecraft.src.NetClientHandler;
-import net.minecraft.src.OpenGlCapsChecker;
 import net.minecraft.src.PlayerController;
 import net.minecraft.src.PlayerControllerTest;
 import net.minecraft.src.RenderEngine;
@@ -58,7 +57,6 @@ import net.minecraft.src.TexturePortalFX;
 import net.minecraft.src.TextureWatchFX;
 import net.minecraft.src.TextureWaterFX;
 import net.minecraft.src.TexureWaterFlowFX;
-import net.minecraft.src.ThreadDownloadResources;
 import net.minecraft.src.ThreadSleepForever;
 import net.minecraft.src.Timer;
 import net.minecraft.src.UnexpectedThrowable;
@@ -79,7 +77,6 @@ public abstract class Minecraft implements Runnable {
 	private boolean a = false;
 	public int displayWidth;
 	public int displayHeight;
-	private OpenGlCapsChecker glCapabilities;
 	private Timer timer = new Timer(20.0F);
 	public World theWorld;
 	public RenderGlobal renderGlobal;
@@ -94,7 +91,6 @@ public abstract class Minecraft implements Runnable {
 	public GuiScreen currentScreen = null;
 	public LoadingScreenRenderer loadingScreen = new LoadingScreenRenderer(this);
 	public EntityRenderer entityRenderer = new EntityRenderer(this);
-	private ThreadDownloadResources downloadResourcesThread;
 	private int ticksRan = 0;
 	private int field_6282_S = 0;
 	public String field_6310_s = null;
@@ -178,7 +174,6 @@ public abstract class Minecraft implements Runnable {
 		GL11.glLoadIdentity();
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		this.checkGLError("Startup");
-		this.glCapabilities = new OpenGlCapsChecker();
 		this.sndManager.loadSoundSettings(this.gameSettings);
 		this.renderEngine.registerTextureFX(this.textureLavaFX);
 		this.renderEngine.registerTextureFX(this.textureWaterFX);
@@ -192,12 +187,6 @@ public abstract class Minecraft implements Runnable {
 		this.renderGlobal = new RenderGlobal(this, this.renderEngine);
 		GL11.glViewport(0, 0, this.displayWidth, this.displayHeight);
 		this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
-
-		try {
-			this.downloadResourcesThread = new ThreadDownloadResources(this.mcDataDir, this);
-			this.downloadResourcesThread.start();
-		} catch (Exception var3) {
-		}
 
 		this.checkGLError("Post startup");
 		this.ingameGUI = new GuiIngame(this);
@@ -341,13 +330,6 @@ public abstract class Minecraft implements Runnable {
 	}
 
 	public void shutdownMinecraftApplet() {
-		try {
-			if(this.downloadResourcesThread != null) {
-				this.downloadResourcesThread.closeMinecraft();
-			}
-		} catch (Exception var8) {
-		}
-
 		try {
 			System.out.println("Stopping!");
 			this.func_6261_a((World)null);
@@ -971,7 +953,6 @@ public abstract class Minecraft implements Runnable {
 		System.out.println("FORCING RELOAD!");
 		this.sndManager = new SoundManager();
 		this.sndManager.loadSoundSettings(this.gameSettings);
-		this.downloadResourcesThread.reloadResources();
 	}
 
 	public boolean isMultiplayerWorld() {
@@ -1138,10 +1119,6 @@ public abstract class Minecraft implements Runnable {
 			this.sndManager.addMusic(var1, var2);
 		}
 
-	}
-
-	public OpenGlCapsChecker func_6251_l() {
-		return this.glCapabilities;
 	}
 
 	public String func_6241_m() {

@@ -1,9 +1,8 @@
 package net.minecraft.src;
 
-import java.io.IOException;
-import java.nio.IntBuffer;
 import org.lwjgl.opengl.GL11;
 
+import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class FontRenderer {
@@ -16,7 +15,7 @@ public class FontRenderer {
 		ImageData var4;
 		try {
 			var4 = ImageData.loadImageFile(var2);
-		} catch (IOException var18) {
+		} catch (Exception var18) {
 			throw new RuntimeException(var18);
 		}
 

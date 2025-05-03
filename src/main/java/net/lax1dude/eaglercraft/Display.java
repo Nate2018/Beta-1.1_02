@@ -51,10 +51,6 @@ public class Display {
 		return PlatformInput.getWindowFocused();
 	}
 
-	public static void create() {
-
-	}
-
 	public static void setTitle(String string) {
 
 	}

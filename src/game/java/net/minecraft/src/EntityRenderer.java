@@ -1,22 +1,20 @@
 package net.minecraft.src;
 
-import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Random;
+
+import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.opengl.NVFogDistance;
 import org.lwjgl.util.glu.GLU;
 
 public class EntityRenderer {
 	private Minecraft mc;
 	private float farPlaneDistance = 0.0F;
 	public ItemRenderer itemRenderer;
-	private int field_1386_j;
 	private Entity field_1385_k = null;
 	private long field_1384_l = System.currentTimeMillis();
 	private Random random = new Random();
@@ -40,7 +38,6 @@ public class EntityRenderer {
 		float var2 = (float)(3 - this.mc.gameSettings.renderDistance) / 3.0F;
 		float var3 = var1 * (1.0F - var2) + var2;
 		this.field_1381_o += (var3 - this.field_1381_o) * 0.1F;
-		++this.field_1386_j;
 		this.itemRenderer.func_895_a();
 		if(this.mc.isFancyGraphics) {
 			this.renderFancyGraphics();
@@ -508,34 +505,12 @@ public class EntityRenderer {
 		GL11.glFog(GL11.GL_FOG_COLOR, this.func_908_a(this.field_4270_e, this.field_4269_f, this.field_4268_g, 1.0F));
 		GL11.glNormal3f(0.0F, -1.0F, 0.0F);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		float var3;
-		float var4;
-		float var5;
-		float var6;
-		float var7;
-		float var8;
 		if(var2.isInsideOfMaterial(Material.water)) {
 			GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
 			GL11.glFogf(GL11.GL_FOG_DENSITY, 0.1F);
-			var3 = 0.4F;
-			var4 = 0.4F;
-			var5 = 0.9F;
-			if(this.mc.gameSettings.anaglyph) {
-				var6 = (var3 * 30.0F + var4 * 59.0F + var5 * 11.0F) / 100.0F;
-				var7 = (var3 * 30.0F + var4 * 70.0F) / 100.0F;
-				var8 = (var3 * 30.0F + var5 * 70.0F) / 100.0F;
-			}
 		} else if(var2.isInsideOfMaterial(Material.lava)) {
 			GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
 			GL11.glFogf(GL11.GL_FOG_DENSITY, 2.0F);
-			var3 = 0.4F;
-			var4 = 0.3F;
-			var5 = 0.3F;
-			if(this.mc.gameSettings.anaglyph) {
-				var6 = (var3 * 30.0F + var4 * 59.0F + var5 * 11.0F) / 100.0F;
-				var7 = (var3 * 30.0F + var4 * 70.0F) / 100.0F;
-				var8 = (var3 * 30.0F + var5 * 70.0F) / 100.0F;
-			}
 		} else {
 			GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_LINEAR);
 			GL11.glFogf(GL11.GL_FOG_START, this.farPlaneDistance * 0.25F);
@@ -543,10 +518,6 @@ public class EntityRenderer {
 			if(var1 < 0) {
 				GL11.glFogf(GL11.GL_FOG_START, 0.0F);
 				GL11.glFogf(GL11.GL_FOG_END, this.farPlaneDistance * 0.8F);
-			}
-
-			if(GLContext.getCapabilities().GL_NV_fog_distance) {
-				GL11.glFogi(NVFogDistance.GL_FOG_DISTANCE_MODE_NV, NVFogDistance.GL_EYE_RADIAL_NV);
 			}
 
 			if(this.mc.theWorld.worldProvider.field_4220_c) {

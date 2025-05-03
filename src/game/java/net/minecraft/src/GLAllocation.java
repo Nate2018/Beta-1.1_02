@@ -1,16 +1,17 @@
 package net.minecraft.src;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.lwjgl.opengl.GL11;
 
+import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
+import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
+import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
+
 public class GLAllocation {
-	private static List displayLists = new ArrayList();
-	private static List textureNames = new ArrayList();
+	private static List<Integer> displayLists = new ArrayList<Integer>();
+	private static List<Integer> textureNames = new ArrayList<Integer>();
 
 	public static synchronized int generateDisplayLists(int var0) {
 		int var1 = GL11.glGenLists(var0);
@@ -48,8 +49,7 @@ public class GLAllocation {
 	}
 
 	public static synchronized ByteBuffer createDirectByteBuffer(int var0) {
-		ByteBuffer var1 = ByteBuffer.allocateDirect(var0).order(ByteOrder.nativeOrder());
-		return var1;
+		return EagRuntime.allocateByteBuffer(var0);
 	}
 
 	public static IntBuffer createDirectIntBuffer(int var0) {

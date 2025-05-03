@@ -203,4 +203,12 @@ public class ImageData {
 		return (w & (w - 1)) != 0 || (h & (h - 1)) != 0;
 	}
 
+	public int getWidth() {
+		return this.width;
+	}
+	
+	public int getHeight() {
+		return this.height;
+	}
+
 }

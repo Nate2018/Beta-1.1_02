@@ -2,15 +2,14 @@ package net.minecraft.src;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import org.lwjgl.opengl.GL11;
 
+import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
+import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 import net.lax1dude.eaglercraft.opengl.ImageData;
 
 public class RenderEngine {
@@ -20,7 +19,6 @@ public class RenderEngine {
 	private IntBuffer singleIntBuffer = GLAllocation.createDirectIntBuffer(1);
 	private ByteBuffer imageData = GLAllocation.createDirectByteBuffer(1048576);
 	private List field_1604_f = new ArrayList();
-	private Map urlToImageDataMap = new HashMap();
 	private GameSettings options;
 	private boolean clampTexture = false;
 	private boolean blurTexture = false;
@@ -176,44 +174,10 @@ public class RenderEngine {
 	}
 
 	public int getTextureForDownloadableImage(String var1, String var2) {
-		ThreadDownloadImageData var3 = (ThreadDownloadImageData)this.urlToImageDataMap.get(var1);
-		if(var3 != null && var3.image != null && !var3.textureSetupComplete) {
-			if(var3.textureName < 0) {
-				var3.textureName = this.allocateAndSetupTexture(var3.image);
-			} else {
-				this.setupTexture(var3.image, var3.textureName);
-			}
-
-			var3.textureSetupComplete = true;
-		}
-
-		return var3 != null && var3.textureName >= 0 ? var3.textureName : (var2 == null ? -1 : this.getTexture(var2));
-	}
-
-	public ThreadDownloadImageData obtainImageData(String var1, ImageBuffer var2) {
-		ThreadDownloadImageData var3 = (ThreadDownloadImageData)this.urlToImageDataMap.get(var1);
-		if(var3 == null) {
-			this.urlToImageDataMap.put(var1, new ThreadDownloadImageData(var1, var2));
-		} else {
-			++var3.referenceCount;
-		}
-
-		return var3;
+		return this.getTexture(var2);
 	}
 
 	public void releaseImageData(String var1) {
-		ThreadDownloadImageData var2 = (ThreadDownloadImageData)this.urlToImageDataMap.get(var1);
-		if(var2 != null) {
-			--var2.referenceCount;
-			if(var2.referenceCount == 0) {
-				if(var2.textureName >= 0) {
-					this.deleteTexture(var2.textureName);
-				}
-
-				this.urlToImageDataMap.remove(var1);
-			}
-		}
-
 	}
 
 	public void registerTextureFX(TextureFX var1) {
@@ -338,11 +302,6 @@ public class RenderEngine {
 			int var3 = ((Integer)var2.next()).intValue();
 			var4 = (ImageData)this.textureNameToImageMap.get(Integer.valueOf(var3));
 			this.setupTexture(var4, var3);
-		}
-
-		ThreadDownloadImageData var7;
-		for(var2 = this.urlToImageDataMap.values().iterator(); var2.hasNext(); var7.textureSetupComplete = false) {
-			var7 = (ThreadDownloadImageData)var2.next();
 		}
 
 		var2 = this.textureMap.keySet().iterator();
