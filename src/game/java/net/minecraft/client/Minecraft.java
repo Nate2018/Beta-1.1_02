@@ -173,7 +173,7 @@ public class Minecraft {
 	}
 
 	public void startGame() throws LWJGLException {
-		Display.setTitle("Minecraft Beta 1.1_01");
+		Display.setTitle("Minecraft Beta 1.1_02");
 
 		try {
 			Display.create();

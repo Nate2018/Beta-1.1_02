@@ -311,25 +311,7 @@ public class NetClientHandler extends NetHandler {
 	}
 
 	public void handleHandshake(Packet2Handshake var1) {
-		if(var1.username.equals("-")) {
-			this.addToSendQueue(new Packet1Login(this.mc.session.playerName, "Password", 7));
-		} else {
-			try {
-				URL var2 = new URL("http://www.minecraft.net/game/joinserver.jsp?user=" + this.mc.session.playerName + "&sessionId=" + this.mc.session.field_6543_c + "&serverId=" + var1.username);
-				BufferedReader var3 = new BufferedReader(new InputStreamReader(var2.openStream()));
-				String var4 = var3.readLine();
-				var3.close();
-				if(var4.equalsIgnoreCase("ok")) {
-					this.addToSendQueue(new Packet1Login(this.mc.session.playerName, "Password", 7));
-				} else {
-					this.netManager.networkShutdown("disconnect.loginFailedInfo", new Object[]{var4});
-				}
-			} catch (Exception var5) {
-				var5.printStackTrace();
-				this.netManager.networkShutdown("disconnect.genericReason", new Object[]{"Internal client error: " + var5.toString()});
-			}
-		}
-
+		this.addToSendQueue(new Packet1Login(this.mc.session.playerName, "Password", 8));
 	}
 
 	public void disconnect() {
