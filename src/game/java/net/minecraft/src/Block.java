@@ -82,12 +82,12 @@ public class Block {
 	public static final Block tilledField = (new BlockSoil(60)).setHardness(0.6F).setStepSound(soundGravelFootstep).func_20012_a("farmland");
 	public static final Block stoneOvenIdle = (new BlockFurnace(61, false)).setHardness(3.5F).setStepSound(soundStoneFootstep).func_20012_a("furnace");
 	public static final Block stoneOvenActive = (new BlockFurnace(62, true)).setHardness(3.5F).setStepSound(soundStoneFootstep).setLightValue(14.0F / 16.0F).func_20012_a("furnace");
-	public static final Block signPost = (new BlockSign(63, TileEntitySign.class, true)).setHardness(1.0F).setStepSound(soundWoodFootstep).func_20012_a("sign");
+	public static final Block signPost = (new BlockSign(63, true)).setHardness(1.0F).setStepSound(soundWoodFootstep).func_20012_a("sign");
 	public static final Block doorWood = (new BlockDoor(64, Material.wood)).setHardness(3.0F).setStepSound(soundWoodFootstep).func_20012_a("doorWood");
 	public static final Block ladder = (new BlockLadder(65, 83)).setHardness(0.4F).setStepSound(soundWoodFootstep).func_20012_a("ladder");
 	public static final Block minecartTrack = (new BlockMinecartTrack(66, 128)).setHardness(0.7F).setStepSound(soundMetalFootstep).func_20012_a("rail");
 	public static final Block stairCompactCobblestone = (new BlockStairs(67, cobblestone)).func_20012_a("stairsStone");
-	public static final Block signWall = (new BlockSign(68, TileEntitySign.class, false)).setHardness(1.0F).setStepSound(soundWoodFootstep).func_20012_a("sign");
+	public static final Block signWall = (new BlockSign(68, false)).setHardness(1.0F).setStepSound(soundWoodFootstep).func_20012_a("sign");
 	public static final Block lever = (new BlockLever(69, 96)).setHardness(0.5F).setStepSound(soundWoodFootstep).func_20012_a("lever");
 	public static final Block pressurePlateStone = (new BlockPressurePlate(70, stone.blockIndexInTexture, EnumMobType.mobs)).setHardness(0.5F).setStepSound(soundStoneFootstep).func_20012_a("pressurePlate");
 	public static final Block doorSteel = (new BlockDoor(71, Material.iron)).setHardness(5.0F).setStepSound(soundMetalFootstep).func_20012_a("doorIron");

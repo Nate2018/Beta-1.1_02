@@ -3,19 +3,21 @@ package net.minecraft.src;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.peyton.eagler.minecraft.TileEntityConstructor;
+
 public class TileEntity {
-	private static Map nameToClassMap = new HashMap();
+	private static Map<String, TileEntityConstructor> nameToClassMap = new HashMap();
 	private static Map classToNameMap = new HashMap();
 	public World worldObj;
 	public int xCoord;
 	public int yCoord;
 	public int zCoord;
 
-	private static void addMapping(Class var0, String var1) {
+	private static void addMapping(Class var0, TileEntityConstructor var2, String var1) {
 		if(classToNameMap.containsKey(var1)) {
 			throw new IllegalArgumentException("Duplicate id: " + var1);
 		} else {
-			nameToClassMap.put(var1, var0);
+			nameToClassMap.put(var1, var2);
 			classToNameMap.put(var0, var1);
 		}
 	}
@@ -45,9 +47,9 @@ public class TileEntity {
 		TileEntity var1 = null;
 
 		try {
-			Class var2 = (Class)nameToClassMap.get(var0.getString("id"));
+			TileEntityConstructor var2 = nameToClassMap.get(var0.getString("id"));
 			if(var2 != null) {
-				var1 = (TileEntity)var2.newInstance();
+				var1 = (TileEntity)var2.createTileEntity();
 			}
 		} catch (Exception var3) {
 			var3.printStackTrace();
@@ -85,9 +87,9 @@ public class TileEntity {
 	}
 
 	static {
-		addMapping(TileEntityFurnace.class, "Furnace");
-		addMapping(TileEntityChest.class, "Chest");
-		addMapping(TileEntitySign.class, "Sign");
-		addMapping(TileEntityMobSpawner.class, "MobSpawner");
+		addMapping(TileEntityFurnace.class, TileEntityFurnace::new, "Furnace");
+		addMapping(TileEntityChest.class, TileEntityChest::new, "Chest");
+		addMapping(TileEntitySign.class, TileEntitySign::new, "Sign");
+		addMapping(TileEntityMobSpawner.class, TileEntityMobSpawner::new, "MobSpawner");
 	}
 }

@@ -3,14 +3,12 @@ package net.minecraft.src;
 import net.lax1dude.eaglercraft.Random;
 
 public class BlockSign extends BlockContainer {
-	private Class signEntityClass;
 	private boolean isFreestanding;
 
-	protected BlockSign(int var1, Class var2, boolean var3) {
+	protected BlockSign(int var1, boolean var3) {
 		super(var1, Material.wood);
 		this.isFreestanding = var3;
 		this.blockIndexInTexture = 4;
-		this.signEntityClass = var2;
 		float var4 = 0.25F;
 		float var5 = 1.0F;
 		this.setBlockBounds(0.5F - var4, 0.0F, 0.5F - var4, 0.5F + var4, var5, 0.5F + var4);
@@ -67,7 +65,7 @@ public class BlockSign extends BlockContainer {
 
 	protected TileEntity SetBlockEntity() {
 		try {
-			return (TileEntity)this.signEntityClass.newInstance();
+			return new TileEntitySign();
 		} catch (Exception var2) {
 			throw new RuntimeException(var2);
 		}

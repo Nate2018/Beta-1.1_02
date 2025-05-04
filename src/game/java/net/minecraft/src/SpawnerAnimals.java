@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.peyton.eagler.minecraft.EntityConstructor;
+
 public final class SpawnerAnimals {
 	private static Set eligibleChunksForSpawning = new HashSet();
 
@@ -45,7 +47,7 @@ public final class SpawnerAnimals {
 					int var10;
 					int var11;
 					int var12;
-					Class[] var33;
+					EntityConstructor[] var33;
 					do {
 						do {
 							ChunkCoordIntPair var31;
@@ -96,7 +98,7 @@ public final class SpawnerAnimals {
 									if(var26 >= 576.0F) {
 										EntityLiving var34;
 										try {
-											var34 = (EntityLiving)var33[var8].getConstructor(new Class[]{World.class}).newInstance(new Object[]{var0});
+											var34 = (EntityLiving)var33[var8].createEntity(var0);
 										} catch (Exception var27) {
 											var27.printStackTrace();
 											return var1;
