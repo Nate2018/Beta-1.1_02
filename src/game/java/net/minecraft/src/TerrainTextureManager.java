@@ -15,7 +15,7 @@ public class TerrainTextureManager {
 
 	public TerrainTextureManager() {
 		try {
-			ImageData var1 = ImageData.loadImageFile("/terrain.png");
+			ImageData var1 = ImageData.loadImageFile("/terrain.png").swapRB();
 			int[] var2 = new int[65536];
 			var1.getRGB(0, 0, 256, 256, var2, 0, 256);
 
@@ -180,7 +180,7 @@ public class TerrainTextureManager {
 
 				this.func_800_a();
 				if(var1.field_1348_a == null) {
-					var1.field_1348_a = new ImageData(32, 160, false);
+					var1.field_1348_a = new ImageData(32, 160, true);
 				}
 
 				var1.field_1348_a.setRGB(0, 0, 32, 160, this.field_1180_b, 0, 32);

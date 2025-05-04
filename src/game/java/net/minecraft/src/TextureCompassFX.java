@@ -17,7 +17,7 @@ public class TextureCompassFX extends TextureFX {
 		this.field_1128_f = 1;
 
 		try {
-			ImageData var2 = ImageData.loadImageFile("/gui/items.png");
+			ImageData var2 = ImageData.loadImageFile("/gui/items.png").swapRB();
 			int var3 = this.field_1126_b % 16 * 16;
 			int var4 = this.field_1126_b / 16 * 16;
 			var2.getRGB(var3, var4, 16, 16, this.field_4230_h, 0, 16);

@@ -82,6 +82,7 @@ public class RenderEngine {
 	}
 
 	public void setupTexture(ImageData var1, int var2) {
+		GL11.glAlphaFunc(516, 0.1F);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, var2);
 		if(useMipmaps) {
 			GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
@@ -334,7 +335,7 @@ public class RenderEngine {
 	}
 
 	private ImageData readTextureImage(InputStream var1) throws IOException {
-		ImageData var2 = ImageData.loadImageFile(var1);
+		ImageData var2 = ImageData.loadImageFile(var1).swapRB();
 		var1.close();
 		return var2;
 	}

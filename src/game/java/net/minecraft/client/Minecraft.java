@@ -290,7 +290,6 @@ public class Minecraft {
 			System.out.println("########## GL ERROR ##########");
 			System.out.println("@ " + var1);
 			System.out.println(var2 + ": " + var3);
-			System.exit(0);
 		}
 
 	}

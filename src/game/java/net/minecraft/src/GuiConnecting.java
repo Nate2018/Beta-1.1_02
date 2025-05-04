@@ -8,7 +8,7 @@ public class GuiConnecting extends GuiScreen {
 
 	public GuiConnecting(Minecraft var1, String var2, int var3) {
 		var1.func_6261_a((World)null);
-		(new ThreadConnectToServer(this, var1, var2, var3)).start();
+		//(new ThreadConnectToServer(this, var1, var2, var3)).start();
 	}
 
 	public void updateScreen() {

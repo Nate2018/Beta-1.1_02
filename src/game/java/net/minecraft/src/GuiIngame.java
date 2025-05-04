@@ -3,6 +3,8 @@ package net.minecraft.src;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.minecraft.client.Minecraft;
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
@@ -157,9 +159,9 @@ public class GuiIngame extends Gui {
 			var8.drawStringWithShadow(this.mc.func_6241_m(), 2, 12, 16777215);
 			var8.drawStringWithShadow(this.mc.func_6262_n(), 2, 22, 16777215);
 			var8.drawStringWithShadow(this.mc.func_6245_o(), 2, 32, 16777215);
-			long var24 = Runtime.getRuntime().maxMemory();
-			long var29 = Runtime.getRuntime().totalMemory();
-			long var30 = Runtime.getRuntime().freeMemory();
+			long var24 = EagRuntime.maxMemory();
+			long var29 = EagRuntime.totalMemory();
+			long var30 = EagRuntime.freeMemory();
 			long var21 = var29 - var30;
 			var23 = "Used memory: " + var21 * 100L / var24 + "% (" + var21 / 1024L / 1024L + "MB) of " + var24 / 1024L / 1024L + "MB";
 			this.drawString(var8, var23, var6 - var8.getStringWidth(var23) - 2, 2, 14737632);

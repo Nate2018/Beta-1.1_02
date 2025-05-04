@@ -18,11 +18,11 @@ public class TextureWatchFX extends TextureFX {
 		this.field_1128_f = 1;
 
 		try {
-			ImageData var2 = ImageData.loadImageFile("/gui/items.png");
+			ImageData var2 = ImageData.loadImageFile("/gui/items.png").swapRB();
 			int var3 = this.field_1126_b % 16 * 16;
 			int var4 = this.field_1126_b / 16 * 16;
 			var2.getRGB(var3, var4, 16, 16, this.field_4224_h, 0, 16);
-			var2 = ImageData.loadImageFile("/misc/dial.png");
+			var2 = ImageData.loadImageFile("/misc/dial.png").swapRB();
 			var2.getRGB(0, 0, 16, 16, this.field_4223_i, 0, 16);
 		} catch (Exception var5) {
 			var5.printStackTrace();
