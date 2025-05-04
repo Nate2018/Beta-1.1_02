@@ -120,6 +120,8 @@ public class Minecraft {
 	private int field_6300_ab = 0;
 	
 	private static Minecraft minecraft;
+	
+	private boolean isShuttingDown = false;
 
 	public Minecraft() {
 		this.displayWidth = Display.getWidth();
@@ -281,23 +283,20 @@ public class Minecraft {
 		}
 
 	}
-
+	
 	public void shutdownMinecraftApplet() {
+		System.out.println("Stopping!");
+		isShuttingDown = true;
+		this.func_6261_a((World)null);
+
 		try {
-			System.out.println("Stopping!");
-			this.func_6261_a((World)null);
-
-			try {
-				GLAllocation.deleteTexturesAndDisplayLists();
-			} catch (Exception var6) {
-			}
-
-			this.sndManager.closeMinecraft();
-		} finally {
-			EagRuntime.destroy();
+			GLAllocation.deleteTexturesAndDisplayLists();
+		} catch (Exception var6) {
 		}
 
+		this.sndManager.closeMinecraft();
 		System.gc();
+		EagRuntime.exit();
 	}
 
 	public void run() {
@@ -409,8 +408,8 @@ public class Minecraft {
 				var17.printStackTrace();
 				throw new RuntimeException("Unexpected error", var17);
 			}
-
 		} finally {
+			this.shutdownMinecraftApplet();
 		}
 	}
 
@@ -902,8 +901,10 @@ public class Minecraft {
 	}
 
 	public void changeWorld(World var1, String var2, EntityPlayer var3) {
-		this.loadingScreen.printText(var2);
-		this.loadingScreen.displayLoadingString("");
+		if(!this.isShuttingDown) {
+			this.loadingScreen.printText(var2);
+			this.loadingScreen.displayLoadingString("");
+		}
 		this.sndManager.func_331_a((String)null, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F);
 		if(this.theWorld != null) {
 			this.theWorld.func_651_a(this.loadingScreen);
