@@ -27,8 +27,10 @@ public class GL11 extends EaglercraftGPU {
 			break;
 		case GL_LIGHT0:
 			GL11.enableMCLight(0);
+			break;
 		case GL_LIGHT1:
 			GL11.enableMCLight(1);
+			break;
 		case GL_ALPHA_TEST:
 			GL11.enableAlpha();
 			break;
@@ -73,8 +75,10 @@ public class GL11 extends EaglercraftGPU {
 			break;
 		case GL_LIGHT0:
 			GL11.disableMCLight(0);
+			break;
 		case GL_LIGHT1:
 			GL11.disableMCLight(1);
+			break;
 		case GL_ALPHA_TEST:
 			GL11.disableAlpha();
 			break;
