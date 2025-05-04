@@ -295,8 +295,8 @@ public class Minecraft {
 		}
 
 		this.sndManager.closeMinecraft();
-		System.gc();
 		EagRuntime.exit();
+		System.gc();
 	}
 
 	public void run() {
