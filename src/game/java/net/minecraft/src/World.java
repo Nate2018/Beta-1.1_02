@@ -3,6 +3,7 @@ package net.minecraft.src;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,7 +63,10 @@ public class World implements IBlockAccess {
 		VFile2 var4 = new VFile2(var3, "level.dat");
 		if(var4.exists()) {
 			try {
-				NBTTagCompound var5 = CompressedStreamTools.func_1138_a(var4.getInputStream());
+				NBTTagCompound var5;
+				try (InputStream is = var4.getInputStream()) {
+					var5 = CompressedStreamTools.func_1138_a(is);
+				}
 				NBTTagCompound var6 = var5.getCompoundTag("Data");
 				return var6;
 			} catch (Exception var7) {
@@ -228,7 +232,10 @@ public class World implements IBlockAccess {
 		this.field_1033_r = !var18.exists();
 		if(var18.exists()) {
 			try {
-				NBTTagCompound var8 = CompressedStreamTools.func_1138_a(var18.getInputStream());
+				NBTTagCompound var8;
+				try (InputStream is = var18.getInputStream()) {
+					var8 = CompressedStreamTools.func_1138_a(is);
+				}
 				NBTTagCompound var9 = var8.getCompoundTag("Data");
 				this.randomSeed = var9.getLong("RandomSeed");
 				this.spawnX = var9.getInteger("SpawnX");
