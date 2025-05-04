@@ -124,6 +124,9 @@ public class Minecraft {
 	private static Minecraft minecraft;
 	
 	private boolean isShuttingDown = false;
+	private static int debugFPS;
+	
+	public ScaledResolution scaledResolution = null;
 
 	public Minecraft() {
 		this.displayWidth = Display.getWidth();
@@ -180,6 +183,7 @@ public class Minecraft {
 		} catch (LWJGLException var6) {
 		}
 
+		this.scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight);
 		RenderManager.instance.field_4236_f = new ItemRenderer(this);
 		this.mcDataDir = getMinecraftDir();
 		this.gameSettings = new GameSettings(this, this.mcDataDir);
@@ -230,12 +234,13 @@ public class Minecraft {
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
 		this.dpi = Display.getDPI();
+		this.scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight);
 	}
 
 	private void loadScreen() throws LWJGLException {
 		Display.update();
 		updateDisplayMode();
-		ScaledResolution var1 = new ScaledResolution(this.displayWidth, this.displayHeight);
+		final ScaledResolution var1 = this.scaledResolution;
 		int var2 = var1.getScaledWidth();
 		int var3 = var1.getScaledHeight();
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
@@ -304,12 +309,10 @@ public class Minecraft {
 			}
 
 			this.currentScreen = (GuiScreen)var1;
+			this.scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight);
 			if(var1 != null) {
 				this.func_6273_f();
-				ScaledResolution var2 = new ScaledResolution(this.displayWidth, this.displayHeight);
-				int var3 = var2.getScaledWidth();
-				int var4 = var2.getScaledHeight();
-				((GuiScreen)var1).setWorldAndResolution(this, var3, var4);
+				((GuiScreen)var1).setWorldAndResolution(this, this.scaledResolution.getScaledWidth(), this.scaledResolution.getScaledHeight());
 				this.field_6307_v = false;
 			} else {
 				this.func_6259_e();
@@ -428,6 +431,7 @@ public class Minecraft {
 					++var3;
 
 					for(this.isWorldLoaded = !this.isMultiplayerWorld() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame(); System.currentTimeMillis() >= var1 + 1000L; var3 = 0) {
+						debugFPS = var3;
 						this.debug = var3 + " fps, " + WorldRenderer.chunksUpdated + " chunk updates";
 						WorldRenderer.chunksUpdated = 0;
 						var1 += 1000L;
@@ -644,23 +648,19 @@ public class Minecraft {
 	}
 
 	private void resize(int var1, int var2) {
-		if(var1 <= 0) {
-			var1 = 1;
-		}
-
-		if(var2 <= 0) {
-			var2 = 1;
-		}
-
-		this.displayWidth = var1;
-		this.displayHeight = var2;
+		this.displayWidth = Math.max(1, var1);
+		this.displayHeight = Math.max(1, var2);
+		this.scaledResolution = new ScaledResolution(this.displayWidth, this.displayHeight);
+		
 		if(this.currentScreen != null) {
-			ScaledResolution var3 = new ScaledResolution(var1, var2);
-			int var4 = var3.getScaledWidth();
-			int var5 = var3.getScaledHeight();
-			this.currentScreen.setWorldAndResolution(this, var4, var5);
+			this.currentScreen.setWorldAndResolution(this, this.scaledResolution.getScaledWidth(), this.scaledResolution.getScaledHeight());
 		}
+		
+		this.loadingScreen = new LoadingScreenRenderer(this);
 
+		EagRuntime.getConfiguration().getHooks().callScreenChangedHook(
+				currentScreen != null ? currentScreen.getClass().getName() : null, scaledResolution.getScaledWidth(),
+				scaledResolution.getScaledHeight(), displayWidth, displayHeight, scaledResolution.scaleFactor);
 	}
 
 	private void clickMiddleMouseButton() {
@@ -1085,5 +1085,9 @@ public class Minecraft {
 
 	public static Minecraft getMinecraft() {
 		return minecraft;
+	}
+	
+	public static int getDebugFPS() {
+		return debugFPS;
 	}
 }

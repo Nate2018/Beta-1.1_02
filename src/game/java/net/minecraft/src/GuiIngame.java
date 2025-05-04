@@ -25,21 +25,19 @@ public class GuiIngame extends Gui {
 	private int field_9419_j = 0;
 	public float field_6446_b;
 	float field_931_c = 1.0F;
+	float prevVignetteBrightness = 1.0F;
 
 	public GuiIngame(Minecraft var1) {
 		this.mc = var1;
 	}
 
-	public void renderGameOverlay(float var1, boolean var2, int var3, int var4) {
-		ScaledResolution var5 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+	public void renderGameOverlay(float var1) {
+		final ScaledResolution var5 = this.mc.scaledResolution;
 		int var6 = var5.getScaledWidth();
 		int var7 = var5.getScaledHeight();
 		FontRenderer var8 = this.mc.fontRenderer;
 		this.mc.entityRenderer.func_905_b();
 		GL11.glEnable(GL11.GL_BLEND);
-		if(this.mc.gameSettings.fancyGraphics) {
-			this.func_4064_a(this.mc.thePlayer.getEntityBrightness(var1), var6, var7);
-		}
 
 		ItemStack var9 = this.mc.thePlayer.inventory.armorItemInSlot(3);
 		if(!this.mc.gameSettings.thirdPersonView && var9 != null && var9.itemID == Block.pumpkin.blockID) {
@@ -58,10 +56,6 @@ public class GuiIngame extends Gui {
 		this.drawTexturedModalRect(var6 / 2 - 91, var7 - 22, 0, 0, 182, 22);
 		this.drawTexturedModalRect(var6 / 2 - 91 - 1 + var11.currentItem * 20, var7 - 22 - 1, 0, 22, 24, 22);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/icons.png"));
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR);
-		this.drawTexturedModalRect(var6 / 2 - 7, var7 / 2 - 7, 0, 0, 16, 16);
-		GL11.glDisable(GL11.GL_BLEND);
 		boolean var12 = this.mc.thePlayer.field_9306_bj / 3 % 2 == 1;
 		if(this.mc.thePlayer.field_9306_bj < 10) {
 			var12 = false;
@@ -261,35 +255,6 @@ public class GuiIngame extends Gui {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-	private void func_4064_a(float var1, int var2, int var3) {
-		var1 = 1.0F - var1;
-		if(var1 < 0.0F) {
-			var1 = 0.0F;
-		}
-
-		if(var1 > 1.0F) {
-			var1 = 1.0F;
-		}
-
-		this.field_931_c = (float)((double)this.field_931_c + (double)(var1 - this.field_931_c) * 0.01D);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glDepthMask(false);
-		GL11.glBlendFunc(GL11.GL_ZERO, GL11.GL_ONE_MINUS_SRC_COLOR);
-		GL11.glColor4f(this.field_931_c, this.field_931_c, this.field_931_c, 1.0F);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("%blur%/misc/vignette.png"));
-		Tessellator var4 = Tessellator.instance;
-		var4.startDrawingQuads();
-		var4.addVertexWithUV(0.0D, (double)var3, -90.0D, 0.0D, 1.0D);
-		var4.addVertexWithUV((double)var2, (double)var3, -90.0D, 1.0D, 1.0D);
-		var4.addVertexWithUV((double)var2, 0.0D, -90.0D, 1.0D, 0.0D);
-		var4.addVertexWithUV(0.0D, 0.0D, -90.0D, 0.0D, 0.0D);
-		var4.draw();
-		GL11.glDepthMask(true);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	}
-
 	private void func_4065_b(float var1, int var2, int var3) {
 		var1 *= var1;
 		var1 *= var1;
@@ -372,5 +337,44 @@ public class GuiIngame extends Gui {
 	public void func_553_b(String var1) {
 		this.field_9420_i = "Now playing: " + var1;
 		this.field_9419_j = 60;
+	}
+	
+	public void renderVignette(float var1, int var2, int var3) {
+		var1 = 1.0F - var1 * 0.5f;
+		
+		if(var1 < 0.0F) {
+			var1 = 0.0F;
+		}
+
+		if(var1 > 1.0F) {
+			var1 = 1.0F;
+		}
+
+		this.prevVignetteBrightness = (float)((double)this.prevVignetteBrightness + (double)(var1 - this.prevVignetteBrightness) * 0.01D);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDepthMask(false);
+		GL11.glBlendFunc(GL11.GL_ZERO, GL11.GL_ONE_MINUS_SRC_COLOR);
+		GL11.glColor4f(this.prevVignetteBrightness, this.prevVignetteBrightness, this.prevVignetteBrightness, 1.0F);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("%blur%/misc/vignette.png"));
+		Tessellator var4 = Tessellator.instance;
+		var4.startDrawingQuads();
+		var4.addVertexWithUV(0.0D, (double)var3, -90.0D, 0.0D, 1.0D);
+		var4.addVertexWithUV((double)var2, (double)var3, -90.0D, 1.0D, 1.0D);
+		var4.addVertexWithUV((double)var2, 0.0D, -90.0D, 1.0D, 0.0D);
+		var4.addVertexWithUV(0.0D, 0.0D, -90.0D, 0.0D, 0.0D);
+		var4.draw();
+		GL11.glDepthMask(true);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
+	public void renderCrossHairs(int w, int h) {
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/icons.png"));
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR);
+		this.drawTexturedModalRect(w / 2 - 7, h / 2 - 7, 0, 0, 16, 16);
 	}
 }

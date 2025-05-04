@@ -34,7 +34,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 			}
 		} else {
 			this.field_1007_c = var1;
-			ScaledResolution var2 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+			final ScaledResolution var2 = this.mc.scaledResolution;
 			int var3 = var2.getScaledWidth();
 			int var4 = var2.getScaledHeight();
 			GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
@@ -69,7 +69,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 			long var2 = System.currentTimeMillis();
 			if(var2 - this.field_1006_d >= 20L) {
 				this.field_1006_d = var2;
-				ScaledResolution var4 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+				final ScaledResolution var4 = this.mc.scaledResolution;
 				int var5 = var4.getScaledWidth();
 				int var6 = var4.getScaledHeight();
 				GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);

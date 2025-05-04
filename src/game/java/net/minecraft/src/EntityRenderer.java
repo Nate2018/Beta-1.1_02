@@ -4,6 +4,9 @@ import java.util.List;
 import net.lax1dude.eaglercraft.Random;
 
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
+import net.lax1dude.eaglercraft.opengl.GameOverlayFramebuffer;
+import net.lax1dude.eaglercraft.opengl.Tessellator;
+import net.lax1dude.eaglercraft.opengl.VertexFormat;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -26,10 +29,13 @@ public class EntityRenderer {
 	float field_4268_g;
 	private float field_1382_n;
 	private float field_1381_o;
+	
+	private GameOverlayFramebuffer overlayFramebuffer;
 
 	public EntityRenderer(Minecraft var1) {
 		this.mc = var1;
 		this.itemRenderer = new ItemRenderer(var1);
+		this.overlayFramebuffer = new GameOverlayFramebuffer();
 	}
 
 	public void func_911_a() {
@@ -260,6 +266,8 @@ public class EntityRenderer {
 
 	}
 
+	//Learned my lesson this time :D
+	private final VertexFormat format = new VertexFormat(true, false, false, false); //Don't continuously create temporary objects
 	public void func_4136_b(float var1) {
 		if(!Display.isActive()) {
 			if(System.currentTimeMillis() - this.field_1384_l > 500L) {
@@ -284,15 +292,56 @@ public class EntityRenderer {
 		}
 
 		if(!this.mc.field_6307_v) {
-			ScaledResolution var7 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+			final ScaledResolution var7 = this.mc.scaledResolution;
 			int var8 = var7.getScaledWidth();
 			int var9 = var7.getScaledHeight();
 			int var10 = Mouse.getX() * var8 / this.mc.displayWidth;
 			int var11 = var9 - Mouse.getY() * var9 / this.mc.displayHeight - 1;
 			if(this.mc.theWorld != null) {
 				this.renderWorld(var1);
-				if(!Keyboard.isKeyDown(Keyboard.KEY_F1)) {
-					this.mc.ingameGUI.renderGameOverlay(var1, this.mc.currentScreen != null, var10, var11);
+				final boolean b = !Keyboard.isKeyDown(Keyboard.KEY_F1) || this.mc.currentScreen != null;
+				if(b) {
+					GL11.glAlphaFunc(GL11.GL_GREATER, 0.1f);
+					long framebufferAge = this.overlayFramebuffer.getAge();
+					if (framebufferAge == -1l || framebufferAge > (Minecraft.getDebugFPS() < 25 ? 125l : 75l)) {
+						this.overlayFramebuffer.beginRender(mc.displayWidth, mc.displayHeight);
+						GL11.glColorMask(true, true, true, true);
+						GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+						GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+						GL11.enableOverlayFramebufferBlending();
+						if (b) {
+							this.mc.ingameGUI.renderGameOverlay(var1);
+						}
+						GL11.disableOverlayFramebufferBlending();
+						this.overlayFramebuffer.endRender();
+					}
+				}
+				if(b) {
+					this.func_905_b();
+					GL11.glDisable(GL11.GL_LIGHTING);
+					GL11.glEnable(GL11.GL_BLEND);
+					if(this.mc.gameSettings.fancyGraphics) {
+						this.mc.ingameGUI.renderVignette(this.mc.thePlayer.getEntityBrightness(var1), var8, var9);
+					}
+					this.mc.ingameGUI.renderCrossHairs(var8, var9);
+					GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.overlayFramebuffer.getTexture());
+					GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+					GL11.glEnable(GL11.GL_BLEND);
+					GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+					GL11.glEnable(GL11.GL_ALPHA_TEST);
+					GL11.glDisable(GL11.GL_DEPTH_TEST);
+					GL11.glDepthMask(false);
+					Tessellator tessellator = Tessellator.getInstance();
+					net.lax1dude.eaglercraft.opengl.WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+					worldrenderer.begin(7, format);
+					worldrenderer.pos(0.0D, (double) var9, -90.0D).tex(0.0D, 0.0D).endVertex();
+					worldrenderer.pos((double) var8, (double) var9, -90.0D).tex(1.0D, 0.0D).endVertex();
+					worldrenderer.pos((double) var8, 0.0D, -90.0D).tex(1.0D, 1.0D).endVertex();
+					worldrenderer.pos(0.0D, 0.0D, -90.0D).tex(0.0D, 1.0D).endVertex();
+					tessellator.draw();
+					GL11.glDepthMask(true);
+					GL11.glEnable(GL11.GL_DEPTH_TEST);
+					GL11.glDisable(GL11.GL_BLEND);
 				}
 			} else {
 				GL11.glViewport(0, 0, this.mc.displayWidth, this.mc.displayHeight);
@@ -429,7 +478,7 @@ public class EntityRenderer {
 	}
 
 	public void func_905_b() {
-		ScaledResolution var1 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+		final ScaledResolution var1 = this.mc.scaledResolution;
 		int var2 = var1.getScaledWidth();
 		int var3 = var1.getScaledHeight();
 		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);

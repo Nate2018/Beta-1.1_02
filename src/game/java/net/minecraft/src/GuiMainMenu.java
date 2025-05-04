@@ -147,7 +147,7 @@ public class GuiMainMenu extends GuiScreen {
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glPushMatrix();
 		GL11.glLoadIdentity();
-		ScaledResolution var14 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
+		final ScaledResolution var14 = this.mc.scaledResolution;
 		var3 = 120 * var14.scaleFactor;
 		GLU.gluPerspective(70.0F, (float)this.mc.displayWidth / (float)var3, 0.05F, 100.0F);
 		GL11.glViewport(0, this.mc.displayHeight - var3, this.mc.displayWidth, var3);
