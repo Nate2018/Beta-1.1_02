@@ -1,10 +1,11 @@
 package net.minecraft.src;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+
+import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.input.Keyboard;
 
@@ -33,14 +34,14 @@ public class GameSettings {
 	public KeyBinding keyBindSneak = new KeyBinding("key.sneak", 42);
 	public KeyBinding[] keyBindings = new KeyBinding[]{this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog};
 	protected Minecraft mc;
-	private File optionsFile;
+	private VFile2 optionsFile;
 	public int difficulty = 2;
 	public boolean thirdPersonView = false;
 	public String lastServer = "";
 
-	public GameSettings(Minecraft var1, File var2) {
+	public GameSettings(Minecraft var1, VFile2 var2) {
 		this.mc = var1;
-		this.optionsFile = new File(var2, "options.txt");
+		this.optionsFile = new VFile2(var2, "options.txt");
 		this.loadOptions();
 	}
 
@@ -151,7 +152,7 @@ public class GameSettings {
 				return;
 			}
 
-			BufferedReader var1 = new BufferedReader(new FileReader(this.optionsFile));
+			BufferedReader var1 = new BufferedReader(new InputStreamReader(this.optionsFile.getInputStream()));
 			String var2 = "";
 
 			while(true) {
@@ -229,7 +230,7 @@ public class GameSettings {
 
 	public void saveOptions() {
 		try {
-			PrintWriter var1 = new PrintWriter(new FileWriter(this.optionsFile));
+			PrintWriter var1 = new PrintWriter(new OutputStreamWriter(this.optionsFile.getOutputStream()));
 			var1.println("music:" + this.musicVolume);
 			var1.println("sound:" + this.soundVolume);
 			var1.println("invertYMouse:" + this.invertMouse);

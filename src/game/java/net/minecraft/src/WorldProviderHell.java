@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import java.io.File;
+import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 
 public class WorldProviderHell extends WorldProvider {
 	public void registerWorldChunkManager() {
@@ -29,9 +29,8 @@ public class WorldProviderHell extends WorldProvider {
 		return new ChunkProviderHell(this.worldObj, this.worldObj.randomSeed);
 	}
 
-	public IChunkLoader getChunkLoader(File var1) {
-		File var2 = new File(var1, "DIM-1");
-		var2.mkdirs();
+	public IChunkLoader getChunkLoader(VFile2 var1) {
+		VFile2 var2 = new VFile2(var1, "DIM-1");
 		return new ChunkLoader(var2, true);
 	}
 

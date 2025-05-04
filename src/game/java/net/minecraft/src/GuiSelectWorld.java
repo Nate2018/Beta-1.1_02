@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import java.io.File;
+import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.minecraft.client.Minecraft;
 
 public class GuiSelectWorld extends GuiScreen {
@@ -17,7 +17,7 @@ public class GuiSelectWorld extends GuiScreen {
 		this.screenTitle = var1.func_20163_a("selectWorld.title");
 		String var2 = var1.func_20163_a("selectWorld.empty");
 		String var3 = var1.func_20163_a("selectWorld.world");
-		File var4 = Minecraft.getMinecraftDir();
+		VFile2 var4 = Minecraft.getMinecraftDir();
 
 		for(int var5 = 0; var5 < 5; ++var5) {
 			NBTTagCompound var6 = World.func_629_a(var4, "World" + (var5 + 1));
@@ -35,7 +35,7 @@ public class GuiSelectWorld extends GuiScreen {
 	}
 
 	protected String getWorldName(int var1) {
-		File var2 = Minecraft.getMinecraftDir();
+		VFile2 var2 = Minecraft.getMinecraftDir();
 		return World.func_629_a(var2, "World" + var1) != null ? "World" + var1 : null;
 	}
 

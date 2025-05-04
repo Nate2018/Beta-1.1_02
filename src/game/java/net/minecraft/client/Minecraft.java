@@ -1,9 +1,8 @@
 package net.minecraft.client;
 
-import java.io.File;
-
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.internal.EnumPlatformType;
+import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.lax1dude.eaglercraft.minecraft.EaglerFontRenderer;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -50,7 +49,6 @@ import net.minecraft.src.TextureCompassFX;
 import net.minecraft.src.TextureFlamesFX;
 import net.minecraft.src.TextureLavaFX;
 import net.minecraft.src.TextureLavaFlowFX;
-import net.minecraft.src.TexturePackList;
 import net.minecraft.src.TexturePortalFX;
 import net.minecraft.src.TextureWatchFX;
 import net.minecraft.src.TextureWaterFX;
@@ -101,8 +99,7 @@ public class Minecraft {
 	public GameSettings gameSettings;
 	public SoundManager sndManager = new SoundManager();
 	public MouseHelper mouseHelper;
-	public TexturePackList texturePackList;
-	public File mcDataDir;
+	public VFile2 mcDataDir;
 	public static long[] frameTimes = new long[512];
 	public static long[] tickTimes = new long[512];
 	public static int numRecordedFrameTimes = 0;
@@ -110,7 +107,7 @@ public class Minecraft {
 	private int serverPort;
 	private TextureWaterFX textureWaterFX = new TextureWaterFX();
 	private TextureLavaFX textureLavaFX = new TextureLavaFX();
-	private static File minecraftDir = null;
+	private static VFile2 minecraftDir = null;
 	public volatile boolean running = true;
 	public String debug = "";
 	boolean isTakingScreenshot = false;
@@ -187,8 +184,7 @@ public class Minecraft {
 		RenderManager.instance.field_4236_f = new ItemRenderer(this);
 		this.mcDataDir = getMinecraftDir();
 		this.gameSettings = new GameSettings(this, this.mcDataDir);
-		this.texturePackList = new TexturePackList(this, this.mcDataDir);
-		this.renderEngine = new RenderEngine(this.texturePackList, this.gameSettings);
+		this.renderEngine = new RenderEngine(this.gameSettings);
 		this.fontRenderer = EaglerFontRenderer.createSupportedFontRenderer(this.gameSettings, "/font/default.png", this.renderEngine);
 		this.loadScreen();
 		this.mouseHelper = new MouseHelper();
@@ -288,9 +284,9 @@ public class Minecraft {
 		var9.draw();
 	}
 
-	public static File getMinecraftDir() {
+	public static VFile2 getMinecraftDir() {
 		if(minecraftDir == null) {
-			minecraftDir = new File("minecraft");
+			minecraftDir = new VFile2("minecraft");
 		}
 
 		return minecraftDir;
@@ -451,9 +447,10 @@ public class Minecraft {
 	private void screenshotListener() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_F2)) {
 			if(!this.isTakingScreenshot) {
-				if(Keyboard.isKeyDown(Keyboard.KEY_F1)) {
-					this.ingameGUI.addChatMessage(ScreenShotHelper.saveScreenshot(minecraftDir, this.displayWidth, this.displayHeight));
-				}
+				//TODO
+//				if(Keyboard.isKeyDown(Keyboard.KEY_F1)) {
+//					this.ingameGUI.addChatMessage(ScreenShotHelper.saveScreenshot(minecraftDir, this.displayWidth, this.displayHeight));
+//				}
 
 				this.isTakingScreenshot = true;
 			}
@@ -879,7 +876,7 @@ public class Minecraft {
 	public void func_6247_b(String var1) {
 		this.func_6261_a((World)null);
 		System.gc();
-		World var2 = new World(new File(getMinecraftDir(), "saves"), var1);
+		World var2 = new World(new VFile2(getMinecraftDir(), "saves"), var1);
 		if(var2.field_1033_r) {
 			this.func_6263_a(var2, "Generating level");
 		} else {
@@ -1020,24 +1017,6 @@ public class Minecraft {
 
 		this.loadingScreen.displayLoadingString("Simulating world for a bit");
 		this.theWorld.func_656_j();
-	}
-
-	public void installResource(String var1, File var2) {
-		int var3 = var1.indexOf("/");
-		String var4 = var1.substring(0, var3);
-		var1 = var1.substring(var3 + 1);
-		if(var4.equalsIgnoreCase("sound")) {
-			this.sndManager.addSound(var1, var2);
-		} else if(var4.equalsIgnoreCase("newsound")) {
-			this.sndManager.addSound(var1, var2);
-		} else if(var4.equalsIgnoreCase("streaming")) {
-			this.sndManager.addStreaming(var1, var2);
-		} else if(var4.equalsIgnoreCase("music")) {
-			this.sndManager.addMusic(var1, var2);
-		} else if(var4.equalsIgnoreCase("newmusic")) {
-			this.sndManager.addMusic(var1, var2);
-		}
-
 	}
 
 	public String func_6241_m() {

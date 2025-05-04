@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import java.io.File;
+import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.minecraft.client.Minecraft;
 
 public class GuiDeleteWorld extends GuiSelectWorld {
@@ -23,7 +23,7 @@ public class GuiDeleteWorld extends GuiSelectWorld {
 
 	public void deleteWorld(boolean var1, int var2) {
 		if(var1) {
-			File var3 = Minecraft.getMinecraftDir();
+			VFile2 var3 = Minecraft.getMinecraftDir();
 			World.deleteWorld(var3, this.getWorldName(var2));
 		}
 

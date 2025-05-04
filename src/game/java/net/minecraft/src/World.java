@@ -2,15 +2,16 @@ package net.minecraft.src;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+import net.lax1dude.eaglercraft.EagUtils;
 import net.lax1dude.eaglercraft.Random;
+import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
+
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,8 +41,8 @@ public class World implements IBlockAccess {
 	public final WorldProvider worldProvider;
 	protected List worldAccesses;
 	private IChunkProvider chunkProvider;
-	public File field_9433_s;
-	public File field_9432_t;
+	public VFile2 field_9433_s;
+	public VFile2 field_9432_t;
 	public long randomSeed;
 	private NBTTagCompound nbtCompoundPlayer;
 	public long sizeOnDisk;
@@ -55,52 +56,54 @@ public class World implements IBlockAccess {
 	private List field_1012_M;
 	public boolean multiplayerWorld;
 
-	public static NBTTagCompound func_629_a(File var0, String var1) {
-		File var2 = new File(var0, "saves");
-		File var3 = new File(var2, var1);
-		if(!var3.exists()) {
-			return null;
-		} else {
-			File var4 = new File(var3, "level.dat");
-			if(var4.exists()) {
-				try {
-					NBTTagCompound var5 = CompressedStreamTools.func_1138_a(new FileInputStream(var4));
-					NBTTagCompound var6 = var5.getCompoundTag("Data");
-					return var6;
-				} catch (Exception var7) {
-					var7.printStackTrace();
-				}
+	public static NBTTagCompound func_629_a(VFile2 var0, String var1) {
+		VFile2 var2 = new VFile2(var0, "saves");
+		VFile2 var3 = new VFile2(var2, var1);
+		VFile2 var4 = new VFile2(var3, "level.dat");
+		if(var4.exists()) {
+			try {
+				NBTTagCompound var5 = CompressedStreamTools.func_1138_a(var4.getInputStream());
+				NBTTagCompound var6 = var5.getCompoundTag("Data");
+				return var6;
+			} catch (Exception var7) {
+				var7.printStackTrace();
 			}
+		}
+		
+		return null;
+	}
 
-			return null;
+	public static void deleteWorld(VFile2 var0, String var1) {
+		VFile2 var2 = new VFile2(var0, "saves");
+		VFile2 var3 = new VFile2(var2, var1);
+		
+		for(int i = 0; i<= 5; ++i) {
+			if(deleteFiles(var3.listFiles(true))) {
+				return;
+			}
+			
+			if(i < 5) {
+				EagUtils.sleep(500);
+			}
 		}
 	}
 
-	public static void deleteWorld(File var0, String var1) {
-		File var2 = new File(var0, "saves");
-		File var3 = new File(var2, var1);
-		if(var3.exists()) {
-			deleteFiles(var3.listFiles());
-			var3.delete();
-		}
-	}
-
-	private static void deleteFiles(File[] var0) {
-		for(int var1 = 0; var1 < var0.length; ++var1) {
-			if(var0[var1].isDirectory()) {
-				deleteFiles(var0[var1].listFiles());
+	private static boolean deleteFiles(List<VFile2> files) {
+		for (int i = 0, l = files.size(); i < l; ++i) {
+			VFile2 file1 = files.get(i);
+			if (!file1.delete()) {
+				return false;
 			}
-
-			var0[var1].delete();
 		}
 
+		return true;
 	}
 
 	public WorldChunkManager func_4075_a() {
 		return this.worldProvider.worldChunkMgr;
 	}
 
-	public World(File var1, String var2) {
+	public World(VFile2 var1, String var2) {
 		this(var1, var2, (new Random()).nextLong());
 	}
 
@@ -184,11 +187,11 @@ public class World implements IBlockAccess {
 		this.calculateInitialSkylight();
 	}
 
-	public World(File var1, String var2, long var3) {
+	public World(VFile2 var1, String var2, long var3) {
 		this(var1, var2, var3, (WorldProvider)null);
 	}
 
-	public World(File var1, String var2, long var3, WorldProvider var5) {
+	public World(VFile2 var1, String var2, long var3, WorldProvider var5) {
 		this.field_4214_a = false;
 		this.field_1051_z = new ArrayList();
 		this.loadedEntityList = new ArrayList();
@@ -218,30 +221,14 @@ public class World implements IBlockAccess {
 		this.multiplayerWorld = false;
 		this.field_9433_s = var1;
 		this.field_9431_w = var2;
-		var1.mkdirs();
-		this.field_9432_t = new File(var1, var2);
-		this.field_9432_t.mkdirs();
-
-		try {
-			File var6 = new File(this.field_9432_t, "session.lock");
-			DataOutputStream var7 = new DataOutputStream(new FileOutputStream(var6));
-
-			try {
-				var7.writeLong(this.field_1054_E);
-			} finally {
-				var7.close();
-			}
-		} catch (IOException var16) {
-			var16.printStackTrace();
-			throw new RuntimeException("Failed to check session lock, aborting");
-		}
+		this.field_9432_t = new VFile2(var1, var2);
 
 		Object var17 = new WorldProvider();
-		File var18 = new File(this.field_9432_t, "level.dat");
+		VFile2 var18 = new VFile2(this.field_9432_t, "level.dat");
 		this.field_1033_r = !var18.exists();
 		if(var18.exists()) {
 			try {
-				NBTTagCompound var8 = CompressedStreamTools.func_1138_a(new FileInputStream(var18));
+				NBTTagCompound var8 = CompressedStreamTools.func_1138_a(var18.getInputStream());
 				NBTTagCompound var9 = var8.getCompoundTag("Data");
 				this.randomSeed = var9.getLong("RandomSeed");
 				this.spawnX = var9.getInteger("SpawnX");
@@ -289,7 +276,7 @@ public class World implements IBlockAccess {
 		this.calculateInitialSkylight();
 	}
 
-	protected IChunkProvider func_4081_a(File var1) {
+	protected IChunkProvider func_4081_a(VFile2 var1) {
 		return new ChunkProviderLoadOrGenerate(this, this.worldProvider.getChunkLoader(var1), this.worldProvider.getChunkProvider());
 	}
 
@@ -346,7 +333,6 @@ public class World implements IBlockAccess {
 	}
 
 	private void saveLevel() {
-		this.func_663_l();
 		NBTTagCompound var1 = new NBTTagCompound();
 		var1.setLong("RandomSeed", this.randomSeed);
 		var1.setInteger("SpawnX", this.spawnX);
@@ -371,10 +357,10 @@ public class World implements IBlockAccess {
 		var3.setTag("Data", var1);
 
 		try {
-			File var4 = new File(this.field_9432_t, "level.dat_new");
-			File var5 = new File(this.field_9432_t, "level.dat_old");
-			File var6 = new File(this.field_9432_t, "level.dat");
-			CompressedStreamTools.writeGzippedCompoundToOutputStream(var3, new FileOutputStream(var4));
+			VFile2 var4 = new VFile2(this.field_9432_t, "level.dat_new");
+			VFile2 var5 = new VFile2(this.field_9432_t, "level.dat_old");
+			VFile2 var6 = new VFile2(this.field_9432_t, "level.dat");
+			CompressedStreamTools.writeGzippedCompoundToOutputStream(var3, var4.getOutputStream());
 			if(var5.exists()) {
 				var5.delete();
 			}
@@ -1958,25 +1944,7 @@ public class World implements IBlockAccess {
 
 	public void sendQuittingDisconnectingPacket() {
 	}
-
-	public void func_663_l() {
-		try {
-			File var1 = new File(this.field_9432_t, "session.lock");
-			DataInputStream var2 = new DataInputStream(new FileInputStream(var1));
-
-			try {
-				if(var2.readLong() != this.field_1054_E) {
-					throw new MinecraftException("The save is being accessed from another location, aborting");
-				}
-			} finally {
-				var2.close();
-			}
-
-		} catch (IOException var7) {
-			throw new MinecraftException("Failed to check session lock, aborting");
-		}
-	}
-
+	
 	public void setWorldTime(long var1) {
 		this.worldTime = var1;
 	}
