@@ -54,7 +54,6 @@ import net.minecraft.src.TexturePortalFX;
 import net.minecraft.src.TextureWatchFX;
 import net.minecraft.src.TextureWaterFX;
 import net.minecraft.src.TexureWaterFlowFX;
-import net.minecraft.src.ThreadSleepForever;
 import net.minecraft.src.Timer;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
@@ -73,7 +72,6 @@ import org.lwjgl.util.glu.GLU;
 
 public class Minecraft {
 	public PlayerController playerController;
-	private boolean a = false;
 	public int displayWidth;
 	public int displayHeight;
 	private Timer timer = new Timer(20.0F);
@@ -124,8 +122,6 @@ public class Minecraft {
 	private static Minecraft minecraft;
 
 	public Minecraft() {
-		this.a = false;
-		new ThreadSleepForever(this, "Timer hack thread");
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
 		this.session = new Session("Player", "mcpass");
@@ -143,14 +139,6 @@ public class Minecraft {
 		try {
 			Display.create();
 		} catch (LWJGLException var6) {
-			var6.printStackTrace();
-
-			try {
-				Thread.sleep(1000L);
-			} catch (InterruptedException var5) {
-			}
-
-			Display.create();
 		}
 
 		RenderManager.instance.field_4236_f = new ItemRenderer(this);
@@ -369,10 +357,6 @@ public class Minecraft {
 						this.theWorld.func_6465_g();
 					}
 
-					if(this.gameSettings.limitFramerate) {
-						Thread.sleep(5L);
-					}
-
 					if(!Keyboard.isKeyDown(Keyboard.KEY_F7)) {
 						Display.update();
 					}
@@ -385,27 +369,18 @@ public class Minecraft {
 						this.entityRenderer.func_4136_b(this.timer.renderPartialTicks);
 					}
 
-					if(!Display.isActive()) {
-						if(this.a) {
-							this.toggleFullscreen();
-						}
-
-						Thread.sleep(10L);
-					}
-
 					if(Keyboard.isKeyDown(Keyboard.KEY_F3)) {
 						this.displayDebugInfo(var20);
 					} else {
 						this.prevFrameTime = System.nanoTime();
 					}
 
-					Thread.yield();
 					if(Keyboard.isKeyDown(Keyboard.KEY_F7)) {
 						Display.update();
 					}
 
 					this.screenshotListener();
-					if(!this.a && (Display.getWidth() != this.displayWidth || Display.getHeight() != this.displayHeight)) {
+					if((Display.getWidth() != this.displayWidth || Display.getHeight() != this.displayHeight)) {
 						this.displayWidth = Display.getWidth();
 						this.displayHeight = Display.getHeight();
 						if(this.displayWidth <= 0) {
@@ -638,54 +613,6 @@ public class Minecraft {
 		}
 	}
 
-	public void toggleFullscreen() {
-		try {
-			this.a = !this.a;
-			System.out.println("Toggle fullscreen!");
-			if(this.a) {
-				this.displayWidth = Display.getWidth();
-				this.displayHeight = Display.getHeight();
-				if(this.displayWidth <= 0) {
-					this.displayWidth = 1;
-				}
-
-				if(this.displayHeight <= 0) {
-					this.displayHeight = 1;
-				}
-			} else {
-				this.displayWidth = Display.getWidth();
-				this.displayHeight = Display.getHeight();
-
-				if(this.displayWidth <= 0) {
-					this.displayWidth = 1;
-				}
-
-				if(this.displayHeight <= 0) {
-					this.displayHeight = 1;
-				}
-			}
-
-			this.func_6273_f();
-			//TODO
-			//Display.setFullscreen(this.a);
-			Display.update();
-			Thread.sleep(1000L);
-			if(this.a) {
-				this.func_6259_e();
-			}
-
-			if(this.currentScreen != null) {
-				this.func_6273_f();
-				this.resize(this.displayWidth, this.displayHeight);
-			}
-
-			System.out.println("Size: " + this.displayWidth + ", " + this.displayHeight);
-		} catch (Exception var2) {
-			var2.printStackTrace();
-		}
-
-	}
-
 	private void resize(int var1, int var2) {
 		if(var1 <= 0) {
 			var1 = 1;
@@ -792,35 +719,31 @@ public class Minecraft {
 											this.thePlayer.handleKeyPress(Keyboard.getEventKey(), Keyboard.getEventKeyState());
 										} while(!Keyboard.getEventKeyState());
 
-										if(Keyboard.getEventKey() == Keyboard.KEY_F11) {
-											this.toggleFullscreen();
+										if(this.currentScreen != null) {
+											this.currentScreen.handleKeyboardInput();
 										} else {
-											if(this.currentScreen != null) {
-												this.currentScreen.handleKeyboardInput();
-											} else {
-												if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) {
-													this.func_6252_g();
-												}
+											if(Keyboard.getEventKey() == Keyboard.KEY_ESCAPE) {
+												this.func_6252_g();
+											}
 
-												if(Keyboard.getEventKey() == Keyboard.KEY_S && Keyboard.isKeyDown(Keyboard.KEY_F3)) {
-													this.forceReload();
-												}
+											if(Keyboard.getEventKey() == Keyboard.KEY_S && Keyboard.isKeyDown(Keyboard.KEY_F3)) {
+												this.forceReload();
+											}
 
-												if(Keyboard.getEventKey() == Keyboard.KEY_F5) {
-													this.gameSettings.thirdPersonView = !this.gameSettings.thirdPersonView;
-												}
+											if(Keyboard.getEventKey() == Keyboard.KEY_F5) {
+												this.gameSettings.thirdPersonView = !this.gameSettings.thirdPersonView;
+											}
 
-												if(Keyboard.getEventKey() == this.gameSettings.keyBindInventory.keyCode) {
-													this.displayGuiScreen(new GuiInventory(this.thePlayer));
-												}
+											if(Keyboard.getEventKey() == this.gameSettings.keyBindInventory.keyCode) {
+												this.displayGuiScreen(new GuiInventory(this.thePlayer));
+											}
 
-												if(Keyboard.getEventKey() == this.gameSettings.keyBindDrop.keyCode) {
-													this.thePlayer.func_20060_w();
-												}
+											if(Keyboard.getEventKey() == this.gameSettings.keyBindDrop.keyCode) {
+												this.thePlayer.func_20060_w();
+											}
 
-												if(this.isMultiplayerWorld() && Keyboard.getEventKey() == this.gameSettings.keyBindChat.keyCode) {
-													this.displayGuiScreen(new GuiChat());
-												}
+											if(this.isMultiplayerWorld() && Keyboard.getEventKey() == this.gameSettings.keyBindChat.keyCode) {
+												this.displayGuiScreen(new GuiChat());
 											}
 
 											for(int var4 = 0; var4 < 9; ++var4) {
