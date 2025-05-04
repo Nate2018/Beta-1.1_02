@@ -150,6 +150,14 @@ public class WorldRenderer {
 					break;
 				}
 			}
+			
+			if(skipRenderPass[0]) {
+				GL11.flushDisplayList(glRenderList, true);
+			}
+			
+			if(skipRenderPass[1]) {
+				GL11.flushDisplayList(glRenderList + 1, true);
+			}
 
 			HashSet var22 = new HashSet();
 			var22.addAll(this.tileEntityRenderers);
@@ -172,6 +180,8 @@ public class WorldRenderer {
 	public void func_1195_b() {
 		for(int var1 = 0; var1 < 2; ++var1) {
 			this.skipRenderPass[var1] = true;
+			GL11.flushDisplayList(glRenderList, true);
+			GL11.flushDisplayList(glRenderList + 1, true);
 		}
 
 		this.isInFrustrum = false;
@@ -196,7 +206,7 @@ public class WorldRenderer {
 	}
 
 	public boolean canRender() {
-		return !this.isInitialized ? false : this.skipRenderPass[0] && this.skipRenderPass[1];
+		return !this.isInitialized ? false : this.skipRenderPass[0] && this.skipRenderPass[1] && !this.needsUpdate;
 	}
 
 	public void markDirty() {
