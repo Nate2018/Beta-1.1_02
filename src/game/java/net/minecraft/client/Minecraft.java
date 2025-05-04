@@ -3,6 +3,7 @@ package net.minecraft.client;
 import java.io.File;
 
 import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.internal.EnumPlatformType;
 import net.lax1dude.eaglercraft.minecraft.EaglerFontRenderer;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
@@ -74,6 +75,7 @@ public class Minecraft {
 	public PlayerController playerController;
 	public int displayWidth;
 	public int displayHeight;
+	public float dpi;
 	private Timer timer = new Timer(20.0F);
 	public World theWorld;
 	public RenderGlobal renderGlobal;
@@ -128,6 +130,41 @@ public class Minecraft {
 		this.displayHeight = Display.getHeight();
 		this.session = new Session("Player", "mcpass");
 		minecraft = this;
+	}
+	
+	public void updateDisplay() {
+		if(Display.isVSyncSupported()) {
+			if(EagRuntime.getPlatformType() == EnumPlatformType.WASM_GC) {
+				Display.setVSync(true);
+			} else {
+				Display.setVSync(this.gameSettings.limitFramerate);
+			}
+		}
+		Display.update(0);
+		this.checkWindowResize();
+	}
+	
+	protected void checkWindowResize() {
+		float dpiFetch = -1.0f;
+		if ((Display.wasResized() || (dpiFetch = Math.max(Display.getDPI(), 1.0f)) != this.dpi)) {
+			int i = this.displayWidth;
+			int j = this.displayHeight;
+			float f = this.dpi;
+			this.displayWidth = Display.getWidth();
+			this.displayHeight = Display.getHeight();
+			this.dpi = dpiFetch == -1.0f ? Math.max(Display.getDPI(), 1.0f) : dpiFetch;
+			if (this.displayWidth != i || this.displayHeight != j || this.dpi != f) {
+				if (this.displayWidth <= 0) {
+					this.displayWidth = 1;
+				}
+
+				if (this.displayHeight <= 0) {
+					this.displayHeight = 1;
+				}
+
+				this.resize(this.displayWidth, this.displayHeight);
+			}
+		}
 	}
 
 	public void setServer(String var1, int var2) {
@@ -188,8 +225,16 @@ public class Minecraft {
 		}
 
 	}
+	
+	private void updateDisplayMode() {
+		this.displayWidth = Display.getWidth();
+		this.displayHeight = Display.getHeight();
+		this.dpi = Display.getDPI();
+	}
 
 	private void loadScreen() throws LWJGLException {
+		Display.update();
+		updateDisplayMode();
 		ScaledResolution var1 = new ScaledResolution(this.displayWidth, this.displayHeight);
 		int var2 = var1.getScaledWidth();
 		int var3 = var1.getScaledHeight();
@@ -223,7 +268,7 @@ public class Minecraft {
 		GL11.glDisable(GL11.GL_FOG);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-		Display.update();
+		this.updateDisplay();
 	}
 
 	public void func_6274_a(int var1, int var2, int var3, int var4, int var5, int var6) {
@@ -357,7 +402,7 @@ public class Minecraft {
 					}
 
 					if(!Keyboard.isKeyDown(Keyboard.KEY_F7)) {
-						Display.update();
+						this.updateDisplay();
 					}
 
 					if(!this.field_6307_v) {
@@ -375,24 +420,10 @@ public class Minecraft {
 					}
 
 					if(Keyboard.isKeyDown(Keyboard.KEY_F7)) {
-						Display.update();
+						this.updateDisplay();
 					}
 
 					this.screenshotListener();
-					if((Display.getWidth() != this.displayWidth || Display.getHeight() != this.displayHeight)) {
-						this.displayWidth = Display.getWidth();
-						this.displayHeight = Display.getHeight();
-						if(this.displayWidth <= 0) {
-							this.displayWidth = 1;
-						}
-
-						if(this.displayHeight <= 0) {
-							this.displayHeight = 1;
-						}
-
-						this.resize(this.displayWidth, this.displayHeight);
-					}
-
 					this.checkGLError("Post render");
 					++var3;
 
