@@ -3,6 +3,8 @@ package net.minecraft.src;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import net.lax1dude.eaglercraft.EagRuntime;
+
 public class FontAllowedCharacters {
 	public static final String field_20157_a = func_20156_a();
 
@@ -10,7 +12,7 @@ public class FontAllowedCharacters {
 		String var0 = "";
 
 		try {
-			BufferedReader var1 = new BufferedReader(new InputStreamReader(FontAllowedCharacters.class.getResourceAsStream("/font.txt"), "UTF-8"));
+			BufferedReader var1 = new BufferedReader(new InputStreamReader(EagRuntime.getRequiredResourceStream("/font.txt"), "UTF-8"));
 			String var2 = "";
 
 			while(true) {

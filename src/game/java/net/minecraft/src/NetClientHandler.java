@@ -1,28 +1,20 @@
 package net.minecraft.src;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.URL;
-import java.net.UnknownHostException;
 import net.lax1dude.eaglercraft.Random;
 import net.minecraft.client.Minecraft;
 
 public class NetClientHandler extends NetHandler {
 	private boolean disconnected = false;
-	private NetworkManager netManager;
+	NetworkManager netManager;
 	public String field_1209_a;
 	private Minecraft mc;
 	private WorldClient worldClient;
 	private boolean field_1210_g = false;
 	Random rand = new Random();
 
-	public NetClientHandler(Minecraft var1, String var2, int var3) throws IOException, UnknownHostException {
+	public NetClientHandler(Minecraft var1) {
 		this.mc = var1;
-		Socket var4 = new Socket(InetAddress.getByName(var2), var3);
-		this.netManager = new NetworkManager(var4, "Client", this);
+		this.netManager = new NetworkManager(this);
 	}
 
 	public void processReadPackets() {

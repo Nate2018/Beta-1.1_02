@@ -18,10 +18,17 @@ public class GuiMultiplayer extends GuiScreen {
 	public void initGui() {
 		StringTranslate var1 = StringTranslate.func_20162_a();
 		Keyboard.enableRepeatEvents(true);
+		//if(this.mc.gameSettings.lastServer == null) {
+			//this.mc.gameSettings.lastServer = "";
+		//}
 		this.controlList.clear();
 		this.controlList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + 12, var1.func_20163_a("multiplayer.connect")));
 		this.controlList.add(new GuiButton(1, this.width / 2 - 100, this.height / 4 + 120 + 12, var1.func_20163_a("gui.cancel")));
-		this.serverAddress = this.mc.gameSettings.lastServer.replaceAll("_", ":");
+		//this.serverAddress = this.mc.gameSettings.lastServer;
+		//if(this.serverAddress.contains("_")) {
+			//this.serverAddress = this.serverAddress.replaceAll("_", ":");
+		//}
+		this.serverAddress = "";
 		((GuiButton)this.controlList.get(0)).enabled = this.serverAddress.length() > 0;
 	}
 
@@ -36,8 +43,7 @@ public class GuiMultiplayer extends GuiScreen {
 			} else if(var1.id == 0) {
 				this.mc.gameSettings.lastServer = this.serverAddress.replaceAll(":", "_");
 				this.mc.gameSettings.saveOptions();
-				String[] var2 = this.serverAddress.split(":");
-				this.mc.displayGuiScreen(new GuiConnecting(this.mc, var2[0], var2.length > 1 ? this.func_4067_a(var2[1], 25565) : 25565));
+				this.mc.displayGuiScreen(new GuiConnecting(this.mc, serverAddress));
 			}
 
 		}

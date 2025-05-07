@@ -1,21 +1,71 @@
 package net.minecraft.src;
 
+import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.internal.EnumEaglerConnectionState;
+import net.lax1dude.eaglercraft.internal.IWebSocketClient;
+import net.lax1dude.eaglercraft.internal.PlatformNetworking;
 import net.minecraft.client.Minecraft;
 
 public class GuiConnecting extends GuiScreen {
+	private boolean connected = false;
 	private NetClientHandler clientHandler;
+	private int timer = 0;
+	private String currentAddress;
 	private boolean cancelled = false;
+	private boolean successful = false;
+	private IWebSocketClient webSocket;
 
-	public GuiConnecting(Minecraft var1, String var2, int var3) {
+	public GuiConnecting(Minecraft var1, String addr) {
+		this.currentAddress = addr;
 		var1.func_6261_a((World)null);
-		//(new ThreadConnectToServer(this, var1, var2, var3)).start();
+
+		if (currentAddress.contains("ws://") && EagRuntime.requireSSL()) {
+			currentAddress = currentAddress.replace("ws://", "wss://");
+		} else if (!currentAddress.contains("://")) {
+			currentAddress = EagRuntime.requireSSL() ? "wss://" + currentAddress : "ws://" + currentAddress;
+		}
+		this.clientHandler = new NetClientHandler(var1);
 	}
 
 	public void updateScreen() {
-		if(this.clientHandler != null) {
-			this.clientHandler.processReadPackets();
+		++timer;
+		if(timer > 1) {
+			if(this.webSocket == null) {
+				this.webSocket = PlatformNetworking.openWebSocket(this.currentAddress);
+				if(this.webSocket == null) {
+					this.mc.displayGuiScreen(new GuiConnectFailed("connect.failed", "disconnect.genericReason", new Object[] {"Could not open websocket to\"" + this.currentAddress + "\"!"}));
+				}
+			} else {
+				if(this.webSocket.getState() == EnumEaglerConnectionState.CONNECTED) {
+					if(!this.successful) {
+						this.clientHandler.netManager.setWebsocketClient(this.webSocket);
+						this.clientHandler.addToSendQueue(new Packet2Handshake(this.mc.session.playerName));
+						this.successful = true;
+						this.connected = true;
+					} else {
+						this.clientHandler.processReadPackets();
+					}
+				} else if(this.webSocket.getState() == EnumEaglerConnectionState.FAILED) {
+					if(this.webSocket != null) {
+						this.webSocket.close();
+						this.webSocket = null;
+					}
+					if (this.currentAddress.contains("ws://") && !EagRuntime.requireSSL()) {
+						currentAddress = currentAddress.replace("ws://", "wss://");
+						timer = 0;
+					} else {
+						this.mc.displayGuiScreen(new GuiConnectFailed("connect.failed", "disconnect.genericReason", new Object[]{"Connection Refused!"}));
+					}
+				}
+			}
+			if(timer > 200 && !this.connected) {
+				if(this.webSocket != null) {
+					this.webSocket.close();
+					this.webSocket = null;
+				}
+				this.mc.displayGuiScreen(new GuiConnectFailed("connect.failed", "disconnect.genericReason", new Object[] {"Connection timed out"}));
+			}
 		}
-
 	}
 
 	protected void keyTyped(char var1, int var2) {

@@ -128,7 +128,7 @@ public class Minecraft {
 	public Minecraft() {
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
-		this.session = new Session("Player", "mcpass");
+		this.session = new Session("Peyton", "mcpass");
 		minecraft = this;
 	}
 	
@@ -218,11 +218,7 @@ public class Minecraft {
 
 		this.checkGLError("Post startup");
 		this.ingameGUI = new GuiIngame(this);
-		if(this.serverName != null) {
-			this.displayGuiScreen(new GuiConnecting(this, this.serverName, this.serverPort));
-		} else {
-			this.displayGuiScreen(new GuiMainMenu());
-		}
+		this.displayGuiScreen(new GuiMainMenu());
 
 	}
 	
