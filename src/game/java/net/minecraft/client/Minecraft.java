@@ -128,7 +128,7 @@ public class Minecraft {
 	public Minecraft() {
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
-		this.session = new Session("Peyton", "mcpass");
+		this.session = new Session("Player");
 		minecraft = this;
 	}
 	

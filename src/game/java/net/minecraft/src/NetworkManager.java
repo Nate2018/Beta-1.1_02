@@ -3,28 +3,20 @@ package net.minecraft.src;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
-import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.lax1dude.eaglercraft.EaglerOutputStream;
 import net.lax1dude.eaglercraft.internal.IWebSocketClient;
 import net.lax1dude.eaglercraft.internal.IWebSocketFrame;
-import net.lax1dude.eaglercraft.v1_8.netty.ByteBuf;
-import net.lax1dude.eaglercraft.v1_8.netty.Unpooled;
-import net.peyton.eagler.netty.NettyUtils;
 
 public class NetworkManager {
 	private boolean isRunning = true;
 	private NetHandler netHandler;
-	private List<Packet> readPackets = Collections.synchronizedList(new ArrayList());
+	private List<Packet> readPackets = new ArrayList<Packet>();
 	private boolean isServerTerminating = false;
 	private boolean isTerminating = false;
 	private String terminationReason = "";
@@ -32,7 +24,6 @@ public class NetworkManager {
 	private int timeSinceLastRead = 0;
 	private int sendQueueByteLength = 0;
 	public int chunkDataSendCounter = 0;
-	private int field_20100_w = 0;
 	
 	public IWebSocketClient webSocket;
 
@@ -52,8 +43,8 @@ public class NetworkManager {
 			try (DataOutputStream dos = new DataOutputStream(sendBuffer)) {
 				Packet.writePacket(var1, dos);
 				webSocket.send(sendBuffer.toByteArray());
-			} catch(IOException e) {
-				e.printStackTrace();
+			} catch(Exception e) {
+				this.onNetworkError(e);
 			}
 		}
 	}
@@ -74,36 +65,49 @@ public class NetworkManager {
 		}
 	}
 	
-	private static class ByteBufferDirectInputStream extends InputStream {
-		private ByteBuffer buf;
-		private ByteBufferDirectInputStream(ByteBuffer b) {
-			this.buf = b;
-		}
-		
-		@Override
-		public int read() throws IOException {
-			return buf.remaining() > 0 ? ((int)buf.get() & 0xFF) : -1;
-		}
-		
-		@Override
-		public int available() {
-			return buf.remaining();
+	public void readPacket() {
+		IWebSocketFrame frame;
+		if((frame = webSocket.getNextBinaryFrame()) != null) {
+			byte[] arr = frame.getByteArray();
+			if(arr != null) {
+				try(ByteArrayInputStream bais = new ByteArrayInputStream(arr); DataInputStream packetStream = new DataInputStream(bais)) {
+					Packet pkt = Packet.readPacket(packetStream);
+					if(pkt != null) {
+						this.readPackets.add(pkt);
+					} else {
+						this.networkShutdown("disconnect.endOfStream", new Object[0]);
+					}
+				} catch(IOException e) {
+					if(!this.isTerminating) {
+						this.onNetworkError(e);
+					}
+				}
+			}
 		}
 	}
 	
 	public void processReadPackets() {
-		IWebSocketFrame frame;
-		while((frame = webSocket.getNextBinaryFrame()) != null) {
-			byte[] arr = frame.getByteArray();
-			if(arr != null) {
-				DataInputStream packetStream = new DataInputStream(new ByteBufferDirectInputStream(ByteBuffer.wrap(arr)));
-				try {
-					Packet pkt = Packet.readPacket(packetStream);
-					pkt.processPacket(this.netHandler);
-				} catch(IOException e) {
-					e.printStackTrace();
-				}
+		if(this.sendQueueByteLength > 1048576) {
+			this.networkShutdown("disconnect.overflow", new Object[0]);
+		}
+
+		if(this.readPackets.isEmpty()) {
+			if(this.timeSinceLastRead++ == 1200) {
+				this.networkShutdown("disconnect.timeout", new Object[0]);
 			}
+		} else {
+			this.timeSinceLastRead = 0;
+		}
+
+		int var1 = 100;
+
+		while(!this.readPackets.isEmpty() && var1-- >= 0) {
+			Packet var2 = (Packet)this.readPackets.remove(0);
+			var2.processPacket(this.netHandler);
+		}
+
+		if(this.isTerminating && this.readPackets.isEmpty()) {
+			this.netHandler.handleErrorMessage(this.terminationReason, this.field_20101_t);
 		}
 	}
 
