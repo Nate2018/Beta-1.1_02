@@ -67,7 +67,7 @@ public class NetworkManager {
 	
 	public void readPacket() {
 		IWebSocketFrame frame;
-		if((frame = webSocket.getNextBinaryFrame()) != null) {
+		while((frame = webSocket.getNextBinaryFrame()) != null) {
 			byte[] arr = frame.getByteArray();
 			if(arr != null) {
 				try(ByteArrayInputStream bais = new ByteArrayInputStream(arr); DataInputStream packetStream = new DataInputStream(bais)) {
