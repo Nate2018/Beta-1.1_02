@@ -46,10 +46,10 @@ def folder = "javascript"
 def name = "classes.js"
 
 teavm.js {
-    obfuscated = false // Change to "true" for release, used for debugging
+    obfuscated = true // Change to "true" for release, used for debugging
     sourceMap = true
     targetFileName = "../" + name
-    optimization = OptimizationLevel.BALANCED // Change to "AGGRESSIVE" for release
+    optimization = OptimizationLevel.AGGRESSIVE // Change to "AGGRESSIVE" for release
     outOfProcess = false
     fastGlobalAnalysis = false
     processMemory = 1024
