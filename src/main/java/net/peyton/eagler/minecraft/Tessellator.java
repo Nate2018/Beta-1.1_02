@@ -126,9 +126,9 @@ public class Tessellator {
 			worldRenderer.normal(this.normalX, this.normalY, this.normalZ);
 		}
 		
-		if(this.field_35838_p) {
-			worldRenderer.lightmap(field_35837_l & 65535, (field_35837_l >> 16) & 65535);
-		}
+//		if(this.field_35838_p) {
+//			worldRenderer.lightmap(field_35837_l & 65535, (field_35837_l >> 16) & 65535);
+//		}
 		
 		worldRenderer.endVertex();
 	}
