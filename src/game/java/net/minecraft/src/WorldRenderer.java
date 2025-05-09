@@ -175,7 +175,6 @@ public class WorldRenderer {
 				}
 			}
 
-			Chunk.field_1540_a = false;
 			HashSet var27 = new HashSet();
 			var27.addAll(this.tileEntityRenderers);
 			var27.removeAll(var26);
