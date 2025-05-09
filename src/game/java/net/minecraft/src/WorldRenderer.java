@@ -10,7 +10,6 @@ import net.peyton.eagler.minecraft.Tessellator;
 public class WorldRenderer {
 	public World worldObj;
 	private int glRenderList = -1;
-	private static Tessellator tessellator = Tessellator.instance;
 	public static int chunksUpdated = 0;
 	public int posX;
 	public int posY;
@@ -40,6 +39,12 @@ public class WorldRenderer {
 	private boolean isInitialized = false;
 	public List tileEntityRenderers = new ArrayList();
 	private List field_1737_F;
+	public boolean isVisibleFromPosition = false;
+	public double visibleFromX;
+	public double visibleFromY;
+	public double visibleFromZ;
+	private boolean needsBoxUpdate = false;
+	public boolean isInFrustrumFully = false;
 
 	public WorldRenderer(World var1, List var2, int var3, int var4, int var5, int var6, int var7) {
 		this.worldObj = var1;
@@ -69,102 +74,114 @@ public class WorldRenderer {
 			this.field_1753_k = var3 - this.field_1750_n;
 			float var4 = 2.0F;
 			this.field_1736_v = AxisAlignedBB.getBoundingBox((double)((float)var1 - var4), (double)((float)var2 - var4), (double)((float)var3 - var4), (double)((float)(var1 + this.sizeWidth) + var4), (double)((float)(var2 + this.sizeHeight) + var4), (double)((float)(var3 + this.sizeDepth) + var4));
-			//GL11.glNewList(this.glRenderList + 2, GL11.GL_COMPILE);
-			//RenderItem.renderAABB(AxisAlignedBB.getBoundingBoxFromPool((double)((float)this.field_1752_l - var4), (double)((float)this.field_1751_m - var4), (double)((float)this.field_1750_n - var4), (double)((float)(this.field_1752_l + this.sizeWidth) + var4), (double)((float)(this.field_1751_m + this.sizeHeight) + var4), (double)((float)(this.field_1750_n + this.sizeDepth) + var4)));
-			//GL11.glEndList();
+			this.needsBoxUpdate = true;
 			this.markDirty();
+			this.isVisibleFromPosition = false;
 		}
 	}
 
 	public void updateRenderer() {
 		if(this.needsUpdate) {
 			++chunksUpdated;
-			int var1 = this.posX;
-			int var2 = this.posY;
-			int var3 = this.posZ;
-			int var4 = this.posX + this.sizeWidth;
-			int var5 = this.posY + this.sizeHeight;
-			int var6 = this.posZ + this.sizeDepth;
-
-			for(int var7 = 0; var7 < 2; ++var7) {
-				this.skipRenderPass[var7] = true;
+			if(this.needsBoxUpdate) {
+				float xMin = 0.0F;
+				GL11.glNewList(this.glRenderList + 2, GL11.GL_COMPILE);
+				RenderItem.renderAABB(AxisAlignedBB.getBoundingBoxFromPool((double)((float)this.field_1752_l - xMin), (double)((float)this.field_1751_m - xMin), (double)((float)this.field_1750_n - xMin), (double)((float)(this.field_1752_l + this.sizeWidth) + xMin), (double)((float)(this.field_1751_m + this.sizeHeight) + xMin), (double)((float)(this.field_1750_n + this.sizeDepth) + xMin)));
+				GL11.glEndList();
+				this.needsBoxUpdate = false;
 			}
 
-			Chunk.field_1540_a = false;
-			HashSet var21 = new HashSet();
-			var21.addAll(this.tileEntityRenderers);
+			this.isVisible = true;
+			this.isVisibleFromPosition = false;
+			int var24 = this.posX;
+			int yMin = this.posY;
+			int zMin = this.posZ;
+			int xMax = this.posX + this.sizeWidth;
+			int yMax = this.posY + this.sizeHeight;
+			int zMax = this.posZ + this.sizeDepth;
+
+			for(int hashset = 0; hashset < 2; ++hashset) {
+				this.skipRenderPass[hashset] = true;
+			}
+
+			HashSet var26 = new HashSet();
+			var26.addAll(this.tileEntityRenderers);
 			this.tileEntityRenderers.clear();
-			byte var8 = 1;
-			ChunkCache var9 = new ChunkCache(this.worldObj, var1 - var8, var2 - var8, var3 - var8, var4 + var8, var5 + var8, var6 + var8);
-			RenderBlocks var10 = new RenderBlocks(var9);
+			byte one = 1;
+			ChunkCache chunkcache = new ChunkCache(this.worldObj, var24 - one, yMin - one, zMin - one, xMax + one, yMax + one, zMax + one);
+			RenderBlocks renderblocks = new RenderBlocks(chunkcache);
+			Tessellator tessellator = Tessellator.instance;
 
-			for(int var11 = 0; var11 < 2; ++var11) {
-				boolean var12 = false;
-				boolean var13 = false;
-				boolean var14 = false;
+			for(int hashset1 = 0; hashset1 < 2; ++hashset1) {
+				boolean renderNextPass = false;
+				boolean hasRenderedBlocks = false;
+				boolean hasGlList = false;
 
-				for(int var15 = var2; var15 < var5; ++var15) {
-					for(int var16 = var3; var16 < var6; ++var16) {
-						for(int var17 = var1; var17 < var4; ++var17) {
-							int var18 = var9.getBlockId(var17, var15, var16);
-							if(var18 > 0) {
-								if(!var14) {
-									var14 = true;
-									GL11.glNewList(this.glRenderList + var11, GL11.GL_COMPILE);
+				for(int y = yMin; y < yMax; ++y) {
+					for(int z = zMin; z < zMax; ++z) {
+						for(int x = var24; x < xMax; ++x) {
+							int i3 = chunkcache.getBlockId(x, y, z);
+							if(i3 > 0) {
+								if(!hasGlList) {
+									hasGlList = true;
+									GL11.glNewList(this.glRenderList + hashset1, GL11.GL_COMPILE);
+									tessellator.setRenderingChunk(true);
 									tessellator.startDrawingQuads();
-									tessellator.setTranslationD(this.field_1752_l-this.posX, this.field_1751_m-this.posY, this.field_1750_n-this.posZ);
+									//tessellator.setTranslationD(this.field_1752_l-this.posX, this.field_1751_m-this.posY, this.field_1750_n-this.posZ);
 								}
 
-								if(var11 == 0 && Block.isBlockContainer[var18]) {
-									TileEntity var23 = var9.getBlockTileEntity(var17, var15, var16);
-									if(TileEntityRenderer.instance.hasSpecialRenderer(var23)) {
-										this.tileEntityRenderers.add(var23);
+								if(hashset1 == 0 && Block.isBlockContainer[i3]) {
+									TileEntity block = chunkcache.getBlockTileEntity(x, y, z);
+									if(TileEntityRenderer.instance.hasSpecialRenderer(block)) {
+										this.tileEntityRenderers.add(block);
 									}
 								}
 
-								Block var24 = Block.blocksList[var18];
-								int var20 = var24.getRenderBlockPass();
-								if(var20 != var11) {
-									var12 = true;
-								} else if(var20 == var11) {
-									var13 |= var10.renderBlockByRenderType(var24, var17, var15, var16);
+								Block var28 = Block.blocksList[i3];
+								int blockPass = var28.getRenderBlockPass();
+								if(hashset1 == 0 && renderblocks.func_35927_a(x, y, z, hashset1)) {
+									hasRenderedBlocks = true;
+								}
+
+								boolean canRender = true;
+								if(blockPass != hashset1) {
+									renderNextPass = true;
+									canRender = false;
+								}
+
+								if(canRender) {
+									hasRenderedBlocks |= renderblocks.renderBlockByRenderType(var28, x, y, z);
 								}
 							}
 						}
 					}
 				}
 
-				if(var14) {
+				if(hasGlList) {
 					tessellator.draw();
 					GL11.glEndList();
-					tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
+					//tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
+					tessellator.setRenderingChunk(false);
 				} else {
-					var13 = false;
+					hasRenderedBlocks = false;
 				}
 
-				if(var13) {
-					this.skipRenderPass[var11] = false;
+				if(hasRenderedBlocks) {
+					this.skipRenderPass[hashset1] = false;
 				}
 
-				if(!var12) {
+				if(!renderNextPass) {
 					break;
 				}
 			}
-			
-			if(skipRenderPass[0]) {
-				GL11.flushDisplayList(glRenderList, true);
-			}
-			
-			if(skipRenderPass[1]) {
-				GL11.flushDisplayList(glRenderList + 1, true);
-			}
 
-			HashSet var22 = new HashSet();
-			var22.addAll(this.tileEntityRenderers);
-			var22.removeAll(var21);
-			this.field_1737_F.addAll(var22);
-			var21.removeAll(this.tileEntityRenderers);
-			this.field_1737_F.removeAll(var21);
+			Chunk.field_1540_a = false;
+			HashSet var27 = new HashSet();
+			var27.addAll(this.tileEntityRenderers);
+			var27.removeAll(var26);
+			this.field_1737_F.addAll(var27);
+			var26.removeAll(this.tileEntityRenderers);
+			this.field_1737_F.removeAll(var26);
 			this.field_1747_A = Chunk.field_1540_a;
 			this.isInitialized = true;
 		}

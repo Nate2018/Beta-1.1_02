@@ -39,6 +39,16 @@ public class ChunkCache implements IBlockAccess {
 		int var5 = (var3 >> 4) - this.field_1059_b;
 		return this.field_1062_c[var4][var5].getChunkBlockTileEntity(var1 & 15, var2, var3 & 15);
 	}
+	
+	public int func_35451_b(int var1, int var2, int var3, int var4) {
+		int var5 = this.func_35454_a(EnumSkyBlock.Sky, var1, var2, var3);
+		int var6 = this.func_35454_a(EnumSkyBlock.Block, var1, var2, var3);
+		if(var6 < var4) {
+			var6 = var4;
+		}
+
+		return var5 << 20 | var6 << 4;
+	}
 
 	public float getLightBrightness(int var1, int var2, int var3) {
 		return this.worldObj.worldProvider.lightBrightnessTable[this.func_4086_d(var1, var2, var3)];
@@ -123,5 +133,73 @@ public class ChunkCache implements IBlockAccess {
 
 	public WorldChunkManager func_4075_a() {
 		return this.worldObj.func_4075_a();
+	}
+	
+	public int func_35454_a(EnumSkyBlock var1, int var2, int var3, int var4) {
+		if(var3 < 0) {
+			var3 = 0;
+		}
+
+		if(var3 >= 128) {
+			var3 = 128 - 1;
+		}
+
+		if(var3 >= 0) {
+			this.worldObj.getClass();
+			if(var3 < 128 && var2 >= -30000000 && var4 >= -30000000 && var2 < 30000000 && var4 <= 30000000) {
+				int var5 = this.getBlockId(var2, var3, var4);
+				int var6;
+				if(var5 != Block.stairSingle.blockID && var5 != Block.tilledField.blockID && var5 != Block.stairCompactCobblestone.blockID && var5 != Block.stairCompactPlanks.blockID) {
+					var5 = (var2 >> 4) - this.field_1060_a;
+					var6 = (var4 >> 4) - this.field_1059_b;
+					return this.field_1062_c[var5][var6].getSavedLightValue(var1, var2 & 15, var3, var4 & 15);
+				}
+
+				var6 = this.func_35453_b(var1, var2, var3 + 1, var4);
+				int var7 = this.func_35453_b(var1, var2 + 1, var3, var4);
+				int var8 = this.func_35453_b(var1, var2 - 1, var3, var4);
+				int var9 = this.func_35453_b(var1, var2, var3, var4 + 1);
+				int var10 = this.func_35453_b(var1, var2, var3, var4 - 1);
+				if(var7 > var6) {
+					var6 = var7;
+				}
+
+				if(var8 > var6) {
+					var6 = var8;
+				}
+
+				if(var9 > var6) {
+					var6 = var9;
+				}
+
+				if(var10 > var6) {
+					var6 = var10;
+				}
+
+				return var6;
+			}
+		}
+
+		return var1.field_1722_c;
+	}
+	
+	public int func_35453_b(EnumSkyBlock var1, int var2, int var3, int var4) {
+		if(var3 < 0) {
+			var3 = 0;
+		}
+
+		if(var3 >= 128) {
+			var3 = 128 - 1;
+		}
+
+		if(var3 >= 0) {
+			if(var3 < 128 && var2 >= -30000000 && var4 >= -30000000 && var2 < 30000000 && var4 <= 30000000) {
+				int var5 = (var2 >> 4) - this.field_1060_a;
+				int var6 = (var4 >> 4) - this.field_1059_b;
+				return this.field_1062_c[var5][var6].getSavedLightValue(var1, var2 & 15, var3, var4 & 15);
+			}
+		}
+
+		return var1.field_1722_c;
 	}
 }

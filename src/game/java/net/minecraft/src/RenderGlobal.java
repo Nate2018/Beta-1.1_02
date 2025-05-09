@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import net.lax1dude.eaglercraft.Random;
 
+import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.Random;
+import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 import net.minecraft.client.Minecraft;
 import net.peyton.eagler.minecraft.Tessellator;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 public class RenderGlobal implements IWorldAccess {
+	private long lastMovedTime = EagRuntime.steadyTimeMillis();
 	public List field_1458_a = new ArrayList();
 	private World worldObj;
 	private RenderEngine renderEngine;
@@ -44,8 +48,10 @@ public class RenderGlobal implements IWorldAccess {
 	private int field_1419_N;
 	private int field_1417_P;
 	private int field_1416_Q;
-	private List field_1415_R = new ArrayList();
-	private RenderList[] field_1414_S = new RenderList[]{new RenderList(), new RenderList(), new RenderList(), new RenderList()};
+	private int worldRenderersCheckIndex;
+	private IntBuffer glListBuffer = GLAllocation.createDirectIntBuffer(65536);
+	int dummyInt0;
+	int glDummyList;
 	int field_1455_d = 0;
 	int field_1454_e = GLAllocation.generateDisplayLists(1);
 	double field_1453_f = -9999.0D;
@@ -53,6 +59,10 @@ public class RenderGlobal implements IWorldAccess {
 	double field_1451_h = -9999.0D;
 	public float field_1450_i;
 	int field_1449_j = 0;
+	
+	double prevReposX;
+	double prevReposY;
+	double prevReposZ;
 
 	public RenderGlobal(Minecraft var1, RenderEngine var2) {
 		this.mc = var1;
@@ -184,6 +194,9 @@ public class RenderGlobal implements IWorldAccess {
 			var1 = 400;
 		}
 
+		this.prevReposX = -9999.0D;
+		this.prevReposY = -9999.0D;
+		this.prevReposZ = -9999.0D;
 		this.renderChunksWide = var1 / 16 + 1;
 		this.renderChunksTall = 8;
 		this.renderChunksDeep = var1 / 16 + 1;
@@ -200,7 +213,10 @@ public class RenderGlobal implements IWorldAccess {
 
 		int var4;
 		for(var4 = 0; var4 < this.worldRenderersToUpdate.size(); ++var4) {
-			((WorldRenderer)this.worldRenderersToUpdate.get(var4)).needsUpdate = false;
+			WorldRenderer wr = ((WorldRenderer)this.worldRenderersToUpdate.get(var4));
+			if(wr != null) {
+				wr.needsUpdate = false;
+			}
 		}
 
 		this.worldRenderersToUpdate.clear();
@@ -209,14 +225,15 @@ public class RenderGlobal implements IWorldAccess {
 		for(var4 = 0; var4 < this.renderChunksWide; ++var4) {
 			for(int var5 = 0; var5 < this.renderChunksTall; ++var5) {
 				for(int var6 = 0; var6 < this.renderChunksDeep; ++var6) {
-					this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4] = new WorldRenderer(this.worldObj, this.field_1458_a, var4 * 16, var5 * 16, var6 * 16, 16, this.field_1440_s + var2);
-					this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4].isWaitingOnOcclusionQuery = false;
-					this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4].isVisible = true;
-					this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4].isInFrustrum = true;
-					this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4].field_1735_w = var3++;
-					this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4].markDirty();
-					this.sortedWorldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4] = this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4];
-					this.worldRenderersToUpdate.add(this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4]);
+					int index = (var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4;
+					WorldRenderer wr = (this.worldRenderers[(var6 * this.renderChunksTall + var5) * this.renderChunksWide + var4] = new WorldRenderer(this.worldObj, this.field_1458_a, var4 * 16, var5 * 16, var6 * 16, 16, this.field_1440_s + var2));
+					wr.isWaitingOnOcclusionQuery = false;
+					wr.isVisible = true;
+					wr.isInFrustrum = true;
+					wr.field_1735_w = var3++;
+					wr.markDirty();
+					this.sortedWorldRenderers[index] = wr;
+					this.worldRenderersToUpdate.add(wr);
 					var2 += 3;
 				}
 			}
@@ -344,6 +361,18 @@ public class RenderGlobal implements IWorldAccess {
 	}
 
 	public int func_943_a(EntityPlayer var1, int var2, double var3) {
+		if(this.worldRenderersToUpdate.size() < 10) {
+			byte partialX = 10;
+
+			for(int i = 0; i < partialX; ++i) {
+				this.worldRenderersCheckIndex = (this.worldRenderersCheckIndex + 1) % this.worldRenderers.length;
+				WorldRenderer partialY = this.worldRenderers[this.worldRenderersCheckIndex];
+				if(partialY.needsUpdate && !this.worldRenderersToUpdate.contains(partialY)) {
+					this.worldRenderersToUpdate.add(partialY);
+				}
+			}
+		}
+		
 		if(this.mc.gameSettings.renderDistance != this.renderDistance) {
 			this.loadRenderers();
 		}
@@ -365,7 +394,18 @@ public class RenderGlobal implements IWorldAccess {
 			this.field_1453_f = var1.posX;
 			this.field_1452_g = var1.posY;
 			this.field_1451_h = var1.posZ;
-			this.func_956_b(MathHelper.floor_double(var1.posX), MathHelper.floor_double(var1.posY), MathHelper.floor_double(var1.posZ));
+			double ocReq = var1.posX - this.prevReposX;
+			double lastIndex = var1.posY - this.prevReposY;
+			double stepNum = var1.posZ - this.prevReposZ;
+			double switchStep = ocReq * ocReq + lastIndex * lastIndex + stepNum * stepNum;
+			int num = 0;
+			if(switchStep > (double)(num * num) + 16.0D) {
+				this.prevReposX = var1.posX;
+				this.prevReposY = var1.posY;
+				this.prevReposZ = var1.posZ;
+				this.func_956_b(MathHelper.floor_double(var1.posX), MathHelper.floor_double(var1.posY), MathHelper.floor_double(var1.posZ));
+			}
+			
 			Arrays.sort(this.sortedWorldRenderers, new EntitySorter(var1));
 		}
 
@@ -373,7 +413,7 @@ public class RenderGlobal implements IWorldAccess {
 	}
 
 	private int func_952_a(int var1, int var2, int var3, double var4) {
-		this.field_1415_R.clear();
+		this.glListBuffer.clear();
 		int var6 = 0;
 
 		for(int var7 = var1; var7 < var2; ++var7) {
@@ -391,50 +431,36 @@ public class RenderGlobal implements IWorldAccess {
 			if(!this.sortedWorldRenderers[var7].skipRenderPass[var3] && this.sortedWorldRenderers[var7].isInFrustrum && this.sortedWorldRenderers[var7].isVisible) {
 				int var8 = this.sortedWorldRenderers[var7].getGLCallListForPass(var3);
 				if(var8 >= 0) {
-					this.field_1415_R.add(this.sortedWorldRenderers[var7]);
-					++var6;
+					int partialX = this.sortedWorldRenderers[var7].getGLCallListForPass(var3);
+					if(partialX >= 0) {
+						this.glListBuffer.put(partialX);
+						++var6;
+					}
 				}
 			}
 		}
 
+		this.glListBuffer.flip();
 		EntityPlayerSP var19 = this.mc.thePlayer;
 		double var20 = var19.lastTickPosX + (var19.posX - var19.lastTickPosX) * var4;
 		double var10 = var19.lastTickPosY + (var19.posY - var19.lastTickPosY) * var4;
 		double var12 = var19.lastTickPosZ + (var19.posZ - var19.lastTickPosZ) * var4;
-		int var14 = 0;
-
-		int var15;
-		for(var15 = 0; var15 < this.field_1414_S.length; ++var15) {
-			this.field_1414_S[var15].func_859_b();
-		}
-
-		for(var15 = 0; var15 < this.field_1415_R.size(); ++var15) {
-			WorldRenderer var16 = (WorldRenderer)this.field_1415_R.get(var15);
-			int var17 = -1;
-
-			for(int var18 = 0; var18 < var14; ++var18) {
-				if(this.field_1414_S[var18].func_862_a(var16.field_1755_i, var16.field_1754_j, var16.field_1753_k)) {
-					var17 = var18;
-				}
-			}
-
-			if(var17 < 0) {
-				var17 = var14++;
-				this.field_1414_S[var17].func_861_a(var16.field_1755_i, var16.field_1754_j, var16.field_1753_k, var20, var10, var12);
-			}
-
-			this.field_1414_S[var17].func_858_a(var16.getGLCallListForPass(var3));
-		}
+		//this.mc.entityRenderer.enableLightmap(var4);
+		
+		//TODO: Idk what this is for
+		GL11.glTranslatef((float)(-var20), (float)(-var10), (float)(-var12));
+		GL11.glCallLists(this.glListBuffer);
+		GL11.glTranslatef((float)var20, (float)var10, (float)var12);
+		
+		//this.mc.entityRenderer.disableLightmap(var4);
 
 		this.func_944_a(var3, var4);
 		return var6;
 	}
 
 	public void func_944_a(int var1, double var2) {
-		for(int var4 = 0; var4 < this.field_1414_S.length; ++var4) {
-			this.field_1414_S[var4].func_860_a();
-		}
-
+		//this.mc.entityRenderer.enableLightmap(var2);
+		//this.mc.entityRenderer.disableLightmap(var2);
 	}
 
 	public void func_945_d() {
@@ -733,32 +759,126 @@ public class RenderGlobal implements IWorldAccess {
 	}
 
 	public boolean updateRenderers(EntityPlayer var1, boolean var2) {
-		Collections.sort(this.worldRenderersToUpdate, new RenderSorter(var1));
-		int var3 = this.worldRenderersToUpdate.size() - 1;
-		int var4 = this.worldRenderersToUpdate.size();
-
-		for(int var5 = 0; var5 < var4; ++var5) {
-			WorldRenderer var6 = (WorldRenderer)this.worldRenderersToUpdate.get(var3 - var5);
-			if(!var2) {
-				if(var6.distanceToEntity(var1) > 1024.0F) {
-					if(var6.isInFrustrum) {
-						if(var5 >= 3) {
-							return false;
-						}
-					} else if(var5 >= 1) {
-						return false;
-					}
-				}
-			} else if(!var6.isInFrustrum) {
-				continue;
+		if(this.worldRenderersToUpdate.size() <= 0) {
+			return false;
+		} else {
+			int num = 0;
+			int maxNum = 1;
+			if(!this.isMoving(var1)) {
+				maxNum *= 3;
 			}
 
-			var6.updateRenderer();
-			this.worldRenderersToUpdate.remove(var6);
-			var6.needsUpdate = false;
-		}
+			byte NOT_IN_FRUSTRUM_MUL = 4;
+			int numValid = 0;
+			WorldRenderer wrBest = null;
+			float distSqBest = Float.MAX_VALUE;
+			int indexBest = -1;
 
-		return this.worldRenderersToUpdate.size() == 0;
+			int dstIndex;
+			for(dstIndex = 0; dstIndex < this.worldRenderersToUpdate.size(); ++dstIndex) {
+				WorldRenderer i = (WorldRenderer)this.worldRenderersToUpdate.get(dstIndex);
+				if(i != null) {
+					++numValid;
+					if(!i.needsUpdate) {
+						this.worldRenderersToUpdate.set(dstIndex, (Object)null);
+					} else {
+						float wr = i.distanceToEntity(var1);
+						if(wr <= 256.0F && this.isActingNow()) {
+							i.updateRenderer();
+							i.needsUpdate = false;
+							this.worldRenderersToUpdate.set(dstIndex, (Object)null);
+							++num;
+						} else {
+							if(wr > 256.0F && num >= maxNum) {
+								break;
+							}
+
+							if(!i.isInFrustrum) {
+								wr *= (float)NOT_IN_FRUSTRUM_MUL;
+							}
+
+							if(wrBest == null) {
+								wrBest = i;
+								distSqBest = wr;
+								indexBest = dstIndex;
+							} else if(wr < distSqBest) {
+								wrBest = i;
+								distSqBest = wr;
+								indexBest = dstIndex;
+							}
+						}
+					}
+				}
+			}
+
+			int var16;
+			if(wrBest != null) {
+				wrBest.updateRenderer();
+				wrBest.needsUpdate = false;
+				this.worldRenderersToUpdate.set(indexBest, (Object)null);
+				++num;
+				float var15 = distSqBest / 5.0F;
+
+				for(var16 = 0; var16 < this.worldRenderersToUpdate.size() && num < maxNum; ++var16) {
+					WorldRenderer var17 = (WorldRenderer)this.worldRenderersToUpdate.get(var16);
+					if(var17 != null) {
+						float distSq = var17.distanceToEntity(var1);
+						if(!var17.isInFrustrum) {
+							distSq *= (float)NOT_IN_FRUSTRUM_MUL;
+						}
+
+						float diffDistSq = Math.abs(distSq - distSqBest);
+						if(diffDistSq < var15) {
+							var17.updateRenderer();
+							var17.needsUpdate = false;
+							this.worldRenderersToUpdate.set(var16, (Object)null);
+							++num;
+						}
+					}
+				}
+			}
+
+			if(numValid == 0) {
+				this.worldRenderersToUpdate.clear();
+			}
+
+			if(this.worldRenderersToUpdate.size() > 100 && numValid < this.worldRenderersToUpdate.size() * 4 / 5) {
+				dstIndex = 0;
+
+				for(var16 = 0; var16 < this.worldRenderersToUpdate.size(); ++var16) {
+					Object var18 = this.worldRenderersToUpdate.get(var16);
+					if(var18 != null && var16 != dstIndex) {
+						this.worldRenderersToUpdate.set(dstIndex, var18);
+						++dstIndex;
+					}
+				}
+
+				for(var16 = this.worldRenderersToUpdate.size() - 1; var16 >= dstIndex; --var16) {
+					this.worldRenderersToUpdate.remove(var16);
+				}
+			}
+
+			return true;
+		}
+	}
+	
+	private boolean isMoving(EntityLiving entityliving) {
+		boolean moving = this.isMovingNow(entityliving);
+		if(moving) {
+			this.lastMovedTime = System.currentTimeMillis();
+			return true;
+		} else {
+			return EagRuntime.steadyTimeMillis() - this.lastMovedTime < 2000L;
+		}
+	}
+
+	private boolean isMovingNow(EntityLiving entityliving) {
+		double maxDiff = 0.001D;
+		return entityliving.isJumping ? true : (entityliving.isSneaking() ? true : ((double)entityliving.prevSwingProgress > maxDiff ? true : (this.mc.mouseHelper.field_1114_a != 0 ? true : (this.mc.mouseHelper.field_1113_b != 0 ? true : (Math.abs(entityliving.posX - entityliving.prevPosX) > maxDiff ? true : (Math.abs(entityliving.posY - entityliving.prevPosY) > maxDiff ? true : Math.abs(entityliving.posZ - entityliving.prevPosZ) > maxDiff))))));
+	}
+	
+	private boolean isActingNow() {
+		return Mouse.isButtonDown(0) ? true : Mouse.isButtonDown(1);
 	}
 
 	public void func_959_a(EntityPlayer var1, MovingObjectPosition var2, int var3, ItemStack var4, float var5) {

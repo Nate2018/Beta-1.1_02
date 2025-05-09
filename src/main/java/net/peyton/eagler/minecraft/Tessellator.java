@@ -28,8 +28,13 @@ public class Tessellator {
 	private double xOffset;
 	private double yOffset;
 	private double zOffset;
+	
+	private boolean renderingChunk;
+	private boolean field_35838_p;
+	private int field_35837_l;
 
 	private Tessellator(int var1) {
+		this.renderingChunk = false;
 		this.worldRenderer = new net.lax1dude.eaglercraft.opengl.WorldRenderer(var1);
 	}
 
@@ -40,6 +45,7 @@ public class Tessellator {
 		hasTexture = false;
 		hasColor = false;
 		hasNormal = false;
+		field_35838_p = false;
 	}
 
 	public void startDrawingQuads() {
@@ -54,11 +60,21 @@ public class Tessellator {
 		if(this.format == null) {
 			this.format = new VertexFormat(true, false, false, false);
 		} else {
-			this.format = new VertexFormat(true, format.attribColorEnabled, format.attribNormalEnabled, false);
+			this.format = new VertexFormat(true, format.attribColorEnabled, format.attribNormalEnabled, format.attribLightmapEnabled);
 		}
 		hasTexture = true;
 		textureU = var1;
 		textureV = var3;
+	}
+	
+	public void func_35835_b(int i) {
+		if(this.format == null) {
+			this.format = new VertexFormat(false, false, false, true);
+		} else if(!this.format.attribLightmapEnabled) {
+			this.format = new VertexFormat(format.attribTextureEnabled, format.attribColorEnabled, format.attribNormalEnabled, format.attribLightmapEnabled);
+		}
+		this.field_35838_p = true;
+		this.field_35837_l = i;
 	}
 
 	public void setColorOpaque_F(float var1, float var2, float var3) {
@@ -78,7 +94,7 @@ public class Tessellator {
 			if(this.format == null) {
 				this.format = new VertexFormat(false, true, false, false);
 			} else {
-				this.format = new VertexFormat(format.attribTextureEnabled, true, format.attribNormalEnabled, false);
+				this.format = new VertexFormat(format.attribTextureEnabled, true, format.attribNormalEnabled, format.attribLightmapEnabled);
 			}
 			this.hasColor = true;
 			this.colorR = var1;
@@ -110,6 +126,10 @@ public class Tessellator {
 			worldRenderer.normal(this.normalX, this.normalY, this.normalZ);
 		}
 		
+		if(this.field_35838_p) {
+			worldRenderer.lightmap(field_35837_l & 65535, (field_35837_l >> 16) & 65535);
+		}
+		
 		worldRenderer.endVertex();
 	}
 
@@ -135,7 +155,7 @@ public class Tessellator {
 		if(this.format == null) {
 			this.format = new VertexFormat(false, false, true, false);
 		} else {
-			this.format = new VertexFormat(format.attribTextureEnabled, format.attribColorEnabled, true, false);
+			this.format = new VertexFormat(format.attribTextureEnabled, format.attribColorEnabled, true, format.attribLightmapEnabled);
 		}
 		hasNormal = true;
 		normalX = var1;
@@ -153,5 +173,13 @@ public class Tessellator {
 		this.xOffset += (double)var1;
 		this.yOffset += (double)var2;
 		this.zOffset += (double)var3;
+	}
+	
+	public boolean isRenderingChunk() {
+		return this.renderingChunk;
+	}
+	
+	public void setRenderingChunk(boolean renderingChunk) {
+		this.renderingChunk = renderingChunk;
 	}
 }

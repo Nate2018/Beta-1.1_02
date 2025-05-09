@@ -131,10 +131,10 @@ public class GuiMultiplayer extends GuiScreen {
 		}
 		
 		System.out.println(var1);
-		
-//		if(var1 == 13) {
-//		this.actionPerformed((GuiButton)this.controlList.get(0));
-//	}
+		System.out.println(var2);
+		if(var2 == 28) {
+			this.actionPerformed((GuiButton)this.controlList.get(0));
+		}
 
 		((GuiButton)this.controlList.get(0)).enabled = this.serverAddress.length() > 0 && this.username.length() > 0;
 	}

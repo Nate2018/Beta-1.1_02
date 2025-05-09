@@ -2,14 +2,14 @@ package net.minecraft.src;
 
 public class MathHelper {
 	private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION;
-	private static float[] SIN_TABLE = new float[65536];
+	private static float[] SIN_TABLE = new float[4096];
 
 	public static final float sin(float var0) {
-		return SIN_TABLE[(int)(var0 * 10430.378F) & '\uffff'];
+		return SIN_TABLE[(int)(var0 * 651.8986F) & 4095];
 	}
 
 	public static final float cos(float var0) {
-		return SIN_TABLE[(int)(var0 * 10430.378F + 16384.0F) & '\uffff'];
+		return SIN_TABLE[(int)((var0 + ((float)Math.PI / 2F)) * 651.8986F) & 4095]; 
 	}
 
 	public static final float sqrt_float(float var0) {
@@ -32,6 +32,10 @@ public class MathHelper {
 
 	public static float abs(float var0) {
 		return var0 >= 0.0F ? var0 : -var0;
+	}
+	
+	public static int abs(int var0) {
+		return var0 >= 0 ? var0 : -var0;
 	}
 
 	public static double abs_max(double var0, double var2) {
@@ -86,8 +90,12 @@ public class MathHelper {
 	}
 
 	static {
-		for(int var0 = 0; var0 < 65536; ++var0) {
-			SIN_TABLE[var0] = (float)Math.sin((double)var0 * Math.PI * 2.0D / 65536.0D);
+		for (int j = 0; j < 4096; ++j) {
+			SIN_TABLE[j] = (float)Math.sin((double)(((float)j + 0.5F) / 4096.0F * ((float)Math.PI * 2F)));
+		}
+		
+		for (int l = 0; l < 360; l += 90) {
+			SIN_TABLE[(int)((float)l * 11.377778F) & 4095] = (float)Math.sin((double)((float)l * 0.017453292F));
 		}
 
 		MULTIPLY_DE_BRUIJN_BIT_POSITION = new int[] { 0, 1, 28, 2, 29, 14, 24, 3, 30, 22, 20, 15, 25, 17, 4, 8, 31, 27,

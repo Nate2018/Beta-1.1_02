@@ -701,6 +701,53 @@ public class World implements IBlockAccess {
 			}
 		}
 	}
+	
+	public int func_35457_a(EnumSkyBlock var1, int var2, int var3, int var4) {
+		if(var3 < 0) {
+			var3 = 0;
+		}
+
+		if(var3 >= 128 && var1 == EnumSkyBlock.Sky) {
+			return 15;
+		} else if(var3 >= 0 && var3 < 128 && var2 >= -30000000 && var4 >= -30000000 && var2 < 30000000 && var4 < 30000000) {
+			int var5 = var2 >> 4;
+			int var6 = var4 >> 4;
+			if(!this.chunkExists(var5, var6)) {
+				return 0;
+			} else {
+				int var7 = this.getBlockId(var2, var3, var4);
+				if(var7 != Block.stairSingle.blockID && var7 != Block.tilledField.blockID && var7 != Block.stairCompactCobblestone.blockID && var7 != Block.stairCompactPlanks.blockID) {
+					Chunk var13 = this.getChunkFromChunkCoords(var5, var6);
+					return var13.getSavedLightValue(var1, var2 & 15, var3, var4 & 15);
+				} else {
+					int var8 = this.getSavedLightValue(var1, var2, var3 + 1, var4);
+					int var9 = this.getSavedLightValue(var1, var2 + 1, var3, var4);
+					int var10 = this.getSavedLightValue(var1, var2 - 1, var3, var4);
+					int var11 = this.getSavedLightValue(var1, var2, var3, var4 + 1);
+					int var12 = this.getSavedLightValue(var1, var2, var3, var4 - 1);
+					if(var9 > var8) {
+						var8 = var9;
+					}
+
+					if(var10 > var8) {
+						var8 = var10;
+					}
+
+					if(var11 > var8) {
+						var8 = var11;
+					}
+
+					if(var12 > var8) {
+						var8 = var12;
+					}
+
+					return var8;
+				}
+			}
+		} else {
+			return var1.field_1722_c;
+		}
+	}
 
 	public int getSavedLightValue(EnumSkyBlock var1, int var2, int var3, int var4) {
 		if(var3 >= 0 && var3 < 128 && var2 >= -32000000 && var4 >= -32000000 && var2 < 32000000 && var4 <= 32000000) {
@@ -2025,5 +2072,15 @@ public class World implements IBlockAccess {
 			}
 		}
 
+	}
+
+	public int func_35451_b(int var1, int var2, int var3, int var4) {
+		int var5 = this.func_35457_a(EnumSkyBlock.Sky, var1, var2, var3);
+		int var6 = this.func_35457_a(EnumSkyBlock.Block, var1, var2, var3);
+		if(var6 < var4) {
+			var6 = var4;
+		}
+
+		return var5 << 20 | var6 << 4;
 	}
 }

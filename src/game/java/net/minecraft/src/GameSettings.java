@@ -22,6 +22,7 @@ public class GameSettings {
 	public boolean limitFramerate = false;
 	public boolean fancyGraphics = true;
 	public String skin = "Default";
+	public KeyBinding ofKeyBindZoom = new KeyBinding("Zoom", Keyboard.KEY_C);
 	public KeyBinding keyBindForward = new KeyBinding("key.forward", 17);
 	public KeyBinding keyBindLeft = new KeyBinding("key.left", 30);
 	public KeyBinding keyBindBack = new KeyBinding("key.back", 31);
@@ -32,7 +33,7 @@ public class GameSettings {
 	public KeyBinding keyBindChat = new KeyBinding("key.chat", 20);
 	public KeyBinding keyBindToggleFog = new KeyBinding("key.fog", 33);
 	public KeyBinding keyBindSneak = new KeyBinding("key.sneak", 42);
-	public KeyBinding[] keyBindings = new KeyBinding[]{this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog};
+	public KeyBinding[] keyBindings = new KeyBinding[]{this.keyBindForward, this.keyBindLeft, this.keyBindBack, this.keyBindRight, this.keyBindJump, this.keyBindSneak, this.keyBindDrop, this.keyBindInventory, this.keyBindChat, this.keyBindToggleFog, this.ofKeyBindZoom};
 	protected Minecraft mc;
 	private VFile2 optionsFile;
 	public int difficulty = 2;

@@ -31,6 +31,11 @@ public class EntityRenderer {
 	private float field_1381_o;
 	
 	private GameOverlayFramebuffer overlayFramebuffer;
+	
+	private MouseFilter mouseFilterXAxis = new MouseFilter();
+	private MouseFilter mouseFilterYAxis = new MouseFilter();
+	private boolean zoomMode = false;
+	private boolean smoothCamera = false;
 
 	public EntityRenderer(Minecraft var1) {
 		this.mc = var1;
@@ -111,6 +116,22 @@ public class EntityRenderer {
 		float var3 = 70.0F;
 		if(var2.isInsideOfMaterial(Material.water)) {
 			var3 = 60.0F;
+		}
+		
+		if(Keyboard.isKeyDown(this.mc.gameSettings.ofKeyBindZoom.keyCode)) {
+			if(!this.zoomMode) {
+				this.zoomMode = true;
+				this.smoothCamera = true;
+			}
+
+			if(this.zoomMode) {
+				var3 /= 4.0F;
+			}
+		} else if(this.zoomMode) {
+			this.zoomMode = false;
+			this.smoothCamera = false;
+			this.mouseFilterXAxis = new MouseFilter();
+			this.mouseFilterYAxis = new MouseFilter();
 		}
 
 		if(var2.health <= 0) {
@@ -269,6 +290,12 @@ public class EntityRenderer {
 	//Learned my lesson this time :D
 	private final VertexFormat format = new VertexFormat(true, false, false, false); //Don't continuously create temporary objects
 	public void func_4136_b(float var1) {
+		World world = this.mc.theWorld;
+		
+		if(world != null) {
+			world.autosavePeriod = 4000;
+		}
+		
 		if(!Display.isActive()) {
 			if(System.currentTimeMillis() - this.field_1384_l > 500L) {
 				this.mc.func_6252_g();
@@ -286,6 +313,11 @@ public class EntityRenderer {
 			byte var6 = 1;
 			if(this.mc.gameSettings.invertMouse) {
 				var6 = -1;
+			}
+			
+			if(this.smoothCamera) {
+				var4 = this.mouseFilterXAxis.func_22386_a(var4, 0.05F * var3);
+				var5 = this.mouseFilterYAxis.func_22386_a(var5, 0.05F * var3);
 			}
 
 			this.mc.thePlayer.func_346_d(var4, var5 * (float)var6);
