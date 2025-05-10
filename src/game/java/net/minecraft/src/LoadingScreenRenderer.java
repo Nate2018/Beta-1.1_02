@@ -2,8 +2,8 @@ package net.minecraft.src;
 
 import net.minecraft.client.Minecraft;
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 public class LoadingScreenRenderer implements IProgressUpdate {
@@ -60,6 +60,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 		}
 	}
 
+	private TextureLocation background = new TextureLocation("/gui/background.png");
 	public void setLoadingProgress(int var1) {
 		if(!this.mc.running) {
 			if(!this.field_1005_e) {
@@ -81,8 +82,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 				GL11.glTranslatef(0.0F, 0.0F, -200.0F);
 				GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
 				Tessellator var7 = Tessellator.instance;
-				int var8 = this.mc.renderEngine.getTexture("/gui/background.png");
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, var8);
+				background.bindTexture();
 				float var9 = 32.0F;
 				var7.startDrawingQuads();
 				var7.setColorOpaque_I(4210752);

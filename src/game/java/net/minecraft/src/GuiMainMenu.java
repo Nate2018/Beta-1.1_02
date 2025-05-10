@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 public class GuiMainMenu extends GuiScreen {
 	private static final Random rand = new Random();
@@ -17,6 +18,9 @@ public class GuiMainMenu extends GuiScreen {
 	private LogoEffectRandomizer[][] logoEffects;
 	private float updateCounter = 0.0F;
 	private String splashText = "missingno";
+	
+	private TextureLocation blackTex = new TextureLocation("/title/black.png");
+	private TextureLocation logoTex = new TextureLocation("/gui/logo.png");
 
 	public GuiMainMenu() {
 		try {
@@ -117,7 +121,7 @@ public class GuiMainMenu extends GuiScreen {
 		this.drawDefaultBackground();
 		Tessellator var4 = Tessellator.instance;
 		this.drawLogo(var3);
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/logo.png"));
+		this.logoTex.bindTexture();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		var4.setColorOpaque_I(16777215);
 		GL11.glPushMatrix();
@@ -186,9 +190,9 @@ public class GuiMainMenu extends GuiScreen {
 			GL11.glRotatef(15.0F, 1.0F, 0.0F, 0.0F);
 			GL11.glScalef(0.89F, 1.0F, 0.4F);
 			GL11.glTranslatef((float)(-this.minecraftLogo[0].length()) * 0.5F, (float)(-this.minecraftLogo.length) * 0.5F, 0.0F);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
+			TextureLocation.terrain.bindTexture();
 			if(var5 == 0) {
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/title/black.png"));
+				this.blackTex.bindTexture();
 			}
 
 			for(int var6 = 0; var6 < this.minecraftLogo.length; ++var6) {

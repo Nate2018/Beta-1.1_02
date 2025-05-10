@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntityGhast extends EntityFlying implements IMobs {
 	public int field_4121_a = 0;
 	public double field_4120_b;
@@ -12,7 +14,7 @@ public class EntityGhast extends EntityFlying implements IMobs {
 
 	public EntityGhast(World var1) {
 		super(var1);
-		this.texture = "/mob/ghast.png";
+		this.texture = new TextureLocation("/mob/ghast.png");
 		this.setSize(4.0F, 4.0F);
 		this.isImmuneToFire = true;
 	}
@@ -90,7 +92,7 @@ public class EntityGhast extends EntityFlying implements IMobs {
 			}
 		}
 
-		this.texture = this.field_4124_f > 10 ? "/mob/ghast_fire.png" : "/mob/ghast.png";
+		this.texture = this.field_4124_f > 10 ? new TextureLocation("/mob/ghast_fire.png") : new TextureLocation("/mob/ghast.png");
 	}
 
 	private boolean func_4050_a(double var1, double var3, double var5, double var7) {

@@ -8,6 +8,8 @@ import net.lax1dude.eaglercraft.opengl.GameOverlayFramebuffer;
 import net.lax1dude.eaglercraft.opengl.Tessellator;
 import net.lax1dude.eaglercraft.opengl.VertexFormat;
 import net.minecraft.client.Minecraft;
+import net.peyton.eagler.minecraft.TextureLocation;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -431,7 +433,7 @@ public class EntityRenderer {
 			this.mc.renderGlobal.updateRenderers(var2, false);
 			this.func_4140_a(0);
 			GL11.glEnable(GL11.GL_FOG);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
+			TextureLocation.terrain.bindTexture();
 			RenderHelper.disableStandardItemLighting();
 			var3.func_943_a(var2, 0, (double)var1);
 			RenderHelper.enableStandardItemLighting();
@@ -451,7 +453,7 @@ public class EntityRenderer {
 			this.func_4140_a(0);
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_CULL_FACE);
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
+			TextureLocation.terrain.bindTexture();
 			var3.func_943_a(var2, 1, (double)var1);
 
 			GL11.glDepthMask(true);

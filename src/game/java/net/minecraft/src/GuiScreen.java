@@ -7,6 +7,7 @@ import net.lax1dude.eaglercraft.EagRuntime;
 import net.minecraft.client.Minecraft;
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -134,12 +135,14 @@ public class GuiScreen extends Gui {
 		}
 
 	}
+	
+	private TextureLocation background = new TextureLocation("/gui/background.png");
 
 	public void drawBackground(int var1) {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_FOG);
 		Tessellator var2 = Tessellator.instance;
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/background.png"));
+		background.bindTexture();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		float var3 = 32.0F;
 		var2.startDrawingQuads();

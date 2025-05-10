@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntityChicken extends EntityAnimals {
 	public boolean field_753_a = false;
 	public float field_752_b = 0.0F;
@@ -11,7 +13,7 @@ public class EntityChicken extends EntityAnimals {
 
 	public EntityChicken(World var1) {
 		super(var1);
-		this.texture = "/mob/chicken.png";
+		this.texture = new TextureLocation("/mob/chicken.png");
 		this.setSize(0.3F, 0.4F);
 		this.health = 4;
 		this.timeUntilNextEgg = this.rand.nextInt(6000) + 6000;

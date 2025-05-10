@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class TextureFX {
 	public byte[] field_1127_a = new byte[1024];
 	public int field_1126_b;
@@ -19,9 +21,9 @@ public class TextureFX {
 
 	public void func_782_a(RenderEngine var1) {
 		if(this.field_1128_f == 0) {
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, var1.getTexture("/terrain.png"));
+			TextureLocation.terrain.bindTexture();
 		} else if(this.field_1128_f == 1) {
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, var1.getTexture("/gui/items.png"));
+			TextureLocation.items.bindTexture();
 		}
 
 	}

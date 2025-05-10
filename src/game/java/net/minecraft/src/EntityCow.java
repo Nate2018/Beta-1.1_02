@@ -1,11 +1,13 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntityCow extends EntityAnimals {
 	public boolean unusedBoolean = false;
 
 	public EntityCow(World var1) {
 		super(var1);
-		this.texture = "/mob/cow.png";
+		this.texture = new TextureLocation("/mob/cow.png");
 		this.setSize(0.9F, 1.3F);
 	}
 

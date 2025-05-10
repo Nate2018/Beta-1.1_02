@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import net.minecraft.client.Minecraft;
 import net.peyton.eagler.minecraft.FontRenderer;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 import org.lwjgl.opengl.GL11;
 
@@ -46,7 +47,7 @@ public class GuiButton extends Gui {
 	public void drawButton(Minecraft var1, int var2, int var3) {
 		if(this.enabled2) {
 			FontRenderer var4 = var1.fontRenderer;
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, var1.renderEngine.getTexture("/gui/gui.png"));
+			TextureLocation.gui.bindTexture();
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			boolean var5 = var2 >= this.xPosition && var3 >= this.yPosition && var2 < this.xPosition + this.width && var3 < this.yPosition + this.height;
 			int var6 = this.getHoverState(var5);

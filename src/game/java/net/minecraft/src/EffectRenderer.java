@@ -6,6 +6,7 @@ import net.lax1dude.eaglercraft.Random;
 import org.lwjgl.opengl.GL11;
 
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 public class EffectRenderer {
 	protected World worldObj;
@@ -44,6 +45,8 @@ public class EffectRenderer {
 
 	}
 
+	private TextureLocation particles = new TextureLocation("/particles.png");
+	private TextureLocation items = new TextureLocation("/particles.png");
 	public void func_1189_a(Entity var1, float var2) {
 		float var3 = MathHelper.cos(var1.rotationYaw * (float)Math.PI / 180.0F);
 		float var4 = MathHelper.sin(var1.rotationYaw * (float)Math.PI / 180.0F);
@@ -56,20 +59,22 @@ public class EffectRenderer {
 
 		for(int var8 = 0; var8 < 3; ++var8) {
 			if(this.field_1728_b[var8].size() != 0) {
-				int var9 = 0;
+				TextureLocation var9 = null;
 				if(var8 == 0) {
-					var9 = this.field_1731_c.getTexture("/particles.png");
+					var9 = TextureLocation.particles;
 				}
 
 				if(var8 == 1) {
-					var9 = this.field_1731_c.getTexture("/terrain.png");
+					var9 = TextureLocation.terrain;
 				}
 
 				if(var8 == 2) {
-					var9 = this.field_1731_c.getTexture("/gui/items.png");
+					var9 = TextureLocation.items;
 				}
 
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, var9);
+				if(var9 != null) {
+					var9.bindTexture();
+				}
 				Tessellator var10 = Tessellator.instance;
 				var10.startDrawingQuads();
 

@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import java.util.List;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public abstract class EntityPlayer extends EntityLiving {
 	public InventoryPlayer inventory = new InventoryPlayer(this);
 	public CraftingInventoryCB field_20069_g;
@@ -34,7 +36,7 @@ public abstract class EntityPlayer extends EntityLiving {
 		this.field_9351_C = "humanoid";
 		this.field_9353_B = 180.0F;
 		this.fireResistance = 20;
-		this.texture = "/mob/char.png";
+		this.texture = new TextureLocation("/mob/char.png");
 	}
 
 	public void onUpdate() {

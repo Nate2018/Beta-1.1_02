@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 import java.util.List;
 import net.lax1dude.eaglercraft.Random;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 public abstract class Entity {
 	private static int field_864_a = 0;
@@ -667,7 +668,7 @@ public abstract class Entity {
 		return var1 < var3 * var3;
 	}
 
-	public String getEntityTexture() {
+	public TextureLocation getEntityTexture() {
 		return null;
 	}
 

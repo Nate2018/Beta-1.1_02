@@ -6,6 +6,7 @@ import org.lwjgl.opengl.GL12;
 
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 public class RenderItem extends Render {
 	private RenderBlocks renderBlocks = new RenderBlocks();
@@ -109,7 +110,7 @@ public class RenderItem extends Render {
 		if(var3 != null) {
 			if(var3.itemID < 256 && RenderBlocks.func_1219_a(Block.blocksList[var3.itemID].getRenderType())) {
 				int var6 = var3.itemID;
-				var2.bindTexture(var2.getTexture("/terrain.png"));
+				TextureLocation.terrain.bindTexture();
 				Block var7 = Block.blocksList[var6];
 				GL11.glPushMatrix();
 				GL11.glTranslatef((float)(var4 - 2), (float)(var5 + 3), 0.0F);
@@ -124,9 +125,9 @@ public class RenderItem extends Render {
 			} else if(var3.getIconIndex() >= 0) {
 				GL11.glDisable(GL11.GL_LIGHTING);
 				if(var3.itemID < 256) {
-					var2.bindTexture(var2.getTexture("/terrain.png"));
+					TextureLocation.terrain.bindTexture();
 				} else {
-					var2.bindTexture(var2.getTexture("/gui/items.png"));
+					TextureLocation.items.bindTexture();
 				}
 
 				this.renderTexturedQuad(var4, var5, var3.getIconIndex() % 16 * 16, var3.getIconIndex() / 16 * 16, 16, 16);

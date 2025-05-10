@@ -3,6 +3,8 @@ package net.minecraft.src;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public abstract class GuiContainer extends GuiScreen {
 	private static RenderItem itemRenderer = new RenderItem();
 	protected int xSize = 176;
@@ -91,7 +93,7 @@ public abstract class GuiContainer extends GuiScreen {
 			int var5 = var1.func_775_c();
 			if(var5 >= 0) {
 				GL11.glDisable(GL11.GL_LIGHTING);
-				this.mc.renderEngine.bindTexture(this.mc.renderEngine.getTexture("/gui/items.png"));
+				TextureLocation.items.bindTexture();
 				this.drawTexturedModalRect(var2, var3, var5 % 16 * 16, var5 / 16 * 16, 16, 16);
 				GL11.glEnable(GL11.GL_LIGHTING);
 				return;

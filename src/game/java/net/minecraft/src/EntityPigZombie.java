@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import java.util.List;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntityPigZombie extends EntityZombie {
 	private int angerLevel = 0;
 	private int randomSoundDelay = 0;
@@ -9,7 +11,7 @@ public class EntityPigZombie extends EntityZombie {
 
 	public EntityPigZombie(World var1) {
 		super(var1);
-		this.texture = "/mob/pigzombie.png";
+		this.texture = new TextureLocation("/mob/pigzombie.png");
 		this.moveSpeed = 0.5F;
 		this.attackStrength = 5;
 		this.isImmuneToFire = true;

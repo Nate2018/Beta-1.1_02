@@ -1,9 +1,11 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntityZombie extends EntityMobs {
 	public EntityZombie(World var1) {
 		super(var1);
-		this.texture = "/mob/zombie.png";
+		this.texture = new TextureLocation("/mob/zombie.png");
 		this.moveSpeed = 0.5F;
 		this.attackStrength = 5;
 	}

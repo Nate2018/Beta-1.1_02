@@ -4,11 +4,10 @@ import org.lwjgl.opengl.GL11;
 
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 public abstract class Render {
 	protected RenderManager renderManager;
-	private ModelBase unusedModelBiped = new ModelBiped();
-	private RenderBlocks unusedRenderBlocks = new RenderBlocks();
 	protected float shadowSize = 0.0F;
 	protected float field_194_c = 1.0F;
 
@@ -19,11 +18,9 @@ public abstract class Render {
 		var2.bindTexture(var2.getTexture(var1));
 	}
 
-	protected boolean func_140_a(String var1, String var2) {
-		RenderEngine var3 = this.renderManager.renderEngine;
-		int var4 = var3.getTextureForDownloadableImage(var1, var2);
-		if(var4 >= 0) {
-			var3.bindTexture(var4);
+	protected boolean func_140_a(String var1, TextureLocation textureLocation) {
+		if(textureLocation != null && textureLocation.getTextureID() >= 0) {
+			textureLocation.bindTexture();
 			return true;
 		} else {
 			return false;

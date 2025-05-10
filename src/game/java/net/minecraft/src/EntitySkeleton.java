@@ -1,11 +1,13 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntitySkeleton extends EntityMobs {
 	private static final ItemStack defaultHeldItem = new ItemStack(Item.bow, 1);
 
 	public EntitySkeleton(World var1) {
 		super(var1);
-		this.texture = "/mob/skeleton.png";
+		this.texture = new TextureLocation("/mob/skeleton.png");
 	}
 
 	protected String getLivingSound() {

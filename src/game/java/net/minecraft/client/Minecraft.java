@@ -61,6 +61,7 @@ import net.minecraft.src.WorldProviderHell;
 import net.minecraft.src.WorldRenderer;
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -687,7 +688,7 @@ public class Minecraft {
 			this.playerController.updateController();
 		}
 
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.renderEngine.getTexture("/terrain.png"));
+		TextureLocation.terrain.bindTexture();
 		if(!this.isWorldLoaded) {
 			this.renderEngine.func_1067_a();
 		}

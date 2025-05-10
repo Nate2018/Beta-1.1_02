@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import java.util.List;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntityLiving extends Entity {
 	public int field_9366_o = 20;
 	public float field_9365_p;
@@ -14,7 +16,7 @@ public class EntityLiving extends Entity {
 	protected float field_9360_w;
 	protected float field_9359_x;
 	protected boolean field_9358_y = true;
-	protected String texture = "/mob/char.png";
+	protected TextureLocation texture = new TextureLocation("/mob/char.png");
 	protected boolean unusedEntityLivingBoolean = true;
 	protected float field_9353_B = 0.0F;
 	protected String field_9351_C = null;
@@ -73,7 +75,7 @@ public class EntityLiving extends Entity {
 		return this.worldObj.rayTraceBlocks(Vec3D.createVector(this.posX, this.posY + (double)this.func_373_s(), this.posZ), Vec3D.createVector(var1.posX, var1.posY + (double)var1.func_373_s(), var1.posZ)) == null;
 	}
 
-	public String getEntityTexture() {
+	public TextureLocation getEntityTexture() {
 		return this.texture;
 	}
 

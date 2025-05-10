@@ -2,6 +2,8 @@ package net.minecraft.src;
 
 import org.lwjgl.opengl.GL11;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class GuiFurnace extends GuiContainer {
 	private TileEntityFurnace furnaceInventory;
 
@@ -15,10 +17,10 @@ public class GuiFurnace extends GuiContainer {
 		this.fontRenderer.drawString("Inventory", 8, this.ySize - 96 + 2, 4210752);
 	}
 
+	TextureLocation furnace = new TextureLocation("/gui/furnace.png");
 	protected void drawGuiContainerBackgroundLayer(float var1) {
-		int var2 = this.mc.renderEngine.getTexture("/gui/furnace.png");
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.renderEngine.bindTexture(var2);
+		furnace.bindTexture();
 		int var3 = (this.width - this.xSize) / 2;
 		int var4 = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(var3, var4, 0, 0, this.xSize, this.ySize);

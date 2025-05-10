@@ -10,6 +10,7 @@ import net.lax1dude.eaglercraft.Random;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 import net.minecraft.client.Minecraft;
 import net.peyton.eagler.minecraft.Tessellator;
+import net.peyton.eagler.minecraft.TextureLocation;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -891,8 +892,7 @@ public class RenderGlobal implements IWorldAccess {
 		if(var3 == 0) {
 			if(this.field_1450_i > 0.0F) {
 				GL11.glBlendFunc(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR);
-				int var7 = this.renderEngine.getTexture("/terrain.png");
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, var7);
+				TextureLocation.terrain.bindTexture();
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.5F);
 				GL11.glPushMatrix();
 				var8 = this.worldObj.getBlockId(var2.blockX, var2.blockY, var2.blockZ);
@@ -923,34 +923,7 @@ public class RenderGlobal implements IWorldAccess {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			float var16 = MathHelper.sin((float)System.currentTimeMillis() / 100.0F) * 0.2F + 0.8F;
 			GL11.glColor4f(var16, var16, var16, MathHelper.sin((float)System.currentTimeMillis() / 200.0F) * 0.2F + 0.5F);
-			var8 = this.renderEngine.getTexture("/terrain.png");
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, var8);
-			int var17 = var2.blockX;
-			int var18 = var2.blockY;
-			int var11 = var2.blockZ;
-			if(var2.sideHit == 0) {
-				--var18;
-			}
-
-			if(var2.sideHit == 1) {
-				++var18;
-			}
-
-			if(var2.sideHit == 2) {
-				--var11;
-			}
-
-			if(var2.sideHit == 3) {
-				++var11;
-			}
-
-			if(var2.sideHit == 4) {
-				--var17;
-			}
-
-			if(var2.sideHit == 5) {
-				++var17;
-			}
+			TextureLocation.terrain.bindTexture();
 		}
 
 		GL11.glDisable(GL11.GL_BLEND);

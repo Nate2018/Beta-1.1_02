@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntityCreeper extends EntityMobs {
 	int timeSinceIgnited;
 	int lastActiveTime;
@@ -9,7 +11,7 @@ public class EntityCreeper extends EntityMobs {
 
 	public EntityCreeper(World var1) {
 		super(var1);
-		this.texture = "/mob/creeper.png";
+		this.texture = new TextureLocation("/mob/creeper.png");
 	}
 
 	public void writeEntityToNBT(NBTTagCompound var1) {

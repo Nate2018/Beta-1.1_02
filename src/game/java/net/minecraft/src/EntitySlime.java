@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.peyton.eagler.minecraft.TextureLocation;
+
 public class EntitySlime extends EntityLiving implements IMobs {
 	public float field_768_a;
 	public float field_767_b;
@@ -8,7 +10,7 @@ public class EntitySlime extends EntityLiving implements IMobs {
 
 	public EntitySlime(World var1) {
 		super(var1);
-		this.texture = "/mob/slime.png";
+		this.texture = new TextureLocation("/mob/slime.png");
 		this.field_770_c = 1 << this.rand.nextInt(3);
 		this.yOffset = 0.0F;
 		this.field_769_d = this.rand.nextInt(20) + 10;
