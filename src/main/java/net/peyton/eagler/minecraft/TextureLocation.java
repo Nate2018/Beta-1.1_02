@@ -29,7 +29,9 @@ public class TextureLocation {
 			textureID = Minecraft.getMinecraft().renderEngine.getTexture(textureName);
 			init = true;
 		}
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+		if(textureID >= 0) {
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+		}
 	}
 	
 	public int getTextureID() {

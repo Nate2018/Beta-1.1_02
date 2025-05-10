@@ -10,14 +10,25 @@ import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 
 public class GLAllocation {
-	private static List<Integer> displayLists = new ArrayList<Integer>();
 	private static List<Integer> textureNames = new ArrayList<Integer>();
 
-	public static synchronized int generateDisplayLists(int var0) {
-		int var1 = GL11.glGenLists(var0);
-		displayLists.add(Integer.valueOf(var1));
-		displayLists.add(Integer.valueOf(var0));
-		return var1;
+	public static synchronized int generateDisplayLists() {
+		return GL11.glGenLists();
+	}
+	
+	public static synchronized int generateDisplayLists(int count) {
+		if(count <= 0) {
+			return 0;
+		}
+		int glBaseList = GL11.glGenLists();
+		for(int i = 1; i < count; ++i) {
+			GL11.glGenLists();
+		}
+		return glBaseList;
+	}
+	
+	public static synchronized void deleteDisplayLists(int list) {
+		GL11.glDeleteLists(list);
 	}
 
 	public static synchronized void generateTextureNames(IntBuffer var0) {
@@ -30,10 +41,6 @@ public class GLAllocation {
 	}
 
 	public static synchronized void deleteTexturesAndDisplayLists() {
-		for(int var0 = 0; var0 < displayLists.size(); var0 += 2) {
-			GL11.glDeleteLists(((Integer)displayLists.get(var0)).intValue(), ((Integer)displayLists.get(var0 + 1)).intValue());
-		}
-
 		IntBuffer var2 = createDirectIntBuffer(textureNames.size());
 		var2.flip();
 		GL11.glDeleteTextures(var2);
@@ -44,7 +51,6 @@ public class GLAllocation {
 
 		var2.flip();
 		GL11.glDeleteTextures(var2);
-		displayLists.clear();
 		textureNames.clear();
 	}
 

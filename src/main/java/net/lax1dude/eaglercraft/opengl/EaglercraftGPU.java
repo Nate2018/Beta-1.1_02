@@ -88,14 +88,12 @@ public class EaglercraftGPU extends GlStateManager {
 
 	static final GLObjectMap<ITextureGL> mapTexturesGL = new GLObjectMap<>(8192);
 	static final GLObjectMap<IQueryGL> mapQueriesGL = new GLObjectMap<>(8192);
+	static final GLObjectMap<DisplayList> mapDisplayListsGL = new GLObjectMap<>(8192);
 
 	static final Logger logger = LogManager.getLogger("EaglercraftGPU");
 
 	static boolean emulatedVAOs = false;
 	static SoftGLVertexState emulatedVAOState = new SoftGLVertexState();
-
-	private static final HashMap<Integer, DisplayList> displayLists = new HashMap<Integer, DisplayList>();
-	private static final HashMap<Integer, DisplayList> displayListsInitialized = new HashMap<Integer, DisplayList>();
 
 	public static String gluErrorString(int i) {
 		switch (i) {
@@ -138,7 +136,7 @@ public class EaglercraftGPU extends GlStateManager {
 		if (op != GL_COMPILE) {
 			throw new UnsupportedOperationException("Only GL_COMPILE is supported by glNewList");
 		}
-		DisplayList dp = currentList = displayLists.get(target);
+		DisplayList dp = currentList = mapDisplayListsGL.get(target);
 		if (dp == null) {
 			throw new IllegalArgumentException("Unknown display list: " + target);
 		}
@@ -180,14 +178,12 @@ public class EaglercraftGPU extends GlStateManager {
 			throw new IllegalStateException("No list is currently being compiled!");
 		}
 
-		displayListsInitialized.put(dp.id, currentList);
-
-		if (dp.attribs == -1) {
-			if (dp.vertexArray != null) {
+		if(dp.attribs == -1) {
+			if(dp.vertexArray != null) {
 				destroyGLVertexArray(dp.vertexArray);
 				dp.vertexArray = null;
 			}
-			if (dp.vertexBuffer != null) {
+			if(dp.vertexBuffer != null) {
 				destroyGLArrayBuffer(dp.vertexBuffer);
 				dp.vertexBuffer = null;
 			}
@@ -214,7 +210,7 @@ public class EaglercraftGPU extends GlStateManager {
 	}
 
 	public static void uploadListDirect(int target, ByteBuffer buffer, int attrib, int mode, int count) {
-		DisplayList dp = displayListsInitialized.get(target);
+		DisplayList dp = mapDisplayListsGL.get(target);
 		if (dp == null) {
 			throw new IllegalArgumentException("Unknown display list: " + target);
 		}
@@ -256,7 +252,7 @@ public class EaglercraftGPU extends GlStateManager {
 	}
 
 	public static void glCallList(int displayList) {
-		DisplayList dp = displayListsInitialized.get(displayList);
+		DisplayList dp = mapDisplayListsGL.get(displayList);
 		if (dp == null) {
 			throw new NullPointerException("Tried to call a display list that does not exist: " + displayList);
 		}
@@ -291,7 +287,7 @@ public class EaglercraftGPU extends GlStateManager {
 	}
 
 	public static void flushDisplayList(int displayList, boolean ignore) {
-		DisplayList dp = displayListsInitialized.get(displayList);
+		DisplayList dp = mapDisplayListsGL.get(displayList);
 		if (dp == null) {
 			if(ignore) {
 				return;
@@ -428,29 +424,19 @@ public class EaglercraftGPU extends GlStateManager {
 		valueBuffer.position(pos);
 	}
 
-	private static int displayListId = 0;
-
-	public static final int glGenLists(int p1) {
-		int base = displayListId + 1;
-		for (int i = 0; i < p1; i++) {
-			int id = ++displayListId;
-			displayLists.put(id, new DisplayList(id));
-		}
-		return base;
+	public static int glGenLists() {
+		return mapDisplayListsGL.register(new DisplayList());
 	}
 
-	public static final void glDeleteLists(int p1, int p2) {
-		for (int i = 0; i < p2; i++) {
-			DisplayList d = displayListsInitialized.remove(p1 + i);
-			if (d != null) {
-				if (d.vertexArray != null) {
-					EaglercraftGPU.destroyGLVertexArray(d.vertexArray);
-				}
-				if (d.vertexBuffer != null) {
-					_wglDeleteBuffers(d.vertexBuffer);
-				}
+	public static void glDeleteLists(int id) {
+		DisplayList d = mapDisplayListsGL.free(id);
+		if(d != null) {
+			if(d.vertexArray != null) {
+				destroyGLVertexArray(d.vertexArray);
 			}
-			displayLists.remove(p1 + i);
+			if(d.vertexBuffer != null) {
+				destroyGLArrayBuffer(d.vertexBuffer);
+			}
 		}
 	}
 
@@ -1120,8 +1106,7 @@ public class EaglercraftGPU extends GlStateManager {
 		stringCache.clear();
 		mapTexturesGL.clear();
 		mapQueriesGL.clear();
-		displayLists.clear();
-		displayListsInitialized.clear();
+		mapDisplayListsGL.clear();
 	}
 
 	public static int checkOpenGLESVersion() {

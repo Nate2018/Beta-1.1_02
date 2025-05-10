@@ -2,6 +2,7 @@ package net.lax1dude.eaglercraft.opengl;
 
 import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
 import net.lax1dude.eaglercraft.internal.IBufferGL;
+import net.lax1dude.eaglercraft.internal.ITextureGL;
 
 /**
  * Copyright (c) 2022 lax1dude. All Rights Reserved.
@@ -21,7 +22,6 @@ import net.lax1dude.eaglercraft.internal.IBufferGL;
  */
 class DisplayList {
 
-	final int id;
 	IVertexArrayGL vertexArray = null;
 	IBufferGL vertexBuffer = null;
 	int attribs = -1;
@@ -29,9 +29,5 @@ class DisplayList {
 	int count = 0;
 	boolean bindQuad16 = false;
 	boolean bindQuad32 = false;
-
-	DisplayList(int id) {
-		this.id = id;
-	}
 
 }

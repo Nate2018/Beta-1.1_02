@@ -31,6 +31,8 @@ public enum EnumArt {
 	public final int field_1636_A;
 	public final int field_1634_B;
 	public final int field_1632_C;
+	
+	public static EnumArt[] _VALUES = values();
 
 	private EnumArt(String var3, int var4, int var5, int var6, int var7) {
 		this.field_1624_y = var3;

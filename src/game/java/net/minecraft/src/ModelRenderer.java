@@ -102,17 +102,8 @@ public class ModelRenderer {
 				} else {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(this.offsetX * var1, this.offsetY * var1, this.offsetZ * var1);
-					if(this.rotateAngleZ != 0.0F) {
-						GL11.glRotatef(this.rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
-					}
 
-					if(this.rotateAngleY != 0.0F) {
-						GL11.glRotatef(this.rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
-					}
-
-					if(this.rotateAngleX != 0.0F) {
-						GL11.glRotatef(this.rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
-					}
+					GL11.rotateZYXRad(this.rotateAngleX, this.rotateAngleY, this.rotateAngleZ);
 
 					GL11.glCallList(this.displayList);
 					GL11.glPopMatrix();
@@ -135,17 +126,7 @@ public class ModelRenderer {
 					}
 				} else {
 					GL11.glTranslatef(this.offsetX * var1, this.offsetY * var1, this.offsetZ * var1);
-					if(this.rotateAngleZ != 0.0F) {
-						GL11.glRotatef(this.rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
-					}
-
-					if(this.rotateAngleY != 0.0F) {
-						GL11.glRotatef(this.rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
-					}
-
-					if(this.rotateAngleX != 0.0F) {
-						GL11.glRotatef(this.rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
-					}
+					GL11.rotateZYXRad(this.rotateAngleX, this.rotateAngleY, this.rotateAngleZ);
 				}
 
 			}
