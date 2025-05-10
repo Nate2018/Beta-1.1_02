@@ -431,6 +431,10 @@ public class EaglercraftGPU extends GlStateManager {
 		}
 		return glBaseList;
 	}
+	
+	public static int glGenLists() {
+		return mapDisplayListsGL.register(new DisplayList());
+	}
 
 	public static void glDeleteLists(int id) {
 		DisplayList d = mapDisplayListsGL.free(id);

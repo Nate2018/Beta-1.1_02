@@ -256,4 +256,8 @@ public class GameSettings {
 		}
 
 	}
+	
+	public int shouldRenderClouds() {
+		return this.renderDistance <= 1 ? (this.fancyGraphics ? 2 : 1) : 0;
+	}
 }

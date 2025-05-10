@@ -470,10 +470,7 @@ public class EntityRenderer {
 			if(this.field_1385_k != null) {
 			}
 
-			this.func_4140_a(0);
-			GL11.glEnable(GL11.GL_FOG);
-			var3.func_4141_b(var1);
-			GL11.glDisable(GL11.GL_FOG);
+			renderCloudsCheck(var3, var1, 0);
 			this.func_4140_a(1);
 			GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT);
 			this.func_4135_b(var1, var11);
@@ -483,6 +480,25 @@ public class EntityRenderer {
 		}
 
 		GL11.glColorMask(true, true, true, false);
+	}
+	
+	private void renderCloudsCheck(RenderGlobal renderGlobalIn, float partialTicks, int pass) {
+		if (this.mc.gameSettings.shouldRenderClouds() != 0) {
+			GL11.glMatrixMode(5889);
+			GL11.glLoadIdentity();
+			GL11.gluPerspective(this.func_914_d(partialTicks), (float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F, this.farPlaneDistance * 4.0F);
+			GL11.glMatrixMode(5888);
+			GL11.glPushMatrix();
+			this.func_4140_a(0);
+			GL11.glEnable(GL11.GL_FOG);
+			renderGlobalIn.cloudRenderer.renderClouds(partialTicks, pass);
+			GL11.glDisable(GL11.GL_FOG);
+			GL11.glPopMatrix();
+			GL11.glMatrixMode(5889);
+			GL11.glLoadIdentity();
+			GL11.gluPerspective(this.func_914_d(partialTicks), (float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F, this.farPlaneDistance * MathHelper.SQRT_2);
+			GL11.glMatrixMode(5888);
+		}
 	}
 
 	private void renderFancyGraphics() {

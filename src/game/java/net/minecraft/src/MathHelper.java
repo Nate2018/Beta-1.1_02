@@ -2,6 +2,7 @@ package net.minecraft.src;
 
 public class MathHelper {
 	private static final int[] MULTIPLY_DE_BRUIJN_BIT_POSITION;
+	public static final float SQRT_2 = sqrt_float(2.0F);
 	private static float[] SIN_TABLE = new float[4096];
 
 	public static final float sin(float var0) {
@@ -82,6 +83,14 @@ public class MathHelper {
 	}
 	
 	public static int clamp(int num, int min, int max) {
+		if (num < min) {
+			return min;
+		} else {
+			return num > max ? max : num;
+		}
+	}
+	
+	public static float clamp(float num, float min, float max) {
 		if (num < min) {
 			return min;
 		} else {
