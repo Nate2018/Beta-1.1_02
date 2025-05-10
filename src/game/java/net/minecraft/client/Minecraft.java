@@ -1,6 +1,8 @@
 package net.minecraft.client;
 
 import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.beta.TextureNewClockFX;
+import net.lax1dude.eaglercraft.beta.TextureNewCompassFX;
 import net.lax1dude.eaglercraft.internal.EnumPlatformType;
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.lax1dude.eaglercraft.minecraft.EaglerFontRenderer;
@@ -16,7 +18,6 @@ import net.minecraft.src.GLAllocation;
 import net.minecraft.src.GameSettings;
 import net.minecraft.src.GuiChat;
 import net.minecraft.src.GuiConflictWarning;
-import net.minecraft.src.GuiConnecting;
 import net.minecraft.src.GuiGameOver;
 import net.minecraft.src.GuiIngame;
 import net.minecraft.src.GuiIngameMenu;
@@ -41,18 +42,9 @@ import net.minecraft.src.RenderEngine;
 import net.minecraft.src.RenderGlobal;
 import net.minecraft.src.RenderManager;
 import net.minecraft.src.ScaledResolution;
-import net.minecraft.src.ScreenShotHelper;
 import net.minecraft.src.Session;
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.Teleporter;
-import net.minecraft.src.TextureCompassFX;
-import net.minecraft.src.TextureFlamesFX;
-import net.minecraft.src.TextureLavaFX;
-import net.minecraft.src.TextureLavaFlowFX;
-import net.minecraft.src.TexturePortalFX;
-import net.minecraft.src.TextureWatchFX;
-import net.minecraft.src.TextureWaterFX;
-import net.minecraft.src.TexureWaterFlowFX;
 import net.minecraft.src.Timer;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
@@ -61,7 +53,6 @@ import net.minecraft.src.WorldProviderHell;
 import net.minecraft.src.WorldRenderer;
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
-import net.peyton.eagler.minecraft.TextureLocation;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
@@ -104,10 +95,6 @@ public class Minecraft {
 	public static long[] frameTimes = new long[512];
 	public static long[] tickTimes = new long[512];
 	public static int numRecordedFrameTimes = 0;
-	private String serverName;
-	private int serverPort;
-	private TextureWaterFX textureWaterFX = new TextureWaterFX();
-	private TextureLavaFX textureLavaFX = new TextureLavaFX();
 	private static VFile2 minecraftDir = null;
 	public volatile boolean running = true;
 	public String debug = "";
@@ -125,11 +112,14 @@ public class Minecraft {
 	private static int debugFPS;
 	
 	public ScaledResolution scaledResolution = null;
+	
+	private boolean checkErrors;
 
 	public Minecraft() {
 		this.displayWidth = Display.getWidth();
 		this.displayHeight = Display.getHeight();
 		this.session = new Session("Player");
+		checkErrors = EagRuntime.getConfiguration().isCheckGLErrors();
 		minecraft = this;
 	}
 	
@@ -168,11 +158,6 @@ public class Minecraft {
 		}
 	}
 
-	public void setServer(String var1, int var2) {
-		this.serverName = var1;
-		this.serverPort = var2;
-	}
-
 	public void startGame() throws LWJGLException {
 		Display.setTitle("Minecraft Beta 1.1_02");
 
@@ -204,15 +189,17 @@ public class Minecraft {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		this.checkGLError("Startup");
 		this.sndManager.loadSoundSettings(this.gameSettings);
-		this.renderEngine.registerTextureFX(this.textureLavaFX);
-		this.renderEngine.registerTextureFX(this.textureWaterFX);
-		this.renderEngine.registerTextureFX(new TexturePortalFX());
-		this.renderEngine.registerTextureFX(new TextureCompassFX(this));
-		this.renderEngine.registerTextureFX(new TextureWatchFX(this));
-		this.renderEngine.registerTextureFX(new TexureWaterFlowFX());
-		this.renderEngine.registerTextureFX(new TextureLavaFlowFX());
-		this.renderEngine.registerTextureFX(new TextureFlamesFX(0));
-		this.renderEngine.registerTextureFX(new TextureFlamesFX(1));
+		
+		renderEngine.registerTextureFX(new TextureNewCompassFX());
+		renderEngine.registerTextureFX(new TextureNewClockFX());
+		renderEngine.registerSpriteSheet("portal", Block.portal.blockIndexInTexture, 1);
+		renderEngine.registerSpriteSheet("water", Block.waterStill.blockIndexInTexture, 1);
+		renderEngine.registerSpriteSheet("water_flow", Block.waterMoving.blockIndexInTexture + 1, 2);
+		renderEngine.registerSpriteSheet("lava", Block.lavaStill.blockIndexInTexture, 1);
+		renderEngine.registerSpriteSheet("lava_flow", Block.lavaMoving.blockIndexInTexture + 1, 2);
+		renderEngine.registerSpriteSheet("fire_0", Block.fire.blockIndexInTexture, 1);
+		renderEngine.registerSpriteSheet("fire_1", Block.fire.blockIndexInTexture + 16, 1);
+		
 		this.renderGlobal = new RenderGlobal(this, this.renderEngine);
 		GL11.glViewport(0, 0, this.displayWidth, this.displayHeight);
 		this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
@@ -315,14 +302,15 @@ public class Minecraft {
 	}
 
 	private void checkGLError(String var1) {
-		int var2 = GL11.glGetError();
-		if(var2 != 0) {
-			String var3 = GLU.gluErrorString(var2);
-			System.out.println("########## GL ERROR ##########");
-			System.out.println("@ " + var1);
-			System.out.println(var2 + ": " + var3);
+		if(checkErrors) {
+			int var2 = GL11.glGetError();
+			if(var2 != 0) {
+				String var3 = GLU.gluErrorString(var2);
+				System.out.println("########## GL ERROR ##########");
+				System.out.println("@ " + var1);
+				System.out.println(var2 + ": " + var3);
+			}
 		}
-
 	}
 	
 	public void shutdownMinecraftApplet() {
@@ -688,9 +676,9 @@ public class Minecraft {
 			this.playerController.updateController();
 		}
 
-		TextureLocation.terrain.bindTexture();
 		if(!this.isWorldLoaded) {
-			this.renderEngine.func_1067_a();
+			this.renderEngine.updateTerrainTextures();
+			GL11.glViewport(0, 0, displayWidth, displayHeight);
 		}
 
 		if(this.currentScreen == null && this.thePlayer != null && this.thePlayer.health <= 0) {
