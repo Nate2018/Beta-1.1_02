@@ -1,5 +1,7 @@
 package net.lax1dude.eaglercraft.internal;
 
+import java.io.File;
+
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -7,6 +9,7 @@ import net.lax1dude.eaglercraft.Display;
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.EagUtils;
 import net.minecraft.client.Minecraft;
+import net.peyton.eagler.minecraft.AudioUtils;
 
 /**
  * Copyright (c) 2022-2023 lax1dude. All Rights Reserved.
@@ -60,9 +63,25 @@ public class LWJGLEntryPoint {
 		getPlatformOptionsFromArgs(args);
 
 		EagRuntime.create();
+		
+		File[] f = new File("resources", "newsound").listFiles();
+		
+		for(File f1 : f) {
+			addSoundsToAudioMap(f1);
+		}
 
 		new Minecraft().run();
 
+	}
+	
+	private static void addSoundsToAudioMap(File file) {
+		if(file.isDirectory()) {
+			for(File f : file.listFiles()) {
+				addSoundsToAudioMap(f);
+			}
+		} else {
+			AudioUtils.addFile(file.getPath().replace("\\", "/"));
+		}
 	}
 
 	private static void getPlatformOptionsFromArgs(String[] args) {

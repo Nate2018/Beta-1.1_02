@@ -12,6 +12,7 @@ import com.jcraft.jzlib.GZIPInputStream;
 import com.jcraft.jzlib.InflaterInputStream;
 
 import net.lax1dude.eaglercraft.internal.PlatformAssets;
+import net.peyton.eagler.minecraft.AudioUtils;
 
 /**
  * Copyright (c) 2022 lax1dude. All Rights Reserved.
@@ -146,6 +147,10 @@ public class EPKLoader {
 				
 				if(zis.read() != ':') {
 					throw new IOException("File '" + name + "' is incomplete");
+				}
+				String s = path + name;
+				if(s.contains(".ogg")) {
+					AudioUtils.addFile(s);
 				}
 				loadedFiles.put(path + name, load);
 			}else {
