@@ -25,6 +25,8 @@ public abstract class EntityPlayer extends EntityLiving {
 	public double field_20061_w;
 	private int damageRemainder = 0;
 	public EntityFish fishEntity = null;
+	
+	private TextureLocation player = new TextureLocation("/mob/char.png");
 
 	public EntityPlayer(World var1) {
 		super(var1);
@@ -36,7 +38,7 @@ public abstract class EntityPlayer extends EntityLiving {
 		this.field_9351_C = "humanoid";
 		this.field_9353_B = 180.0F;
 		this.fireResistance = 20;
-		this.texture = new TextureLocation("/mob/char.png");
+		this.texture = player;
 	}
 
 	public void onUpdate() {

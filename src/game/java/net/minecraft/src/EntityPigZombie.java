@@ -8,10 +8,12 @@ public class EntityPigZombie extends EntityZombie {
 	private int angerLevel = 0;
 	private int randomSoundDelay = 0;
 	private static final ItemStack defaultHeldItem = new ItemStack(Item.swordGold, 1);
+	
+	private TextureLocation pigZombie = new TextureLocation("/mob/pigzombie.png");
 
 	public EntityPigZombie(World var1) {
 		super(var1);
-		this.texture = new TextureLocation("/mob/pigzombie.png");
+		this.texture = pigZombie;
 		this.moveSpeed = 0.5F;
 		this.attackStrength = 5;
 		this.isImmuneToFire = true;

@@ -4,10 +4,12 @@ import net.peyton.eagler.minecraft.TextureLocation;
 
 public class EntityPig extends EntityAnimals {
 	public boolean rideable = false;
+	
+	private TextureLocation pig = new TextureLocation("/mob/pig.png");
 
 	public EntityPig(World var1) {
 		super(var1);
-		this.texture = new TextureLocation("/mob/pig.png");
+		this.texture = pig;
 		this.setSize(0.9F, 0.9F);
 		this.rideable = false;
 	}

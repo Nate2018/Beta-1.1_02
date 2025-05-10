@@ -8,10 +8,12 @@ public class EntityCreeper extends EntityMobs {
 	int fuseTime = 30;
 	int creeperState = -1;
 	int field_12241_e = -1;
+	
+	private TextureLocation creeper = new TextureLocation("/mob/creeper.png");
 
 	public EntityCreeper(World var1) {
 		super(var1);
-		this.texture = new TextureLocation("/mob/creeper.png");
+		this.texture = creeper;
 	}
 
 	public void writeEntityToNBT(NBTTagCompound var1) {

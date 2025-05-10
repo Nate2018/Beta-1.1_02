@@ -10,10 +10,12 @@ public class EntityChicken extends EntityAnimals {
 	public float field_756_e;
 	public float field_755_h = 1.0F;
 	public int timeUntilNextEgg;
+	
+	private TextureLocation chicken = new TextureLocation("/mob/chicken.png");
 
 	public EntityChicken(World var1) {
 		super(var1);
-		this.texture = new TextureLocation("/mob/chicken.png");
+		this.texture = chicken;
 		this.setSize(0.3F, 0.4F);
 		this.health = 4;
 		this.timeUntilNextEgg = this.rand.nextInt(6000) + 6000;

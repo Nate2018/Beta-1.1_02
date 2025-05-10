@@ -7,10 +7,12 @@ public class EntitySlime extends EntityLiving implements IMobs {
 	public float field_767_b;
 	private int field_769_d = 0;
 	public int field_770_c = 1;
+	
+	private TextureLocation slime = new TextureLocation("/mob/slime.png");
 
 	public EntitySlime(World var1) {
 		super(var1);
-		this.texture = new TextureLocation("/mob/slime.png");
+		this.texture = slime;
 		this.field_770_c = 1 << this.rand.nextInt(3);
 		this.yOffset = 0.0F;
 		this.field_769_d = this.rand.nextInt(20) + 10;

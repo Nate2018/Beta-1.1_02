@@ -3,9 +3,12 @@ package net.minecraft.src;
 import net.peyton.eagler.minecraft.TextureLocation;
 
 public class EntitySpider extends EntityMobs {
+	
+	private TextureLocation spider = new TextureLocation("/mob/spider.png");
+	
 	public EntitySpider(World var1) {
 		super(var1);
-		this.texture = new TextureLocation("/mob/spider.png");
+		this.texture = spider;
 		this.setSize(1.4F, 0.9F);
 		this.moveSpeed = 0.8F;
 	}

@@ -11,10 +11,13 @@ public class EntityGhast extends EntityFlying implements IMobs {
 	private int field_4122_h = 0;
 	public int field_4125_e = 0;
 	public int field_4124_f = 0;
+	
+	private TextureLocation ghast = new TextureLocation("/mob/ghast.png");
+	private TextureLocation ghastFire = new TextureLocation("/mob/ghast_fire.png");
 
 	public EntityGhast(World var1) {
 		super(var1);
-		this.texture = new TextureLocation("/mob/ghast.png");
+		this.texture = ghast;
 		this.setSize(4.0F, 4.0F);
 		this.isImmuneToFire = true;
 	}
@@ -92,7 +95,7 @@ public class EntityGhast extends EntityFlying implements IMobs {
 			}
 		}
 
-		this.texture = this.field_4124_f > 10 ? new TextureLocation("/mob/ghast_fire.png") : new TextureLocation("/mob/ghast.png");
+		this.texture = this.field_4124_f > 10 ? ghastFire : ghast;
 	}
 
 	private boolean func_4050_a(double var1, double var3, double var5, double var7) {
