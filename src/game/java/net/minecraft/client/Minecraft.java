@@ -103,7 +103,7 @@ public class Minecraft {
 	public boolean field_6289_L = false;
 	private int field_6302_aa = 0;
 	public boolean isFancyGraphics = false;
-	long systemTime = System.currentTimeMillis();
+	long systemTime = EagRuntime.steadyTimeMillis();
 	private int field_6300_ab = 0;
 	
 	private static Minecraft minecraft;
@@ -340,7 +340,7 @@ public class Minecraft {
 
 		try {
 			try {
-				long var1 = System.currentTimeMillis();
+				long var1 = EagRuntime.steadyTimeMillis();
 				int var3 = 0;
 
 				while(this.running) {
@@ -358,7 +358,7 @@ public class Minecraft {
 						this.timer.updateTimer();
 					}
 
-					long var19 = System.nanoTime();
+					long var19 = EagRuntime.nanoTime();
 
 					for(int var6 = 0; var6 < this.timer.elapsedTicks; ++var6) {
 						++this.ticksRan;
@@ -372,7 +372,7 @@ public class Minecraft {
 						}
 					}
 
-					long var20 = System.nanoTime() - var19;
+					long var20 = EagRuntime.nanoTime() - var19;
 					this.checkGLError("Pre render");
 					this.sndManager.func_338_a(this.thePlayer, this.timer.renderPartialTicks);
 					GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -400,7 +400,7 @@ public class Minecraft {
 					if(Keyboard.isKeyDown(Keyboard.KEY_F3)) {
 						this.displayDebugInfo(var20);
 					} else {
-						this.prevFrameTime = System.nanoTime();
+						this.prevFrameTime = EagRuntime.nanoTime();
 					}
 
 					if(Keyboard.isKeyDown(Keyboard.KEY_F7)) {
@@ -411,7 +411,7 @@ public class Minecraft {
 					this.checkGLError("Post render");
 					++var3;
 
-					for(this.isWorldLoaded = !this.isMultiplayerWorld() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame(); System.currentTimeMillis() >= var1 + 1000L; var3 = 0) {
+					for(this.isWorldLoaded = !this.isMultiplayerWorld() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame(); EagRuntime.steadyTimeMillis() >= var1 + 1000L; var3 = 0) {
 						debugFPS = var3;
 						this.debug = var3 + " fps, " + WorldRenderer.chunksUpdated + " chunk updates";
 						WorldRenderer.chunksUpdated = 0;
@@ -448,10 +448,10 @@ public class Minecraft {
 	private void displayDebugInfo(long var1) {
 		long var3 = 16666666L;
 		if(this.prevFrameTime == -1L) {
-			this.prevFrameTime = System.nanoTime();
+			this.prevFrameTime = EagRuntime.nanoTime();
 		}
 
-		long var5 = System.nanoTime();
+		long var5 = EagRuntime.nanoTime();
 		tickTimes[numRecordedFrameTimes & frameTimes.length - 1] = var1;
 		frameTimes[numRecordedFrameTimes++ & frameTimes.length - 1] = var5 - this.prevFrameTime;
 		this.prevFrameTime = var5;
@@ -772,7 +772,7 @@ public class Minecraft {
 								}
 							}
 
-							var1 = System.currentTimeMillis() - this.systemTime;
+							var1 = EagRuntime.steadyTimeMillis() - this.systemTime;
 						} while(var1 > 200L);
 
 						int var3 = Mouse.getEventDWheel();
@@ -845,7 +845,7 @@ public class Minecraft {
 			}
 		}
 
-		this.systemTime = System.currentTimeMillis();
+		this.systemTime = EagRuntime.steadyTimeMillis();
 	}
 
 	private void forceReload() {

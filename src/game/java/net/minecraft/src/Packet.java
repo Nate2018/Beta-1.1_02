@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.peyton.eagler.minecraft.PacketConstructor;
 
 public abstract class Packet {
 	private static Map<Integer, PacketConstructor> packetIdToClassMap = new HashMap();
 	private static Map packetClassToIdMap = new HashMap();
-	public final long field_20018_j = System.currentTimeMillis();
+	public final long field_20018_j = EagRuntime.steadyTimeMillis();
 	public boolean isChunkDataPacket = false;
 
 	static void addIdClassMapping(int var0, Class var1, PacketConstructor var2) {

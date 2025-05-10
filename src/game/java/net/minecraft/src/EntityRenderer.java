@@ -1,6 +1,8 @@
 package net.minecraft.src;
 
 import java.util.List;
+
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.Random;
 
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
@@ -21,7 +23,7 @@ public class EntityRenderer {
 	private float farPlaneDistance = 0.0F;
 	public ItemRenderer itemRenderer;
 	private Entity field_1385_k = null;
-	private long field_1384_l = System.currentTimeMillis();
+	private long field_1384_l = EagRuntime.steadyTimeMillis();
 	private Random random = new Random();
 	volatile int field_1394_b = 0;
 	volatile int field_1393_c = 0;
@@ -299,11 +301,11 @@ public class EntityRenderer {
 		}
 		
 		if(!Display.isActive()) {
-			if(System.currentTimeMillis() - this.field_1384_l > 500L) {
+			if(EagRuntime.steadyTimeMillis() - this.field_1384_l > 500L) {
 				this.mc.func_6252_g();
 			}
 		} else {
-			this.field_1384_l = System.currentTimeMillis();
+			this.field_1384_l = EagRuntime.steadyTimeMillis();
 		}
 
 		if(this.mc.field_6289_L) {

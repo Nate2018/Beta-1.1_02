@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import net.lax1dude.eaglercraft.EagRuntime;
+
 public class Timer {
 	public float ticksPerSecond;
 	private double lastHRTime;
@@ -13,14 +15,14 @@ public class Timer {
 
 	public Timer(float var1) {
 		this.ticksPerSecond = var1;
-		this.lastSyncSysClock = System.currentTimeMillis();
-		this.lastSyncHRClock = System.nanoTime() / 1000000L;
+		this.lastSyncSysClock = EagRuntime.steadyTimeMillis();
+		this.lastSyncHRClock = EagRuntime.nanoTime() / 1000000L;
 	}
 
 	public void updateTimer() {
-		long var1 = System.currentTimeMillis();
+		long var1 = EagRuntime.steadyTimeMillis();
 		long var3 = var1 - this.lastSyncSysClock;
-		long var5 = System.nanoTime() / 1000000L;
+		long var5 = EagRuntime.nanoTime() / 1000000L;
 		double var9;
 		if(var3 > 1000L) {
 			long var7 = var5 - this.lastSyncHRClock;

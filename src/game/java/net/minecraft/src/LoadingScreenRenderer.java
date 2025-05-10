@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.minecraft.client.Minecraft;
 import net.peyton.eagler.minecraft.Tessellator;
 import net.peyton.eagler.minecraft.TextureLocation;
@@ -10,7 +11,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 	private String field_1004_a = "";
 	private Minecraft mc;
 	private String field_1007_c = "";
-	private long field_1006_d = System.currentTimeMillis();
+	private long field_1006_d = EagRuntime.steadyTimeMillis();
 	private boolean field_1005_e = false;
 
 	public LoadingScreenRenderer(Minecraft var1) {
@@ -67,7 +68,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 				throw new MinecraftError();
 			}
 		} else {
-			long var2 = System.currentTimeMillis();
+			long var2 = EagRuntime.steadyTimeMillis();
 			if(var2 - this.field_1006_d >= 20L) {
 				this.field_1006_d = var2;
 				final ScaledResolution var4 = this.mc.scaledResolution;

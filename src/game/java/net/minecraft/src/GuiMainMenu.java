@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.Random;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -127,7 +129,7 @@ public class GuiMainMenu extends GuiScreen {
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float)(this.width / 2 + 90), 70.0F, 0.0F);
 		GL11.glRotatef(-20.0F, 0.0F, 0.0F, 1.0F);
-		float var5 = 1.8F - MathHelper.abs(MathHelper.sin((float)(System.currentTimeMillis() % 1000L) / 1000.0F * (float)Math.PI * 2.0F) * 0.1F);
+		float var5 = 1.8F - MathHelper.abs(MathHelper.sin((float)(EagRuntime.steadyTimeMillis() % 1000L) / 1000.0F * (float)Math.PI * 2.0F) * 0.1F);
 		var5 = var5 * 100.0F / (float)(this.fontRenderer.getStringWidth(this.splashText) + 32);
 		GL11.glScalef(var5, var5, var5);
 		this.drawCenteredString(this.fontRenderer, this.splashText, 0, -8, 16776960);

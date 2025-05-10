@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.EagUtils;
 import net.lax1dude.eaglercraft.Random;
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
@@ -31,7 +32,6 @@ public class World implements IBlockAccess {
 	protected int field_9437_g;
 	protected int field_9436_h;
 	public boolean field_1043_h;
-	private long field_1054_E;
 	protected int autosavePeriod;
 	public int difficultySetting;
 	public Random rand;
@@ -126,7 +126,6 @@ public class World implements IBlockAccess {
 		this.field_9437_g = (new Random()).nextInt();
 		this.field_9436_h = 1013904223;
 		this.field_1043_h = false;
-		this.field_1054_E = System.currentTimeMillis();
 		this.autosavePeriod = 40;
 		this.rand = new Random();
 		this.field_1033_r = false;
@@ -162,7 +161,6 @@ public class World implements IBlockAccess {
 		this.field_9437_g = (new Random()).nextInt();
 		this.field_9436_h = 1013904223;
 		this.field_1043_h = false;
-		this.field_1054_E = System.currentTimeMillis();
 		this.autosavePeriod = 40;
 		this.rand = new Random();
 		this.field_1033_r = false;
@@ -175,7 +173,6 @@ public class World implements IBlockAccess {
 		this.field_9426_L = this.rand.nextInt(12000);
 		this.field_1012_M = new ArrayList();
 		this.multiplayerWorld = false;
-		this.field_1054_E = var1.field_1054_E;
 		this.field_9433_s = var1.field_9433_s;
 		this.field_9432_t = var1.field_9432_t;
 		this.field_9431_w = var1.field_9431_w;
@@ -210,7 +207,6 @@ public class World implements IBlockAccess {
 		this.field_9437_g = (new Random()).nextInt();
 		this.field_9436_h = 1013904223;
 		this.field_1043_h = false;
-		this.field_1054_E = System.currentTimeMillis();
 		this.autosavePeriod = 40;
 		this.rand = new Random();
 		this.field_1033_r = false;

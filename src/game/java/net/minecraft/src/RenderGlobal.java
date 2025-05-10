@@ -682,7 +682,7 @@ public class RenderGlobal implements IWorldAccess {
 	private boolean isMoving(EntityLiving entityliving) {
 		boolean moving = this.isMovingNow(entityliving);
 		if(moving) {
-			this.lastMovedTime = System.currentTimeMillis();
+			this.lastMovedTime = EagRuntime.steadyTimeMillis();
 			return true;
 		} else {
 			return EagRuntime.steadyTimeMillis() - this.lastMovedTime < 2000L;
@@ -703,7 +703,7 @@ public class RenderGlobal implements IWorldAccess {
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, (MathHelper.sin((float)System.currentTimeMillis() / 100.0F) * 0.2F + 0.4F) * 0.5F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, (MathHelper.sin((float)EagRuntime.steadyTimeMillis() / 100.0F) * 0.2F + 0.4F) * 0.5F);
 		int var8;
 		if(var3 == 0) {
 			if(this.field_1450_i > 0.0F) {
@@ -737,8 +737,8 @@ public class RenderGlobal implements IWorldAccess {
 			}
 		} else if(var4 != null) {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			float var16 = MathHelper.sin((float)System.currentTimeMillis() / 100.0F) * 0.2F + 0.8F;
-			GL11.glColor4f(var16, var16, var16, MathHelper.sin((float)System.currentTimeMillis() / 200.0F) * 0.2F + 0.5F);
+			float var16 = MathHelper.sin((float)EagRuntime.steadyTimeMillis() / 100.0F) * 0.2F + 0.8F;
+			GL11.glColor4f(var16, var16, var16, MathHelper.sin((float)EagRuntime.steadyTimeMillis() / 200.0F) * 0.2F + 0.5F);
 			TextureLocation.terrain.bindTexture();
 		}
 
