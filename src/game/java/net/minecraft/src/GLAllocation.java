@@ -12,19 +12,8 @@ import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 public class GLAllocation {
 	private static List<Integer> textureNames = new ArrayList<Integer>();
 
-	public static synchronized int generateDisplayLists() {
-		return GL11.glGenLists();
-	}
-	
 	public static synchronized int generateDisplayLists(int count) {
-		if(count <= 0) {
-			return 0;
-		}
-		int glBaseList = GL11.glGenLists();
-		for(int i = 1; i < count; ++i) {
-			GL11.glGenLists();
-		}
-		return glBaseList;
+		return GL11.glGenLists(count);
 	}
 	
 	public static synchronized void deleteDisplayLists(int list) {

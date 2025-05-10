@@ -174,10 +174,10 @@ public class EaglercraftGPU extends GlStateManager {
 
 	public static void glEndList() {
 		DisplayList dp = currentList;
-		if (dp == null) {
+		if(dp == null) {
 			throw new IllegalStateException("No list is currently being compiled!");
 		}
-
+		
 		if(dp.attribs == -1) {
 			if(dp.vertexArray != null) {
 				destroyGLVertexArray(dp.vertexArray);
@@ -190,21 +190,21 @@ public class EaglercraftGPU extends GlStateManager {
 			currentList = null;
 			return;
 		}
-
-		if (dp.vertexArray == null) {
+		
+		if(dp.vertexArray == null) {
 			dp.vertexArray = createGLVertexArray();
 			dp.bindQuad16 = false;
 			dp.bindQuad32 = false;
 		}
-		if (dp.vertexBuffer == null) {
+		if(dp.vertexBuffer == null) {
 			dp.vertexBuffer = _wglGenBuffers();
 		}
-
+		
 		bindVAOGLArrayBufferNow(dp.vertexBuffer);
 		displayListBuffer.flip();
 		_wglBufferData(GL_ARRAY_BUFFER, displayListBuffer, GL_STATIC_DRAW);
 		displayListBuffer.clear();
-
+		
 		FixedFunctionPipeline.setupDisplayList(dp);
 		currentList = null;
 	}
@@ -423,9 +423,13 @@ public class EaglercraftGPU extends GlStateManager {
 		}
 		valueBuffer.position(pos);
 	}
-
-	public static int glGenLists() {
-		return mapDisplayListsGL.register(new DisplayList());
+	
+	public static int glGenLists(int count) {
+		int glBaseList = mapDisplayListsGL.allocatedObjects + 1;
+		for (int i = 0; i < count; i++) {
+			mapDisplayListsGL.register(new DisplayList());
+		}
+		return glBaseList;
 	}
 
 	public static void glDeleteLists(int id) {
