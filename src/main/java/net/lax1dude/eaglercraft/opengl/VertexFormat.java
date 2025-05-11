@@ -84,6 +84,8 @@ public class VertexFormat {
 	public final int attribStride;
 
 	public final int eaglercraftAttribBits;
+	
+	static final VertexFormat[] stateCache = new VertexFormat[32];
 
 	public VertexFormat(boolean texture, boolean color, boolean normal, boolean lightmap) {
 
@@ -178,7 +180,27 @@ public class VertexFormat {
 		attribNormalStride = normal ? bytes : -1;
 		attribLightmapStride = lightmap ? bytes : -1;
 		eaglercraftAttribBits = bitfield;
+		stateCache[bitfield] = this;
 
 	}
-
+	
+	private static int bitfield;
+	public static VertexFormat createVertexFormat(boolean texture, boolean color, boolean normal) {
+		bitfield = 0;
+		if(color) {
+			bitfield |= EaglercraftGPU.ATTRIB_COLOR;
+		}
+		if(texture) {
+			bitfield |= EaglercraftGPU.ATTRIB_TEXTURE;
+		}
+		if(normal) {
+			bitfield |= EaglercraftGPU.ATTRIB_NORMAL;
+		}
+		
+		VertexFormat format = stateCache[bitfield];
+		if(format != null) {
+			return format;
+		}
+		return new VertexFormat(texture, color, normal, false);
+	}
 }

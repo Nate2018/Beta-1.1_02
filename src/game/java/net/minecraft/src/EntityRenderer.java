@@ -292,7 +292,7 @@ public class EntityRenderer {
 	}
 
 	//Learned my lesson this time :D
-	private final VertexFormat format = new VertexFormat(true, false, false, false); //Don't continuously create temporary objects
+	private final VertexFormat format = VertexFormat.createVertexFormat(true, false, false);
 	public void func_4136_b(float var1) {
 		World world = this.mc.theWorld;
 		

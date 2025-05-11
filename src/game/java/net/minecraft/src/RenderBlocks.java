@@ -350,13 +350,12 @@ public class RenderBlocks {
 				if(!this.field_35942_c[this.blockAccess.getBlockId(j1, k1, l1)]) {
 					short c = 16384;
 					tessellator.setColorOpaque_I(c);
-					tessellator.func_35835_b(this.blockAccess.func_35451_b(j1, k1, l1, 2));
 					int k2 = (i2 & 15) << 4;
 					int l2 = i2 & 240;
-					double d = ((double)k2 + 0.0D) / 256.0D;
-					double d1 = ((double)k2 + 15.99D) / 256.0D;
-					double d2 = (double)((float)l2 / 256.0F);
-					double d3 = (double)(((float)l2 + 15.99F) / 256.0F);
+					double d = (k2 + 0.0D) / 256.0D;
+					double d1 = (k2 + 15.99D) / 256.0D;
+					double d2 = (l2 / 256.0D);
+					double d3 = (l2 + 15.99D) / 256.0D;
 					double d4 = d;
 					double d5 = d1;
 					double d6 = d1;
@@ -396,39 +395,39 @@ public class RenderBlocks {
 						}
 					}
 
-					double d12 = (double)0.003125F;
+					double d12 = 0.003125D;
 					double d13 = 0.0D - d12;
 					double d14 = 1.0D + d12;
 					if(i1 == 0) {
-						tessellator.addVertexWithUV((double)j + d13, (double)(k + 1) + d12, (double)l + d13, d5, d9);
-						tessellator.addVertexWithUV((double)j + d13, (double)(k + 1) + d12, (double)l + d14, d6, d10);
-						tessellator.addVertexWithUV((double)j + d14, (double)(k + 1) + d12, (double)l + d14, d7, d11);
-						tessellator.addVertexWithUV((double)j + d14, (double)(k + 1) + d12, (double)l + d13, d4, d8);
+						tessellator.addVertexWithUV(j + d13, (k + 1) + d12, l + d13, d5, d9);
+						tessellator.addVertexWithUV(j + d13, (k + 1) + d12, l + d14, d6, d10);
+						tessellator.addVertexWithUV(j + d14, (k + 1) + d12, l + d14, d7, d11);
+						tessellator.addVertexWithUV(j + d14, (k + 1) + d12, l + d13, d4, d8);
 					} else if(i1 == 1) {
-						tessellator.addVertexWithUV((double)j + d13, (double)(k + 0) - d12, (double)l + d14, d6, d10);
-						tessellator.addVertexWithUV((double)j + d13, (double)(k + 0) - d12, (double)l + d13, d5, d9);
-						tessellator.addVertexWithUV((double)j + d14, (double)(k + 0) - d12, (double)l + d13, d4, d8);
-						tessellator.addVertexWithUV((double)j + d14, (double)(k + 0) - d12, (double)l + d14, d7, d11);
+						tessellator.addVertexWithUV(j + d13, (k + 0) - d12, l + d14, d6, d10);
+						tessellator.addVertexWithUV(j + d13, (k + 0) - d12, l + d13, d5, d9);
+						tessellator.addVertexWithUV(j + d14, (k + 0) - d12, l + d13, d4, d8);
+						tessellator.addVertexWithUV(j + d14, (k + 0) - d12, l + d14, d7, d11);
 					} else if(i1 == 2) {
-						tessellator.addVertexWithUV((double)(j + 1) + d12, (double)k + d13, (double)l + d14, d6, d10);
-						tessellator.addVertexWithUV((double)(j + 1) + d12, (double)k + d13, (double)l + d13, d5, d9);
-						tessellator.addVertexWithUV((double)(j + 1) + d12, (double)k + d14, (double)l + d13, d4, d8);
-						tessellator.addVertexWithUV((double)(j + 1) + d12, (double)k + d14, (double)l + d14, d7, d11);
+						tessellator.addVertexWithUV((j + 1) + d12, k + d13, l + d14, d6, d10);
+						tessellator.addVertexWithUV((j + 1) + d12, k + d13, l + d13, d5, d9);
+						tessellator.addVertexWithUV((j + 1) + d12, k + d14, l + d13, d4, d8);
+						tessellator.addVertexWithUV((j + 1) + d12, k + d14, l + d14, d7, d11);
 					} else if(i1 == 3) {
-						tessellator.addVertexWithUV((double)(j + 0) - d12, (double)k + d13, (double)l + d13, d5, d9);
-						tessellator.addVertexWithUV((double)(j + 0) - d12, (double)k + d13, (double)l + d14, d6, d10);
-						tessellator.addVertexWithUV((double)(j + 0) - d12, (double)k + d14, (double)l + d14, d7, d11);
-						tessellator.addVertexWithUV((double)(j + 0) - d12, (double)k + d14, (double)l + d13, d4, d8);
+						tessellator.addVertexWithUV((j + 0) - d12, k + d13, l + d13, d5, d9);
+						tessellator.addVertexWithUV((j + 0) - d12, k + d13, l + d14, d6, d10);
+						tessellator.addVertexWithUV((j + 0) - d12, k + d14, l + d14, d7, d11);
+						tessellator.addVertexWithUV((j + 0) - d12, k + d14, l + d13, d4, d8);
 					} else if(i1 == 4) {
-						tessellator.addVertexWithUV((double)j + d13, (double)k + d14, (double)(l + 1) + d12, d6, d10);
-						tessellator.addVertexWithUV((double)j + d13, (double)k + d13, (double)(l + 1) + d12, d5, d9);
-						tessellator.addVertexWithUV((double)j + d14, (double)k + d13, (double)(l + 1) + d12, d4, d8);
-						tessellator.addVertexWithUV((double)j + d14, (double)k + d14, (double)(l + 1) + d12, d7, d11);
+						tessellator.addVertexWithUV(j + d13, k + d14, (l + 1) + d12, d6, d10);
+						tessellator.addVertexWithUV(j + d13, k + d13, (l + 1) + d12, d5, d9);
+						tessellator.addVertexWithUV(j + d14, k + d13, (l + 1) + d12, d4, d8);
+						tessellator.addVertexWithUV(j + d14, k + d14, (l + 1) + d12, d7, d11);
 					} else if(i1 == 5) {
-						tessellator.addVertexWithUV((double)j + d14, (double)k + d13, (double)(l + 0) - d12, d4, d8);
-						tessellator.addVertexWithUV((double)j + d13, (double)k + d13, (double)(l + 0) - d12, d5, d9);
-						tessellator.addVertexWithUV((double)j + d13, (double)k + d14, (double)(l + 0) - d12, d6, d10);
-						tessellator.addVertexWithUV((double)j + d14, (double)k + d14, (double)(l + 0) - d12, d7, d11);
+						tessellator.addVertexWithUV(j + d14, k + d13, (l + 0) - d12, d4, d8);
+						tessellator.addVertexWithUV(j + d13, k + d13, (l + 0) - d12, d5, d9);
+						tessellator.addVertexWithUV(j + d13, k + d14, (l + 0) - d12, d6, d10);
+						tessellator.addVertexWithUV(j + d14, k + d14, (l + 0) - d12, d7, d11);
 					}
 				}
 			}

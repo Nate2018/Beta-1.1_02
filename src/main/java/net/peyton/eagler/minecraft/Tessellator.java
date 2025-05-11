@@ -6,12 +6,8 @@ import net.lax1dude.eaglercraft.opengl.WorldVertexBufferUploader;
 public class Tessellator {
 	
 	private net.lax1dude.eaglercraft.opengl.WorldRenderer worldRenderer;
-	public static final Tessellator instance = new Tessellator(2097152);
+	public static final Tessellator instance = new Tessellator(524288);
 	private VertexFormat format;
-	
-	private boolean hasTexture = false;
-	private boolean hasColor = false;
-	private boolean hasNormal = false;
 	
 	private double textureU = 0;
 	private double textureV = 0;
@@ -30,8 +26,6 @@ public class Tessellator {
 	private double zOffset;
 	
 	private boolean renderingChunk;
-	private boolean field_35838_p;
-	private int field_35837_l;
 
 	private Tessellator(int var1) {
 		this.renderingChunk = false;
@@ -42,10 +36,6 @@ public class Tessellator {
 		this.worldRenderer.finishDrawing();
 		WorldVertexBufferUploader.func_181679_a(this.worldRenderer);
 		format = null;
-		hasTexture = false;
-		hasColor = false;
-		hasNormal = false;
-		field_35838_p = false;
 	}
 
 	public void startDrawingQuads() {
@@ -58,25 +48,14 @@ public class Tessellator {
 
 	public void setTextureUV(double var1, double var3) {
 		if(this.format == null) {
-			this.format = new VertexFormat(true, false, false, false);
+			this.format = VertexFormat.createVertexFormat(true, false, false);
 		} else {
-			this.format = new VertexFormat(true, format.attribColorEnabled, format.attribNormalEnabled, format.attribLightmapEnabled);
+			this.format = VertexFormat.createVertexFormat(true, format.attribColorEnabled, format.attribNormalEnabled);
 		}
-		hasTexture = true;
 		textureU = var1;
 		textureV = var3;
 	}
 	
-	public void func_35835_b(int i) {
-		if(this.format == null) {
-			this.format = new VertexFormat(false, false, false, true);
-		} else if(!this.format.attribLightmapEnabled) {
-			this.format = new VertexFormat(format.attribTextureEnabled, format.attribColorEnabled, format.attribNormalEnabled, format.attribLightmapEnabled);
-		}
-		this.field_35838_p = true;
-		this.field_35837_l = i;
-	}
-
 	public void setColorOpaque_F(float var1, float var2, float var3) {
 		this.setColorOpaque((int)(var1 * 255.0F), (int)(var2 * 255.0F), (int)(var3 * 255.0F));
 	}
@@ -92,11 +71,10 @@ public class Tessellator {
 	public void setColorRGBA(int var1, int var2, int var3, int var4) {
 		if(!this.worldRenderer.needsUpdate) {
 			if(this.format == null) {
-				this.format = new VertexFormat(false, true, false, false);
+				this.format = VertexFormat.createVertexFormat(false, true, false);
 			} else {
-				this.format = new VertexFormat(format.attribTextureEnabled, true, format.attribNormalEnabled, format.attribLightmapEnabled);
+				this.format = VertexFormat.createVertexFormat(format.attribTextureEnabled, true, format.attribNormalEnabled);
 			}
-			this.hasColor = true;
 			this.colorR = var1;
 			this.colorG = var2;
 			this.colorB = var3;
@@ -110,25 +88,21 @@ public class Tessellator {
 	}
 
 	public void addVertex(double var1, double var3, double var5) {
-		worldRenderer.setVertexFormat(format == null ? new VertexFormat(false, false, false, false) : format);
+		worldRenderer.setVertexFormat(format == null ? (format = VertexFormat.createVertexFormat(false, false, false)) : format);
 		
-		worldRenderer.pos((float)(var1 + this.xOffset), (float)(var3 + this.yOffset), (float)(var5 + this.zOffset));
+		worldRenderer.pos(var1 + this.xOffset, var3 + this.yOffset, var5 + this.zOffset);
 		
-		if(this.hasTexture) {
+		if(format.attribTextureEnabled) {
 			worldRenderer.tex(this.textureU, this.textureV);
 		}
 		
-		if(this.hasColor) {
+		if(format.attribColorEnabled ) {
 			worldRenderer.setColorRGBA(colorR, colorG, colorB, colorA);
 		}
 		
-		if(this.hasNormal) {
+		if(format.attribNormalEnabled) {
 			worldRenderer.normal(this.normalX, this.normalY, this.normalZ);
 		}
-		
-//		if(this.field_35838_p) {
-//			worldRenderer.lightmap(field_35837_l & 65535, (field_35837_l >> 16) & 65535);
-//		}
 		
 		worldRenderer.endVertex();
 	}
@@ -153,11 +127,10 @@ public class Tessellator {
 
 	public void setNormal(float var1, float var2, float var3) {
 		if(this.format == null) {
-			this.format = new VertexFormat(false, false, true, false);
+			this.format = VertexFormat.createVertexFormat(false, false, true);
 		} else {
-			this.format = new VertexFormat(format.attribTextureEnabled, format.attribColorEnabled, true, format.attribLightmapEnabled);
+			this.format = VertexFormat.createVertexFormat(format.attribTextureEnabled, format.attribColorEnabled, true);
 		}
-		hasNormal = true;
 		normalX = var1;
 		normalY = var2;
 		normalZ = var3;
