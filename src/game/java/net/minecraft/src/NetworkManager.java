@@ -4,12 +4,11 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import net.lax1dude.eaglercraft.EaglerOutputStream;
+import net.lax1dude.eaglercraft.internal.EnumEaglerConnectionState;
 import net.lax1dude.eaglercraft.internal.IWebSocketClient;
 import net.lax1dude.eaglercraft.internal.IWebSocketFrame;
 
@@ -39,12 +38,16 @@ public class NetworkManager {
 
 	public void addToSendQueue(Packet var1) {
 		if(!this.isServerTerminating) {
-			sendBuffer.reset();
-			try (DataOutputStream dos = new DataOutputStream(sendBuffer)) {
-				Packet.writePacket(var1, dos);
-				webSocket.send(sendBuffer.toByteArray());
-			} catch(Exception e) {
-				this.onNetworkError(e);
+			if(isOpen()) {
+				sendBuffer.reset();
+				try (DataOutputStream dos = new DataOutputStream(sendBuffer)) {
+					Packet.writePacket(var1, dos);
+					webSocket.send(sendBuffer.toByteArray());
+				} catch(Exception e) {
+					this.onNetworkError(e);
+				}
+			} else {
+				this.networkShutdown("Connection closed");
 			}
 		}
 	}
@@ -60,8 +63,14 @@ public class NetworkManager {
 			this.terminationReason = var1;
 			this.field_20101_t = var2;
 			this.isRunning = false;
-			webSocket.close();
-			webSocket = null;
+		}
+		
+		if(isOpen()) {
+			try {
+				this.webSocket.close();
+			}catch(Exception e) {
+			}
+			this.webSocket = null;
 		}
 	}
 	
@@ -110,12 +119,9 @@ public class NetworkManager {
 			this.netHandler.handleErrorMessage(this.terminationReason, this.field_20101_t);
 		}
 	}
-
-	static boolean isRunning(NetworkManager var0) {
-		return var0.isRunning;
+	
+	private boolean isOpen() {
+		return this.webSocket != null && this.webSocket.getState() == EnumEaglerConnectionState.CONNECTED && this.webSocket.isOpen();
 	}
 
-	static boolean isServerTerminating(NetworkManager var0) {
-		return var0.isServerTerminating;
-	}
 }
