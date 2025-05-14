@@ -1,6 +1,7 @@
 package net.minecraft.client;
 
 import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.EagUtils;
 import net.lax1dude.eaglercraft.beta.TextureNewClockFX;
 import net.lax1dude.eaglercraft.beta.TextureNewCompassFX;
 import net.lax1dude.eaglercraft.internal.EnumPlatformType;
@@ -100,7 +101,7 @@ public class Minecraft {
 	public String debug = "";
 	boolean isTakingScreenshot = false;
 	long prevFrameTime = -1L;
-	public boolean field_6289_L = false;
+	public boolean inGameHasFocus = false;
 	private int field_6302_aa = 0;
 	public boolean isFancyGraphics = false;
 	long systemTime = EagRuntime.steadyTimeMillis();
@@ -114,6 +115,7 @@ public class Minecraft {
 	public ScaledResolution scaledResolution = null;
 	
 	private boolean checkErrors;
+	private int dontPauseTimer = 0;
 
 	public Minecraft() {
 		this.displayWidth = Display.getWidth();
@@ -525,23 +527,21 @@ public class Minecraft {
 	}
 
 	public void func_6259_e() {
-		if(Display.isActive()) {
-			if(!this.field_6289_L) {
-				this.field_6289_L = true;
-				this.mouseHelper.func_774_a();
-				this.displayGuiScreen((GuiScreen)null);
-				this.field_6302_aa = this.ticksRan + 10000;
-			}
+		if(!this.inGameHasFocus && Display.isActive()) {
+			this.inGameHasFocus = true;
+			this.mouseHelper.func_774_a();
+			this.displayGuiScreen((GuiScreen)null);
+			this.field_6302_aa = this.ticksRan + 10000;
 		}
 	}
 
 	public void func_6273_f() {
-		if(this.field_6289_L) {
+		if(this.inGameHasFocus) {
 			if(this.thePlayer != null) {
 				this.thePlayer.resetPlayerKeyState();
 			}
 
-			this.field_6289_L = false;
+			this.inGameHasFocus = false;
 			this.mouseHelper.func_773_b();
 		}
 	}
@@ -680,13 +680,26 @@ public class Minecraft {
 			this.renderEngine.updateTerrainTextures();
 			GL11.glViewport(0, 0, displayWidth, displayHeight);
 		}
-
-		if(this.currentScreen == null && this.thePlayer != null && this.thePlayer.health <= 0) {
-			this.displayGuiScreen((GuiScreen)null);
+		
+		if(this.currentScreen == null && this.thePlayer != null) {
+			if(this.thePlayer.health <= 0) {
+				this.displayGuiScreen((GuiScreen)null);
+			}
+			if (this.currentScreen == null && this.dontPauseTimer <= 0) {
+				if(!Mouse.isMouseGrabbed()) {
+					this.func_6273_f();
+					this.func_6252_g();
+				}
+			}
 		}
 
 		if(this.currentScreen != null) {
+			this.dontPauseTimer = 10;
 			this.field_6302_aa = this.ticksRan + 10000;
+		} else {
+			if (this.dontPauseTimer > 0) {
+				--this.dontPauseTimer;
+			}
 		}
 
 		if(this.currentScreen != null) {
@@ -713,18 +726,18 @@ public class Minecraft {
 										do {
 											if(!Keyboard.next()) {
 												if(this.currentScreen == null) {
-													if(Mouse.isButtonDown(0) && (float)(this.ticksRan - this.field_6302_aa) >= this.timer.ticksPerSecond / 4.0F && this.field_6289_L) {
+													if(Mouse.isButtonDown(0) && (float)(this.ticksRan - this.field_6302_aa) >= this.timer.ticksPerSecond / 4.0F && this.inGameHasFocus) {
 														this.clickMouse(0);
 														this.field_6302_aa = this.ticksRan;
 													}
 
-													if(Mouse.isButtonDown(1) && (float)(this.ticksRan - this.field_6302_aa) >= this.timer.ticksPerSecond / 4.0F && this.field_6289_L) {
+													if(Mouse.isButtonDown(1) && (float)(this.ticksRan - this.field_6302_aa) >= this.timer.ticksPerSecond / 4.0F && this.inGameHasFocus) {
 														this.clickMouse(1);
 														this.field_6302_aa = this.ticksRan;
 													}
 												}
 
-												this.func_6254_a(0, this.currentScreen == null && Mouse.isButtonDown(0) && this.field_6289_L);
+												this.func_6254_a(0, this.currentScreen == null && Mouse.isButtonDown(0) && this.inGameHasFocus);
 												break label238;
 											}
 
@@ -781,7 +794,7 @@ public class Minecraft {
 						}
 
 						if(this.currentScreen == null) {
-							if(!this.field_6289_L && Mouse.getEventButtonState()) {
+							if(!this.inGameHasFocus && Mouse.getEventButtonState()) {
 								this.func_6259_e();
 							} else {
 								if(Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {

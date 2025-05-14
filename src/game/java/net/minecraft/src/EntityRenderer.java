@@ -308,7 +308,7 @@ public class EntityRenderer {
 			this.field_1384_l = EagRuntime.steadyTimeMillis();
 		}
 
-		if(this.mc.field_6289_L) {
+		if(this.mc.inGameHasFocus) {
 			this.mc.mouseHelper.mouseXYChange();
 			float var2 = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
 			float var3 = var2 * var2 * var2 * 8.0F;
