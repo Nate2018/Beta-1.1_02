@@ -3,15 +3,18 @@ package net.minecraft.src;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.carrotsearch.hppc.ObjectIntHashMap;
+import com.carrotsearch.hppc.ObjectIntMap;
+
 import net.peyton.eagler.minecraft.EntityConstructor;
 
 public class EntityList {
-	private static Map<String, EntityConstructor> stringToClassMapping = new HashMap();
-	private static Map classToStringMapping = new HashMap();
-	private static Map<Integer, EntityConstructor> IDtoClassMapping = new HashMap();
-	private static Map classToIDMapping = new HashMap();
+	private static Map<String, EntityConstructor<Entity>> stringToClassMapping = new HashMap<String, EntityConstructor<Entity>>();
+	private static Map<Class<? extends Entity>, String> classToStringMapping = new HashMap<Class<? extends Entity>, String>();
+	private static Map<Integer, EntityConstructor<Entity>> IDtoClassMapping = new HashMap<Integer, EntityConstructor<Entity>>();
+	private static final ObjectIntMap<Class<? extends Entity>> classToIDMapping = new ObjectIntHashMap<>();
 
-	private static void addMapping(Class var0, EntityConstructor var3, String var1, int var2) {
+	private static void addMapping(Class<? extends Entity> var0, EntityConstructor<Entity> var3, String var1, int var2) {
 		stringToClassMapping.put(var1, var3);
 		classToStringMapping.put(var0, var1);
 		IDtoClassMapping.put(Integer.valueOf(var2), var3);
@@ -22,7 +25,7 @@ public class EntityList {
 		Entity var2 = null;
 
 		try {
-			EntityConstructor var3 = stringToClassMapping.get(var0);
+			EntityConstructor<Entity> var3 = stringToClassMapping.get(var0);
 			if(var3 != null) {
 				var2 = var3.createEntity(var1);
 			}
@@ -37,7 +40,7 @@ public class EntityList {
 		Entity var2 = null;
 
 		try {
-			EntityConstructor var3 = stringToClassMapping.get(var0.getString("id"));
+			EntityConstructor<Entity> var3 = stringToClassMapping.get(var0.getString("id"));
 			if(var3 != null) {
 				var2 = var3.createEntity(var1);
 			}
@@ -58,7 +61,7 @@ public class EntityList {
 		Entity var2 = null;
 
 		try {
-			EntityConstructor var3 = IDtoClassMapping.get(Integer.valueOf(var0));
+			EntityConstructor<Entity> var3 = IDtoClassMapping.get(Integer.valueOf(var0));
 			if(var3 != null) {
 				var2 = var3.createEntity(var1);
 			}

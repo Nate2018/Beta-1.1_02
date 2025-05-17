@@ -3,10 +3,15 @@ package net.minecraft.src;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import org.lwjgl.opengl.GL11;
+
+import com.carrotsearch.hppc.IntObjectHashMap;
+import com.carrotsearch.hppc.IntObjectMap;
+import com.carrotsearch.hppc.ObjectIntHashMap;
+import com.carrotsearch.hppc.ObjectIntMap;
+import com.carrotsearch.hppc.cursors.IntObjectCursor;
+import com.carrotsearch.hppc.cursors.ObjectIntCursor;
 
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.beta.SpriteSheetTexture;
@@ -17,8 +22,8 @@ import net.peyton.eagler.minecraft.TextureLocation;
 
 public class RenderEngine {
 	public static boolean useMipmaps = false;
-	private HashMap textureMap = new HashMap();
-	private HashMap textureNameToImageMap = new HashMap();
+	private ObjectIntMap<String> textureMap = new ObjectIntHashMap<>();
+	private IntObjectMap<ImageData> textureNameToImageMap = new IntObjectHashMap<>();
 	private IntBuffer singleIntBuffer = GLAllocation.createDirectIntBuffer(1);
 	private ByteBuffer imageData = GLAllocation.createDirectByteBuffer(1048576);
 	private List<TextureFX> field_1604_f = new ArrayList<TextureFX>();
@@ -32,9 +37,9 @@ public class RenderEngine {
 	}
 
 	public int getTexture(String var1) {
-		Integer var3 = (Integer) this.textureMap.get(var1);
-		if (var3 != null) {
-			return var3.intValue();
+		int var3 = this.textureMap.getOrDefault(var1, -1);
+		if (var3 >= 0) {
+			return var3;
 		} else {
 			try {
 				this.singleIntBuffer.clear();
@@ -59,7 +64,7 @@ public class RenderEngine {
 					this.setupTexture(this.readTextureImage(EagRuntime.getRequiredResourceStream(var1)), var5);
 				}
 
-				this.textureMap.put(var1, Integer.valueOf(var5));
+				this.textureMap.put(var1, var5);
 				return var5;
 			} catch (IOException var4) {
 				throw new RuntimeException("!!");
@@ -84,7 +89,7 @@ public class RenderEngine {
 		GLAllocation.generateTextureNames(this.singleIntBuffer);
 		int var2 = this.singleIntBuffer.get(0);
 		this.setupTexture(var1, var2);
-		this.textureNameToImageMap.put(Integer.valueOf(var2), var1);
+		this.textureNameToImageMap.put(var2, var1);
 		return var2;
 	}
 
@@ -176,7 +181,7 @@ public class RenderEngine {
 	}
 
 	public void deleteTexture(int var1) {
-		this.textureNameToImageMap.remove(Integer.valueOf(var1));
+		this.textureNameToImageMap.remove(var1);
 		this.singleIntBuffer.clear();
 		this.singleIntBuffer.put(var1);
 		this.singleIntBuffer.flip();
@@ -334,40 +339,40 @@ public class RenderEngine {
 	}
 
 	public void refreshTextures() {
-		Iterator var2 = this.textureNameToImageMap.keySet().iterator();
-
 		ImageData var4;
-		while (var2.hasNext()) {
-			int var3 = ((Integer) var2.next()).intValue();
-			var4 = (ImageData) this.textureNameToImageMap.get(Integer.valueOf(var3));
-			this.setupTexture(var4, var3);
+		for(IntObjectCursor<ImageData> cursor : textureNameToImageMap) {
+			if(cursor != null) {
+				int var3 = cursor.key;
+				var4 = cursor.value;
+				this.setupTexture(var4, var3);
+			}
 		}
+		
+		for(ObjectIntCursor<String> cursor : textureMap) {
+			if(cursor != null) {
+				String var8 = cursor.key;
+				
+				try {
+					if (var8.startsWith("##")) {
+						var4 = this.unwrapImageByColumns(
+								this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(2))));
+					} else if (var8.startsWith("%clamp%")) {
+						this.clampTexture = true;
+						var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(7)));
+					} else if (var8.startsWith("%blur%")) {
+						this.blurTexture = true;
+						var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(6)));
+					} else {
+						var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8));
+					}
 
-		var2 = this.textureMap.keySet().iterator();
-
-		while (var2.hasNext()) {
-			String var8 = (String) var2.next();
-
-			try {
-				if (var8.startsWith("##")) {
-					var4 = this.unwrapImageByColumns(
-							this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(2))));
-				} else if (var8.startsWith("%clamp%")) {
-					this.clampTexture = true;
-					var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(7)));
-				} else if (var8.startsWith("%blur%")) {
-					this.blurTexture = true;
-					var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(6)));
-				} else {
-					var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8));
+					int var5 = ((Integer) this.textureMap.get(var8)).intValue();
+					this.setupTexture(var4, var5);
+					this.blurTexture = false;
+					this.clampTexture = false;
+				} catch (IOException var6) {
+					var6.printStackTrace();
 				}
-
-				int var5 = ((Integer) this.textureMap.get(var8)).intValue();
-				this.setupTexture(var4, var5);
-				this.blurTexture = false;
-				this.clampTexture = false;
-			} catch (IOException var6) {
-				var6.printStackTrace();
 			}
 		}
 

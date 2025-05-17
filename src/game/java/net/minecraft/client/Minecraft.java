@@ -1,7 +1,6 @@
 package net.minecraft.client;
 
 import net.lax1dude.eaglercraft.EagRuntime;
-import net.lax1dude.eaglercraft.EagUtils;
 import net.lax1dude.eaglercraft.beta.TextureNewClockFX;
 import net.lax1dude.eaglercraft.beta.TextureNewCompassFX;
 import net.lax1dude.eaglercraft.internal.EnumPlatformType;
@@ -222,40 +221,53 @@ public class Minecraft {
 	private void loadScreen() throws LWJGLException {
 		Display.update();
 		updateDisplayMode();
-		final ScaledResolution var1 = this.scaledResolution;
-		int var2 = var1.getScaledWidth();
-		int var3 = var1.getScaledHeight();
-		GL11.glClear(GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_COLOR_BUFFER_BIT);
+		GL11.glViewport(0, 0, displayWidth, displayHeight);
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0.0D, (double)var2, (double)var3, 0.0D, 1000.0D, 3000.0D);
+		GL11.glOrtho(0.0D, (double) scaledResolution.getScaledWidth(),
+				(double) scaledResolution.getScaledHeight(), 0.0D, 1000.0D, 3000.0D);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);
 		GL11.glLoadIdentity();
 		GL11.glTranslatef(0.0F, 0.0F, -2000.0F);
-		GL11.glViewport(0, 0, this.displayWidth, this.displayHeight);
-		GL11.glClearColor(0.0F, 0.0F, 0.0F, 0.0F);
-		Tessellator var4 = Tessellator.instance;
 		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_FOG);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_FOG);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.renderEngine.getTexture("/title/mojang.png"));
-		var4.startDrawingQuads();
-		var4.setColorOpaque_I(16777215);
-		var4.addVertexWithUV(0.0D, (double)this.displayHeight, 0.0D, 0.0D, 0.0D);
-		var4.addVertexWithUV((double)this.displayWidth, (double)this.displayHeight, 0.0D, 0.0D, 0.0D);
-		var4.addVertexWithUV((double)this.displayWidth, 0.0D, 0.0D, 0.0D, 0.0D);
-		var4.addVertexWithUV(0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-		var4.draw();
-		short var5 = 256;
-		short var6 = 256;
+		
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.setColorRGBA(255, 255, 255, 255);
+		tessellator.addVertexWithUV(0.0D, (double) this.displayHeight, 0.0D, 0.0D, 0.0D);
+		tessellator.addVertexWithUV((double) this.displayWidth, (double) this.displayHeight, 0.0D, 0.0D, 0.0D);
+		tessellator.addVertexWithUV((double) this.displayWidth, 0.0D, 0.0D, 0.0D, 0.0D);
+		tessellator.addVertexWithUV(0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+		tessellator.draw();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		var4.setColorOpaque_I(16777215);
-		this.func_6274_a((this.displayWidth / 2 - var5) / 2, (this.displayHeight / 2 - var6) / 2, 0, 0, var5, var6);
+		
+		short short1 = 256;
+		short short2 = 256;
+		this.func_6274_a((scaledResolution.getScaledWidth() - short1) / 2,
+				(scaledResolution.getScaledHeight() - short2) / 2, 0, 0, short1, short2, 255, 255, 255, 255);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_FOG);
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
+		GL11.glEnable(GL11.GL_ALPHA);
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
 		this.updateDisplay();
+	}
+	
+	public void func_6274_a(int parInt1, int parInt2, int parInt3, int parInt4, int parInt5, int parInt6, int parInt7,
+			int parInt8, int parInt9, int parInt10) {
+		float f = 0.00390625F;
+		float f1 = 0.00390625F;
+		Tessellator tessellator = Tessellator.instance;
+		tessellator.startDrawingQuads();
+		tessellator.setColorRGBA(parInt7, parInt8, parInt9, parInt10);
+		tessellator.addVertexWithUV((double) parInt1, (double) (parInt2 + parInt6), 0.0D, (double) ((float) parInt3 * f), (double) ((float) (parInt4 + parInt6) * f1));
+		tessellator.addVertexWithUV((double) (parInt1 + parInt5), (double) (parInt2 + parInt6), 0.0D, (double) ((float) (parInt3 + parInt5) * f), (double) ((float) (parInt4 + parInt6) * f1));
+		tessellator.addVertexWithUV((double) (parInt1 + parInt5), (double) parInt2, 0.0D, (double) ((float) (parInt3 + parInt5) * f), (double) ((float) parInt4 * f1));
+		tessellator.addVertexWithUV((double) parInt1, (double) parInt2, 0.0D, (double) ((float) parInt3 * f), (double) ((float) parInt4 * f1));
+		tessellator.draw();
 	}
 
 	public void func_6274_a(int var1, int var2, int var3, int var4, int var5, int var6) {

@@ -1,13 +1,15 @@
 package net.minecraft.src;
 
-import java.util.HashSet;
+import com.carrotsearch.hppc.LongHashSet;
+import com.carrotsearch.hppc.LongSet;
+import com.carrotsearch.hppc.cursors.LongCursor;
+
 import java.util.Iterator;
-import java.util.Set;
 
 import net.peyton.eagler.minecraft.EntityConstructor;
 
 public final class SpawnerAnimals {
-	private static Set eligibleChunksForSpawning = new HashSet();
+	private static LongSet eligibleChunksForSpawning = new LongHashSet();
 
 	protected static ChunkPosition getRandomSpawningPointInChunk(World var0, int var1, int var2) {
 		int var3 = var1 + var0.rand.nextInt(16);
@@ -28,7 +30,8 @@ public final class SpawnerAnimals {
 
 			for(int var6 = -var5; var6 <= var5; ++var6) {
 				for(int var7 = -var5; var7 <= var5; ++var7) {
-					eligibleChunksForSpawning.add(new ChunkCoordIntPair(var6 + var3, var7 + var4));
+					long chunkcoordintpair = ChunkCoordIntPair.chunkXZ2Int(var6 + var3, var7 + var4);
+					eligibleChunksForSpawning.add(chunkcoordintpair);
 				}
 			}
 		}
@@ -39,35 +42,27 @@ public final class SpawnerAnimals {
 		for(int var28 = 0; var28 < EnumCreatureType.values().length; ++var28) {
 			EnumCreatureType var29 = EnumCreatureType.values()[var28];
 			if(var0.countEntities(var29.field_4278_c) <= var29.maxNumberOfEntityType * eligibleChunksForSpawning.size() / 256) {
-				Iterator var30 = eligibleChunksForSpawning.iterator();
 
-				label110:
-				while(true) {
+				label110: for(LongCursor chunkcoordintpair1 : eligibleChunksForSpawning) {
+					long chunkcoordintpair1l = chunkcoordintpair1.value;
+					int chunkXPos = (int) (chunkcoordintpair1l & 4294967295L);
+					int chunkZPos = (int) (chunkcoordintpair1l >>> 32);
 					int var8;
 					int var10;
 					int var11;
 					int var12;
-					EntityConstructor[] var33;
+					EntityConstructor<Entity>[] var33;
 					do {
 						do {
-							ChunkCoordIntPair var31;
 							do {
 								do {
-									do {
-										if(!var30.hasNext()) {
-											continue label113;
-										}
-
-										var31 = (ChunkCoordIntPair)var30.next();
-									} while(var0.rand.nextInt(50) != 0);
-
-									MobSpawnerBase var32 = var0.func_4075_a().func_4074_a(var31);
+									MobSpawnerBase var32 = var0.func_4075_a().func_4074_a(chunkXPos, chunkZPos);
 									var33 = var32.getEntitiesForType(var29);
 								} while(var33 == null);
 							} while(var33.length == 0);
 
 							var8 = var0.rand.nextInt(var33.length);
-							ChunkPosition var9 = getRandomSpawningPointInChunk(var0, var31.chunkXPos * 16, var31.chunkZPos * 16);
+							ChunkPosition var9 = getRandomSpawningPointInChunk(var0, chunkXPos * 16, chunkZPos * 16);
 							var10 = var9.x;
 							var11 = var9.y;
 							var12 = var9.z;

@@ -23,6 +23,10 @@ public class WorldChunkManager {
 	public MobSpawnerBase func_4074_a(ChunkCoordIntPair var1) {
 		return this.func_4073_a(var1.chunkXPos, var1.chunkZPos);
 	}
+	
+	public MobSpawnerBase func_4074_a(int chunkXPos, int chunkZPos) {
+		return this.func_4073_a(chunkXPos, chunkZPos);
+	}
 
 	public MobSpawnerBase func_4073_a(int var1, int var2) {
 		return this.func_4069_a(var1, var2, 1, 1)[0];

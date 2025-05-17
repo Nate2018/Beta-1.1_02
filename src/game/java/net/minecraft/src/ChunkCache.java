@@ -145,7 +145,6 @@ public class ChunkCache implements IBlockAccess {
 		}
 
 		if(var3 >= 0) {
-			this.worldObj.getClass();
 			if(var3 < 128 && var2 >= -30000000 && var4 >= -30000000 && var2 < 30000000 && var4 <= 30000000) {
 				int var5 = this.getBlockId(var2, var3, var4);
 				int var6;
