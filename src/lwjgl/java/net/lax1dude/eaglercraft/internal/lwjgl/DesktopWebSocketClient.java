@@ -5,7 +5,6 @@ import java.net.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.lax1dude.eaglercraft.EaglercraftVersion;
 import net.lax1dude.eaglercraft.internal.AbstractWebSocketClient;
 import net.lax1dude.eaglercraft.internal.EnumEaglerConnectionState;
 
@@ -41,8 +40,7 @@ public class DesktopWebSocketClient extends AbstractWebSocketClient {
 		currentURIStr = currentURI.toString();
 		clientImpl = new WebSocketClientImpl(this, currentURI);
 		clientImpl.addHeader("Origin",
-				"EAG_LWJGL_" + (EaglercraftVersion.projectForkName + "_" + EaglercraftVersion.projectOriginVersion)
-						.replaceAll("[^a-zA-Z0-9\\-_\\.]", "_"));
+				"EAG_LWJGL_BETA_1.1_02".replaceAll("[^a-zA-Z0-9\\-_\\.]", "_"));
 	}
 
 	@Override

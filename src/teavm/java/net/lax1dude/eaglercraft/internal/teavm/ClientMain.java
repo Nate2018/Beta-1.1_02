@@ -119,11 +119,6 @@ public class ClientMain {
 					}
 				}
 				
-				configLocalesFolder = eaglercraftOpts.getLocalesURI("lang");
-				if(configLocalesFolder.endsWith("/")) {
-					configLocalesFolder = configLocalesFolder.substring(0, configLocalesFolder.length() - 1);
-				}
-				
 				((TeaVMClientConfigAdapter)TeaVMClientConfigAdapter.instance).loadNative(eaglercraftOpts);
 				
 				systemOut.println("ClientMain: [INFO] configuration was successful");
@@ -183,7 +178,6 @@ public class ClientMain {
 			LogManager.logRedirector = new ILogRedirector() {
 				@Override
 				public void log(String txt, boolean err) {
-					PlatformApplication.addLogMessage(txt, err);
 				}
 			};
 			
@@ -239,7 +233,6 @@ public class ClientMain {
 	public static String configRootElementId = null;
 	public static HTMLElement configRootElement =  null;
 	public static EPKFileEntry[] configEPKFiles = null;
-	public static String configLocalesFolder = null;
 	public static boolean crashOnUncaughtExceptions = false;
 	
 	@JSFunctor
@@ -294,9 +287,9 @@ public class ClientMain {
 		}
 
 		StringBuilder str = new StringBuilder();
-		str.append("eaglercraft.version = \"").append(EaglercraftVersion.projectForkVersion).append("\"\n");
+		str.append("eaglercraft.version = \"").append("Beta 1.1_02").append("\"\n");
 		str.append("eaglercraft.minecraft = \"0.30\"\n");
-		str.append("eaglercraft.brand = \"" + EaglercraftVersion.projectForkVendor + "\"\n");
+		str.append("eaglercraft.brand = \"" + "eaglercraft" + "\"\n");
 		str.append('\n');
 		str.append(addWebGLToCrash());
 		str.append('\n');
