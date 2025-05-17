@@ -5,7 +5,6 @@ import org.lwjgl.input.Keyboard;
 public class GuiChat extends GuiScreen {
 	private String message = "";
 	private int updateCounter = 0;
-	private static final String field_20082_i = FontAllowedCharacters.field_20157_a;
 
 	public void initGui() {
 		Keyboard.enableRepeatEvents(true);
@@ -34,7 +33,7 @@ public class GuiChat extends GuiScreen {
 				this.message = this.message.substring(0, this.message.length() - 1);
 			}
 
-			if(field_20082_i.indexOf(var1) >= 0 && this.message.length() < 100) {
+			if(FontAllowedCharacters.isAllowed(var1) >= 0 && this.message.length() < 100) {
 				this.message = this.message + var1;
 			}
 

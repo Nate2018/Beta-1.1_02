@@ -166,7 +166,6 @@ public class SoundManager {
 				return;
 			}
 			String soundName = "/newsound/" + var1 + (randNum != -1 ? randNum : "") + ".ogg";
-			System.out.println(soundName);
 			if (!sounds.containsKey(soundName)) {
 				if (EagRuntime.getPlatformType() != EnumPlatformType.DESKTOP) {
 					trk = PlatformAudio.loadAudioDataNew(soundName, true, browserResourceLoader);

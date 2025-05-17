@@ -8,7 +8,6 @@ public class GuiEditSign extends GuiScreen {
 	private TileEntitySign entitySign;
 	private int updateCounter;
 	private int editLine = 0;
-	private static final String field_20083_l = FontAllowedCharacters.field_20157_a;
 
 	public GuiEditSign(TileEntitySign var1) {
 		this.entitySign = var1;
@@ -55,7 +54,7 @@ public class GuiEditSign extends GuiScreen {
 			this.entitySign.signText[this.editLine] = this.entitySign.signText[this.editLine].substring(0, this.entitySign.signText[this.editLine].length() - 1);
 		}
 
-		if(field_20083_l.indexOf(var1) >= 0 && this.entitySign.signText[this.editLine].length() < 15) {
+		if(FontAllowedCharacters.isAllowed(var1) >= 0 && this.entitySign.signText[this.editLine].length() < 15) {
 			this.entitySign.signText[this.editLine] = this.entitySign.signText[this.editLine] + var1;
 		}
 

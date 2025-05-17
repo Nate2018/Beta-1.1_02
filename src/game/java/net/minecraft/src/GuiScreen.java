@@ -160,4 +160,8 @@ public class GuiScreen extends Gui {
 
 	public void deleteWorld(boolean var1, int var2) {
 	}
+	
+	public static boolean isCtrlKeyDown() {
+		return Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157);
+	}
 }
