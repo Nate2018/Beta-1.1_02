@@ -115,6 +115,7 @@ public class EaglercraftGPU extends GlStateManager {
 	}
 
 	public static void glTexParameteri(int target, int param, int value) {
+		if(value == GL_CLAMP) value = GL_CLAMP_TO_EDGE;
 		_wglTexParameteri(target, param, value);
 	}
 
