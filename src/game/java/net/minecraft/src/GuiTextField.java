@@ -85,6 +85,10 @@ public class GuiTextField extends Gui {
 					this.field_22078_e + (this.field_22076_g - 8) / 2, 0x707070);
 		}
 	}
+	
+	public void setFocused(boolean b) {
+		this.field_22082_a = b;
+	}
 
 	public void setMaxLength(int n) {
 		this.maxLength = n;

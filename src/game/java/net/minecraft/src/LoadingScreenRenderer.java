@@ -29,11 +29,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 	}
 
 	public void func_597_c(String var1) {
-		if(!this.mc.running) {
-			if(!this.field_1005_e) {
-				throw new MinecraftError();
-			}
-		} else {
+		if(this.mc.running) {
 			this.field_1007_c = var1;
 			final ScaledResolution var2 = this.mc.scaledResolution;
 			int var3 = var2.getScaledWidth();
@@ -49,11 +45,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 	}
 
 	public void displayLoadingString(String var1) {
-		if(!this.mc.running) {
-			if(!this.field_1005_e) {
-				throw new MinecraftError();
-			}
-		} else {
+		if(this.mc.running) {
 			this.field_1006_d = 0L;
 			this.field_1004_a = var1;
 			this.setLoadingProgress(-1);
@@ -63,11 +55,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
 
 	private TextureLocation background = new TextureLocation("/gui/background.png");
 	public void setLoadingProgress(int var1) {
-		if(!this.mc.running) {
-			if(!this.field_1005_e) {
-				throw new MinecraftError();
-			}
-		} else {
+		if(this.mc.running) {
 			long var2 = EagRuntime.steadyTimeMillis();
 			if(var2 - this.field_1006_d >= 20L) {
 				this.field_1006_d = var2;

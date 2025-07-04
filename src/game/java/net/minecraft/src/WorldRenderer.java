@@ -127,7 +127,6 @@ public class WorldRenderer {
 									GL11.glNewList(this.glRenderList + hashset1, GL11.GL_COMPILE);
 									tessellator.setRenderingChunk(true);
 									tessellator.startDrawingQuads();
-									//tessellator.setTranslationD(this.field_1752_l-this.posX, this.field_1751_m-this.posY, this.field_1750_n-this.posZ);
 								}
 
 								if(hashset1 == 0 && Block.isBlockContainer[i3]) {
@@ -160,7 +159,6 @@ public class WorldRenderer {
 				if(hasGlList) {
 					tessellator.draw();
 					GL11.glEndList();
-					//tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
 					tessellator.setRenderingChunk(false);
 				} else {
 					hasRenderedBlocks = false;
@@ -173,6 +171,14 @@ public class WorldRenderer {
 				if(!renderNextPass) {
 					break;
 				}
+			}
+			
+			if(skipRenderPass[0]) {
+				GL11.flushDisplayList(glRenderList, true);
+			}
+			
+			if(skipRenderPass[1]) {
+				GL11.flushDisplayList(glRenderList + 1, true);
 			}
 
 			HashSet var27 = new HashSet();

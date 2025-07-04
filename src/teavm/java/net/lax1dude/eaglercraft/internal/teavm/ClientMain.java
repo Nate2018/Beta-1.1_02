@@ -35,6 +35,8 @@ import net.lax1dude.eaglercraft.internal.teavm.opts.JSEaglercraftXOptsAssetsURI;
 import net.lax1dude.eaglercraft.internal.teavm.opts.JSEaglercraftXOptsRoot;
 import net.minecraft.client.Minecraft;
 
+import net.lax1dude.eaglercraft.internal.ContextLostError;
+
 /**
  * Copyright (c) 2022-2024 lax1dude. All Rights Reserved.
  * 
@@ -183,6 +185,13 @@ public class ClientMain {
 			
 			try {
 				EagRuntime.create();
+			}catch(ContextLostError ex) {
+				systemErr.println("ClientMain: [ERROR] webgl context lost during initialization!");
+				try {
+					showContextLostScreen(EagRuntime.getStackTrace(ex));
+				}catch(Throwable t) {
+				}
+				return;
 			}catch(PlatformIncompatibleException ex) {
 				systemErr.println("ClientMain: [ERROR] this browser is incompatible with eaglercraftx!");
 				systemErr.println("ClientMain: [ERROR] Reason: " + ex.getMessage());
@@ -203,6 +212,12 @@ public class ClientMain {
 
 			try {
 				new Minecraft().run();
+			}catch(ContextLostError ex) {
+				systemErr.println("ClientMain: [ERROR] webgl context lost!");
+				try {
+					showContextLostScreen(EagRuntime.getStackTrace(ex));
+				}catch(Throwable t) {
+				}
 			}catch(Throwable t) {
 				systemErr.println("ClientMain: [ERROR] unhandled exception caused main thread to exit");
 				EagRuntime.debugPrintStackTraceToSTDERR(t);
@@ -689,5 +704,51 @@ public class ClientMain {
 
 	@JSBody(params = { "v" }, script = "try { return (typeof window[v] !== \"undefined\") ? JSON.stringify(window[v]) : \"[\\\"<error>\\\"]\"; } catch(e) { return \"[\\\"<error>\\\"]\"; }")
 	private static native String getArray(String var);
+	
+	public static void showContextLostScreen(String t) {
+		if(!isCrashed) {
+			isCrashed = true;
+			
+			HTMLDocument doc = Window.current().getDocument();
+			HTMLElement el;
+			if(PlatformRuntime.parent != null) {
+				el = PlatformRuntime.parent;
+			}else {
+				if(configRootElement == null) {
+					configRootElement = doc.getElementById(configRootElementId);
+				}
+				el = configRootElement;
+			}
+			
+			if(el == null) {
+				Window.alert("WebGL context lost!");
+				System.err.println("WebGL context lost: " + t);
+				return;
+			}
+			
+			String s = el.getAttribute("style");
+			el.setAttribute("style", (s == null ? "" : s) + "position:relative;");
+			HTMLElement img = doc.createElement("img");
+			HTMLElement div = doc.createElement("div");
+			img.setAttribute("style", "z-index:100;position:absolute;top:10px;left:calc(50% - 151px);");
+			img.setAttribute("src", crashImageWrapper());
+			div.setAttribute("style", "z-index:100;position:absolute;top:135px;left:10%;right:10%;bottom:50px;background-color:white;border:1px solid #cccccc;overflow-x:hidden;overflow-y:scroll;font:18px sans-serif;padding:40px;");
+			div.getClassList().add("_eaglercraftX_context_lost_element");
+			el.appendChild(img);
+			el.appendChild(div);
+			div.setInnerHTML("<h2><svg style=\"vertical-align:middle;margin:0px 16px 8px 8px;\" xmlns=\"http://www.w3.org/2000/svg\" width=\"48\" height=\"48\" viewBox=\"0 0 48 48\" fill=\"none\"><path stroke=\"#000000\" stroke-width=\"3\" stroke-linecap=\"square\" d=\"M1.5 8.5v34h45v-28m-3-3h-10v-3m-3-3h-10m15 6h-18v-3m-3-3h-10\"/><path stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"square\" d=\"M12 21h0m0 4h0m4 0h0m0-4h0m-2 2h0m20-2h0m0 4h0m4 0h0m0-4h0m-2 2h0\"/><path stroke=\"#000000\" stroke-width=\"2\" stroke-linecap=\"square\" d=\"M20 30h0 m2 2h0 m2 2h0 m2 2h0 m2 -2h0 m2 -2h0 m2 -2h0\"/></svg> + WebGL context lost!</h2>"
+					+ "<div style=\"margin-left:40px;\">"
+					+ "<p style=\"font-size:1.2em;\">Your browser has forcibly released all of the resources "
+					+ "allocated by the game's 3D rendering context. EaglercraftX cannot continue, please refresh "
+					+ "the page to restart the game.</p>"
+					+ "<p style=\"font-size:1.2em;\">This is not a bug, it is usually caused by the browser "
+					+ "deciding it no longer has sufficient resources to continue rendering this page. If it "
+					+ "happens again, try closing your other browser tabs and windows.</p>"
+					+ "<p style=\"overflow-wrap:break-word;white-space:pre-wrap;font:0.75em monospace;margin-top:1.5em;\" id=\"_eaglercraftX_contextLostTrace\"></p>"
+					+ "</div>");
+			
+			div.querySelector("#_eaglercraftX_contextLostTrace").appendChild(doc.createTextNode(t));			
+		}
+	}
 
 }

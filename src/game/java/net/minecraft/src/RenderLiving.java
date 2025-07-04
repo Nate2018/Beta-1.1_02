@@ -1,11 +1,14 @@
 package net.minecraft.src;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class RenderLiving extends Render {
 	protected ModelBase e;
 	protected ModelBase renderPassModel;
+	private Logger LOGGER = LogManager.getLogger();
 
 	public RenderLiving(ModelBase var1, float var2) {
 		this.e = var1;
@@ -54,7 +57,7 @@ public class RenderLiving extends Render {
 				var15 = 1.0F;
 			}
 
-			this.func_140_a(var1.field_20047_bv, var1.getEntityTexture());
+			this.func_140_a(var1.getEntityTexture());
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
 			this.e.render(var16, var15, var13, var11 - var10, var12, var14);
 
@@ -111,7 +114,7 @@ public class RenderLiving extends Render {
 
 			GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		} catch (Exception var24) {
-			var24.printStackTrace();
+			LOGGER.error(var24);
 		}
 
 		GL11.glEnable(GL11.GL_CULL_FACE);

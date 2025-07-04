@@ -5,9 +5,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class CraftingManager {
 	private static final CraftingManager instance = new CraftingManager();
 	private List recipes = new ArrayList();
+	private Logger LOGGER = LogManager.getLogger();
 
 	public static final CraftingManager getInstance() {
 		return instance;
@@ -62,7 +66,7 @@ public class CraftingManager {
 		this.addRecipe(new ItemStack(Block.pressurePlateStone, 1), new Object[]{"###", Character.valueOf('#'), Block.stone});
 		this.addRecipe(new ItemStack(Block.pressurePlatePlanks, 1), new Object[]{"###", Character.valueOf('#'), Block.planks});
 		Collections.sort(this.recipes, new RecipeSorter(this));
-		System.out.println(this.recipes.size() + " recipes");
+		LOGGER.info("{} recipes", this.recipes.size());
 	}
 
 	void addRecipe(ItemStack var1, Object... var2) {

@@ -7,6 +7,9 @@ import java.io.PrintWriter;
 
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.minecraft.client.Minecraft;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
 public class GameSettings {
@@ -39,6 +42,8 @@ public class GameSettings {
 	public int difficulty = 2;
 	public boolean thirdPersonView = false;
 	public String lastServer = "";
+	
+	private Logger LOGGER = LogManager.getLogger();
 
 	public GameSettings(Minecraft var1, VFile2 var2) {
 		this.mc = var1;
@@ -219,8 +224,8 @@ public class GameSettings {
 				}
 			}
 		} catch (Exception var5) {
-			System.out.println("Failed to load options");
-			var5.printStackTrace();
+			LOGGER.error("Failed to load options");
+			LOGGER.error(var5);
 		}
 
 	}
@@ -251,8 +256,8 @@ public class GameSettings {
 
 			var1.close();
 		} catch (Exception var3) {
-			System.out.println("Failed to save options");
-			var3.printStackTrace();
+			LOGGER.error("Failed to save options");
+			LOGGER.error(var3);
 		}
 
 	}

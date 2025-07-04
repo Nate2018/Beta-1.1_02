@@ -40,6 +40,5 @@ public class Session {
 		registeredBlocksList.add(Block.bookShelf);
 		registeredBlocksList.add(Block.tnt);
 		registeredBlocksList.add(Block.obsidian);
-		System.out.println(registeredBlocksList.size());
 	}
 }

@@ -3,6 +3,9 @@ package net.minecraft.src;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.carrotsearch.hppc.ObjectIntHashMap;
 import com.carrotsearch.hppc.ObjectIntMap;
 
@@ -13,6 +16,8 @@ public class EntityList {
 	private static Map<Class<? extends Entity>, String> classToStringMapping = new HashMap<Class<? extends Entity>, String>();
 	private static Map<Integer, EntityConstructor<Entity>> IDtoClassMapping = new HashMap<Integer, EntityConstructor<Entity>>();
 	private static final ObjectIntMap<Class<? extends Entity>> classToIDMapping = new ObjectIntHashMap<>();
+	
+	private static Logger LOGGER = LogManager.getLogger();
 
 	private static void addMapping(Class<? extends Entity> var0, EntityConstructor<Entity> var3, String var1, int var2) {
 		stringToClassMapping.put(var1, var3);
@@ -30,7 +35,7 @@ public class EntityList {
 				var2 = var3.createEntity(var1);
 			}
 		} catch (Exception var4) {
-			var4.printStackTrace();
+			LOGGER.error(var4);
 		}
 
 		return var2;
@@ -45,13 +50,13 @@ public class EntityList {
 				var2 = var3.createEntity(var1);
 			}
 		} catch (Exception var4) {
-			var4.printStackTrace();
+			LOGGER.error(var4);
 		}
 
 		if(var2 != null) {
 			var2.readFromNBT(var0);
 		} else {
-			System.out.println("Skipping Entity with id " + var0.getString("id"));
+			LOGGER.warn("Skipping Entity with id {}", var0.getString("id"));
 		}
 
 		return var2;
@@ -66,11 +71,11 @@ public class EntityList {
 				var2 = var3.createEntity(var1);
 			}
 		} catch (Exception var4) {
-			var4.printStackTrace();
+			LOGGER.error(var4);
 		}
 
 		if(var2 == null) {
-			System.out.println("Skipping Entity with id " + var0);
+			LOGGER.warn("Skipping Entity with id {}", var0);
 		}
 
 		return var2;

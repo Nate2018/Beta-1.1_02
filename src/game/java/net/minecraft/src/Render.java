@@ -18,7 +18,7 @@ public abstract class Render {
 		var2.bindTexture(var2.getTexture(var1));
 	}
 
-	protected boolean func_140_a(String var1, TextureLocation textureLocation) {
+	protected boolean func_140_a(TextureLocation textureLocation) {
 		if(textureLocation != null && textureLocation.getTextureID() >= 0) {
 			textureLocation.bindTexture();
 			return true;

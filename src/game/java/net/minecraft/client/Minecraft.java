@@ -4,8 +4,10 @@ import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.beta.TextureNewClockFX;
 import net.lax1dude.eaglercraft.beta.TextureNewCompassFX;
 import net.lax1dude.eaglercraft.internal.EnumPlatformType;
+import net.lax1dude.eaglercraft.internal.PlatformOpenGL;
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.lax1dude.eaglercraft.minecraft.EaglerFontRenderer;
+import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.EffectRenderer;
@@ -54,6 +56,8 @@ import net.minecraft.src.WorldRenderer;
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -115,6 +119,8 @@ public class Minecraft {
 	
 	private boolean checkErrors;
 	private int dontPauseTimer = 0;
+	
+	private Logger LOGGER = LogManager.getLogger();
 
 	public Minecraft() {
 		this.displayWidth = Display.getWidth();
@@ -126,7 +132,8 @@ public class Minecraft {
 	
 	public void updateDisplay() {
 		if(Display.isVSyncSupported()) {
-			if(EagRuntime.getPlatformType() == EnumPlatformType.WASM_GC) {
+			//Fix for WASM and menu input lag
+			if(EagRuntime.getPlatformType() == EnumPlatformType.WASM_GC || (this.theWorld == null || this.currentScreen != null)) {
 				Display.setVSync(true);
 			} else {
 				Display.setVSync(this.gameSettings.limitFramerate);
@@ -320,15 +327,15 @@ public class Minecraft {
 			int var2 = GL11.glGetError();
 			if(var2 != 0) {
 				String var3 = GLU.gluErrorString(var2);
-				System.out.println("########## GL ERROR ##########");
-				System.out.println("@ " + var1);
-				System.out.println(var2 + ": " + var3);
+				LOGGER.error("########## GL ERROR ##########");
+				LOGGER.error("@ {}", var1);
+				LOGGER.info("{}: {}", var2, var3);
 			}
 		}
 	}
 	
 	public void shutdownMinecraftApplet() {
-		System.out.println("Stopping!");
+		LOGGER.info("Stopping!");
 		isShuttingDown = true;
 		this.func_6261_a((World)null);
 
@@ -348,7 +355,7 @@ public class Minecraft {
 		try {
 			this.startGame();
 		} catch (Exception var15) {
-			var15.printStackTrace();
+			LOGGER.error(var15);
 			throw new RuntimeException("Failed to start game", var15);
 		}
 
@@ -360,6 +367,9 @@ public class Minecraft {
 				while(this.running) {
 					AxisAlignedBB.clearBoundingBoxPool();
 					Vec3D.initialize();
+					
+					Display.checkContextLost();
+					
 					if(Display.isCloseRequested()) {
 						this.shutdown();
 					}
@@ -389,7 +399,15 @@ public class Minecraft {
 					long var20 = EagRuntime.nanoTime() - var19;
 					this.checkGLError("Pre render");
 					this.sndManager.func_338_a(this.thePlayer, this.timer.renderPartialTicks);
+					
+					EaglercraftGPU.optimize();
+					PlatformOpenGL._wglBindFramebuffer(0x8D40, null);
+					GL11.glViewport(0, 0, this.displayWidth, this.displayHeight);
+					GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+					GL11.glPushMatrix();
+					//GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 					GL11.glEnable(GL11.GL_TEXTURE_2D);
+					
 					if(this.theWorld != null && !this.theWorld.multiplayerWorld) {
 						while(this.theWorld.func_6465_g()) {
 						}
@@ -410,6 +428,8 @@ public class Minecraft {
 
 						this.entityRenderer.func_4136_b(this.timer.renderPartialTicks);
 					}
+					
+					GL11.glPopMatrix();
 
 					if(Keyboard.isKeyDown(Keyboard.KEY_F3)) {
 						this.displayDebugInfo(var20);
@@ -435,7 +455,7 @@ public class Minecraft {
 			} catch (MinecraftError var16) {
 			} catch (Throwable var17) {
 				this.theWorld = null;
-				var17.printStackTrace();
+				LOGGER.error(var17);
 				throw new RuntimeException("Unexpected error", var17);
 			}
 		} finally {
@@ -874,7 +894,7 @@ public class Minecraft {
 	}
 
 	private void forceReload() {
-		System.out.println("FORCING RELOAD!");
+		LOGGER.info("FORCING RELOAD!");
 		this.sndManager = new SoundManager();
 		this.sndManager.loadSoundSettings(this.gameSettings);
 	}
@@ -949,7 +969,7 @@ public class Minecraft {
 		}
 
 		this.theWorld = var1;
-		System.out.println("Player is " + this.thePlayer);
+		LOGGER.info("Player is {}", this.thePlayer);
 		if(var1 != null) {
 			this.playerController.func_717_a(var1);
 			if(!this.isMultiplayerWorld()) {
@@ -967,7 +987,7 @@ public class Minecraft {
 				this.func_6255_d(var2);
 			}
 
-			System.out.println("Player is now " + this.thePlayer);
+			LOGGER.info("Player is now {}", this.thePlayer);
 			if(this.thePlayer == null) {
 				this.thePlayer = (EntityPlayerSP)this.playerController.func_4087_b(var1);
 				this.thePlayer.preparePlayerToSpawn();

@@ -1,8 +1,13 @@
 package net.minecraft.src;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.lax1dude.eaglercraft.Random;
 
 public class BlockPortal extends BlockBreakable {
+	private Logger LOGGER = LogManager.getLogger();
+	
 	public BlockPortal(int var1, int var2) {
 		super(var1, var2, Material.portal, false);
 	}
@@ -45,7 +50,7 @@ public class BlockPortal extends BlockBreakable {
 			var6 = 1;
 		}
 
-		System.out.println(var5 + ", " + var6);
+		LOGGER.info("{}, {}", var5, var6);
 		if(var5 == var6) {
 			return false;
 		} else {

@@ -4,11 +4,15 @@ import java.io.IOException;
 
 import net.lax1dude.eaglercraft.opengl.ImageData;
 import net.minecraft.client.Minecraft;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 public class TexturePackDefault extends TexturePackBase {
 	private int texturePackName = -1;
 	private ImageData texturePackThumbnail;
+	private static Logger LOGGER = LogManager.getLogger();
 
 	public TexturePackDefault() {
 		this.texturePackFileName = "Default";
@@ -17,7 +21,7 @@ public class TexturePackDefault extends TexturePackBase {
 		try {
 			this.texturePackThumbnail = ImageData.loadImageFile("/pack.png");
 		} catch (Exception var2) {
-			var2.printStackTrace();
+			LOGGER.error(var2);
 		}
 
 	}

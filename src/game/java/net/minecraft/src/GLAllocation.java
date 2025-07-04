@@ -12,15 +12,15 @@ import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 public class GLAllocation {
 	private static List<Integer> textureNames = new ArrayList<Integer>();
 
-	public static synchronized int generateDisplayLists(int count) {
+	public static int generateDisplayLists(int count) {
 		return GL11.glGenLists(count);
 	}
 	
-	public static synchronized void deleteDisplayLists(int list) {
+	public static void deleteDisplayLists(int list) {
 		GL11.glDeleteLists(list);
 	}
 
-	public static synchronized void generateTextureNames(IntBuffer var0) {
+	public static void generateTextureNames(IntBuffer var0) {
 		GL11.glGenTextures(var0);
 
 		for(int var1 = var0.position(); var1 < var0.limit(); ++var1) {
@@ -29,7 +29,7 @@ public class GLAllocation {
 
 	}
 
-	public static synchronized void deleteTexturesAndDisplayLists() {
+	public static void deleteTexturesAndDisplayLists() {
 		IntBuffer var2 = createDirectIntBuffer(textureNames.size());
 		var2.flip();
 		GL11.glDeleteTextures(var2);
@@ -43,7 +43,7 @@ public class GLAllocation {
 		textureNames.clear();
 	}
 
-	public static synchronized ByteBuffer createDirectByteBuffer(int var0) {
+	public static ByteBuffer createDirectByteBuffer(int var0) {
 		return EagRuntime.allocateByteBuffer(var0);
 	}
 

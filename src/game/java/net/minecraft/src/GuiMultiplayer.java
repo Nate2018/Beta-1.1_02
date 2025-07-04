@@ -58,7 +58,7 @@ public class GuiMultiplayer extends GuiScreen {
 			} else if(var1.id == 0) {
 				String server = this.server.getTextBoxText().trim();
 				String username = this.username.getTextBoxText().trim();
-				server = this.mc.gameSettings.lastServer = server.replaceAll(":", "_");
+				this.mc.gameSettings.lastServer = server.replaceAll(":", "_");
 				EaglerProfile.setName(username);
 				EaglerProfile.save();
 				this.mc.gameSettings.saveOptions();

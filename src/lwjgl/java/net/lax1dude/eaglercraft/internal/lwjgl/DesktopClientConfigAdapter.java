@@ -1,7 +1,5 @@
 package net.lax1dude.eaglercraft.internal.lwjgl;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import net.lax1dude.eaglercraft.EaglercraftVersion;

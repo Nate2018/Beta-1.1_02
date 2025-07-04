@@ -1,6 +1,7 @@
 package net.minecraft.src;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.lwjgl.opengl.GL11;
@@ -8,7 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.peyton.eagler.minecraft.FontRenderer;
 
 public class TileEntityRenderer {
-	private Map specialRendererMap = new HashMap();
+	private Map<Class<? extends TileEntity>, TileEntitySpecialRenderer> specialRendererMap = new IdentityHashMap<>();
 	public static TileEntityRenderer instance = new TileEntityRenderer();
 	private FontRenderer fontRenderer;
 	public static double staticPlayerX;

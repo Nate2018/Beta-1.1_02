@@ -88,16 +88,18 @@ public class RenderGlobal implements IWorldAccess {
 
 		int var8;
 		int var9;
+		
+		//TODO Made this a single draw call, does this break anything?
+		var4.startDrawingQuads();
 		for(var8 = -var6 * var7; var8 <= var6 * var7; var8 += var6) {
 			for(var9 = -var6 * var7; var9 <= var6 * var7; var9 += var6) {
-				var4.startDrawingQuads();
 				var4.addVertex((double)(var8 + 0), (double)var5, (double)(var9 + 0));
 				var4.addVertex((double)(var8 + var6), (double)var5, (double)(var9 + 0));
 				var4.addVertex((double)(var8 + var6), (double)var5, (double)(var9 + var6));
 				var4.addVertex((double)(var8 + 0), (double)var5, (double)(var9 + var6));
-				var4.draw();
 			}
 		}
+		var4.draw();
 
 		GL11.glEndList();
 		this.field_1432_A = this.field_1434_y + 2;
@@ -501,7 +503,7 @@ public class RenderGlobal implements IWorldAccess {
 			GL11.glDisable(GL11.GL_FOG);
 			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GL11.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 			float[] var15 = this.worldObj.worldProvider.func_4097_b(this.worldObj.getCelestialAngle(var1), var1);
 			float var11;
 			if(var15 != null) {

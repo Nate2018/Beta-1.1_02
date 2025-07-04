@@ -1,5 +1,8 @@
 package net.minecraft.src;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.lax1dude.eaglercraft.Random;
 
 public class Item {
@@ -108,11 +111,13 @@ public class Item {
 	protected int iconIndex;
 	protected boolean bFull3D = false;
 	private String healAmount;
+	
+	private static Logger LOGGER = LogManager.getLogger();
 
 	protected Item(int var1) {
 		this.shiftedIndex = 256 + var1;
 		if(itemsList[256 + var1] != null) {
-			System.out.println("CONFLICT @ " + var1);
+			LOGGER.error("CONFLICT @ {}", var1);
 		}
 
 		itemsList[256 + var1] = this;

@@ -259,4 +259,8 @@ public class GL11 extends EaglercraftGPU {
 			return; //?
 		}
 	}
+
+	public static void glBlendFuncSeparate(int i, int j, int k, int l) {
+		tryBlendFuncSeparate(i, j, k, l);
+	}
 }

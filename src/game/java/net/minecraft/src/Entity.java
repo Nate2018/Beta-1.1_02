@@ -58,7 +58,6 @@ public abstract class Entity {
 	public int field_9306_bj = 0;
 	public int air = 300;
 	private boolean field_862_c = true;
-	public String field_20047_bv;
 	public String skinUrl;
 	protected boolean isImmuneToFire = false;
 	private double minecartType;

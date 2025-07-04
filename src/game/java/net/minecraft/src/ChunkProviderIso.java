@@ -2,11 +2,16 @@ package net.minecraft.src;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class ChunkProviderIso implements IChunkProvider {
 	private Chunk[] chunks = new Chunk[256];
 	private World worldObj;
 	private IChunkLoader chunkLoader;
 	byte[] field_899_a = new byte[-Short.MIN_VALUE];
+	
+	private Logger LOGGER = LogManager.getLogger();
 
 	public ChunkProviderIso(World var1, IChunkLoader var2) {
 		this.worldObj = var1;
@@ -35,16 +40,16 @@ public class ChunkProviderIso implements IChunkProvider {
 
 			return this.chunks[var3];
 		} catch (Exception var5) {
-			var5.printStackTrace();
+			LOGGER.error(var5);
 			return null;
 		}
 	}
 
-	private synchronized Chunk func_543_c(int var1, int var2) {
+	private Chunk func_543_c(int var1, int var2) {
 		try {
 			return this.chunkLoader.loadChunk(this.worldObj, var1, var2);
 		} catch (IOException var4) {
-			var4.printStackTrace();
+			LOGGER.error(var4);
 			return null;
 		}
 	}

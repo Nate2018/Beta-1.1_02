@@ -6,6 +6,7 @@ import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.lax1dude.eaglercraft.Display;
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
 import net.lax1dude.eaglercraft.internal.IBufferGL;
@@ -91,6 +92,7 @@ public class InstancedFontRenderer {
 		_wglCompileShader(vert);
 
 		if (_wglGetShaderi(vert, GL_COMPILE_STATUS) != GL_TRUE) {
+			Display.checkContextLost();
 			logger.error("Failed to compile GL_VERTEX_SHADER \"" + vertexShaderPath + "\" for InstancedFontRenderer!");
 			String log = _wglGetShaderInfoLog(vert);
 			if (log != null) {
@@ -106,6 +108,7 @@ public class InstancedFontRenderer {
 		_wglCompileShader(frag);
 
 		if (_wglGetShaderi(frag, GL_COMPILE_STATUS) != GL_TRUE) {
+			Display.checkContextLost();
 			logger.error(
 					"Failed to compile GL_FRAGMENT_SHADER \"" + fragmentShaderPath + "\" for InstancedFontRenderer!");
 			String log = _wglGetShaderInfoLog(frag);
@@ -136,6 +139,7 @@ public class InstancedFontRenderer {
 		_wglDeleteShader(frag);
 
 		if (_wglGetProgrami(shaderProgram, GL_LINK_STATUS) != GL_TRUE) {
+			Display.checkContextLost();
 			logger.error("Failed to link shader program for InstancedFontRenderer!");
 			String log = _wglGetProgramInfoLog(shaderProgram);
 			if (log != null) {
@@ -203,7 +207,7 @@ public class InstancedFontRenderer {
 		EaglercraftGPU.vertexAttribDivisor(0, 0);
 
 		EaglercraftGPU.bindVAOGLArrayBufferNow(instancesBuffer);
-		_wglBufferData(GL_ARRAY_BUFFER, fontDataBuffer.remaining(), GL_STREAM_DRAW);
+		_wglBufferData(GL_ARRAY_BUFFER, fontDataBuffer.capacity(), GL_STREAM_DRAW);
 
 		EaglercraftGPU.enableVertexAttribArray(1);
 		EaglercraftGPU.vertexAttribPointer(1, 2, GL_SHORT, false, 10, 0);
@@ -379,6 +383,7 @@ public class InstancedFontRenderer {
 			int l = fontDataBuffer.limit();
 
 			fontDataBuffer.flip();
+			_wglBufferData(GL_ARRAY_BUFFER, fontDataBuffer.capacity(), GL_STREAM_DRAW);
 			_wglBufferSubData(GL_ARRAY_BUFFER, 0, fontDataBuffer);
 
 			fontDataBuffer.position(p);
@@ -392,6 +397,7 @@ public class InstancedFontRenderer {
 			int l = fontBoldDataBuffer.limit();
 
 			fontBoldDataBuffer.flip();
+			_wglBufferData(GL_ARRAY_BUFFER, fontBoldDataBuffer.capacity(), GL_STREAM_DRAW);
 			_wglBufferSubData(GL_ARRAY_BUFFER, 0, fontBoldDataBuffer);
 
 			fontBoldDataBuffer.position(p);

@@ -17,6 +17,9 @@ import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class World implements IBlockAccess {
 	public boolean field_4214_a;
 	private List field_1051_z;
@@ -56,6 +59,8 @@ public class World implements IBlockAccess {
 	private int field_9426_L;
 	private List field_1012_M;
 	public boolean multiplayerWorld;
+	
+	private static Logger LOGGER = LogManager.getLogger();
 
 	public static NBTTagCompound func_629_a(VFile2 var0, String var1) {
 		VFile2 var2 = new VFile2(var0, "saves");
@@ -70,7 +75,7 @@ public class World implements IBlockAccess {
 				NBTTagCompound var6 = var5.getCompoundTag("Data");
 				return var6;
 			} catch (Exception var7) {
-				var7.printStackTrace();
+				LOGGER.error(var7);
 			}
 		}
 		
@@ -247,7 +252,7 @@ public class World implements IBlockAccess {
 					}
 				}
 			} catch (Exception var14) {
-				var14.printStackTrace();
+				LOGGER.error(var14);
 			}
 		}
 
@@ -315,7 +320,7 @@ public class World implements IBlockAccess {
 
 			this.entityJoinedWorld(var1);
 		} catch (Exception var3) {
-			var3.printStackTrace();
+			LOGGER.error(var3);
 		}
 
 	}
@@ -378,7 +383,7 @@ public class World implements IBlockAccess {
 				var4.delete();
 			}
 		} catch (Exception var7) {
-			var7.printStackTrace();
+			LOGGER.error(var7);
 		}
 
 	}
@@ -969,7 +974,7 @@ public class World implements IBlockAccess {
 		} else {
 			if(var1 instanceof EntityPlayer) {
 				this.playerEntities.add((EntityPlayer)var1);
-				System.out.println("Player count: " + this.playerEntities.size());
+				LOGGER.info("Player count: {}", this.playerEntities.size());
 			}
 
 			this.getChunkFromChunkCoords(var2, var3).addEntity(var1);
@@ -1774,7 +1779,15 @@ public class World implements IBlockAccess {
 			int var9 = var3 + this.rand.nextInt(var4) - this.rand.nextInt(var4);
 			int var10 = this.getBlockId(var7, var8, var9);
 			if(var10 > 0) {
-				Block.blocksList[var10].randomDisplayTick(this, var7, var8, var9, var5);
+				Block block;
+				try { //Vanilla beta crash
+					block = Block.blocksList[var10];
+				} catch(Throwable t) {
+					return;
+				}
+				if(block != null) { //Vanilla beta crash
+					block.randomDisplayTick(this, var7, var8, var9, var5);
+				}
 			}
 		}
 

@@ -3,6 +3,9 @@ package net.minecraft.src;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.peyton.eagler.minecraft.TileEntityConstructor;
 
 public class TileEntity {
@@ -12,6 +15,8 @@ public class TileEntity {
 	public int xCoord;
 	public int yCoord;
 	public int zCoord;
+	
+	private static Logger LOGGER = LogManager.getLogger();
 
 	private static void addMapping(Class var0, TileEntityConstructor var2, String var1) {
 		if(classToNameMap.containsKey(var1)) {
@@ -52,13 +57,13 @@ public class TileEntity {
 				var1 = (TileEntity)var2.createTileEntity();
 			}
 		} catch (Exception var3) {
-			var3.printStackTrace();
+			LOGGER.error(var3);
 		}
 
 		if(var1 != null) {
 			var1.readFromNBT(var0);
 		} else {
-			System.out.println("Skipping TileEntity with id " + var0.getString("id"));
+			LOGGER.warn("Skipping TileEntity with id {}", var0.getString("id"));
 		}
 
 		return var1;

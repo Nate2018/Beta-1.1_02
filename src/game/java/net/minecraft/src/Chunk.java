@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.lax1dude.eaglercraft.Random;
 
 public class Chunk {
@@ -26,6 +30,8 @@ public class Chunk {
 	public boolean field_1524_q;
 	public boolean hasEntities;
 	public long lastSaveTime;
+	
+	private Logger LOGGER = LogManager.getLogger();
 
 	public Chunk(World var1, int var2, int var3) {
 		this.chunkTileEntityMap = new HashMap();
@@ -376,8 +382,8 @@ public class Chunk {
 			int var2 = MathHelper.floor_double(var1.posX / 16.0D);
 			int var3 = MathHelper.floor_double(var1.posZ / 16.0D);
 			if(var2 != this.xPosition || var3 != this.zPosition) {
-				System.out.println("Wrong location! " + var1);
-				new Exception("Stack trace").printStackTrace();
+				LOGGER.error("Wrong location! {}:{}", var1, var1.getClass().getSimpleName());
+				LOGGER.error(new Exception("Stack trace"));
 			}
 
 			int var4 = MathHelper.floor_double(var1.posY / 16.0D);
@@ -458,7 +464,7 @@ public class Chunk {
 
 			this.chunkTileEntityMap.put(var5, var4);
 		} else {
-			System.out.println("Attempted to place a tile entity where there was no entity tile!");
+			LOGGER.error("Attempted to place a tile entity where there was no entity tile!");
 		}
 	}
 

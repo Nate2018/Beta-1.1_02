@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.peyton.eagler.minecraft.PacketConstructor;
 
@@ -14,6 +17,8 @@ public abstract class Packet {
 	private static Map packetClassToIdMap = new HashMap();
 	public final long field_20018_j = EagRuntime.steadyTimeMillis();
 	public boolean isChunkDataPacket = false;
+	
+	private static Logger LOGGER = LogManager.getLogger();
 
 	static void addIdClassMapping(int var0, Class var1, PacketConstructor var2) {
 		if(packetIdToClassMap.containsKey(Integer.valueOf(var0))) {
@@ -31,8 +36,8 @@ public abstract class Packet {
 			PacketConstructor var1 = packetIdToClassMap.get(Integer.valueOf(var0));
 			return var1 == null ? null : var1.createPacket();
 		} catch (Exception var2) {
-			var2.printStackTrace();
-			System.out.println("Skipping packet with id " + var0);
+			LOGGER.error("Skipping packet with id {}", var0);
+			LOGGER.error(var2);
 			return null;
 		}
 	}

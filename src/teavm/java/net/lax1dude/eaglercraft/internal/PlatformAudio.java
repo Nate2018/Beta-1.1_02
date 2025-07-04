@@ -495,7 +495,10 @@ public class PlatformAudio {
 		src.setLoop(repeat);
 		
 		PannerNode panner = audioctx.createPanner();
-		panner.setPosition(x, y, z);
+		try {
+			panner.setPosition(x, y, z);
+		} catch(Throwable stupidDumbBitch) {
+		}
 		float v1 = volume * 16.0f;
 		if(v1 < 16.0f) v1 = 16.0f;
 		panner.setMaxDistance(v1);

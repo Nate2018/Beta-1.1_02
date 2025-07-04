@@ -2,7 +2,6 @@ package net.lax1dude.eaglercraft.opengl;
 
 import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
 import net.lax1dude.eaglercraft.internal.IBufferGL;
-import net.lax1dude.eaglercraft.internal.ITextureGL;
 
 /**
  * Copyright (c) 2022 lax1dude. All Rights Reserved.

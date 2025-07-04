@@ -140,7 +140,7 @@ public class RenderPlayer extends RenderLiving {
 		}
 
 		float var5;
-		if(var1.field_771_i.equals("deadmau5") && this.func_140_a(var1.field_20047_bv, (TextureLocation)null)) {
+		if(var1.field_771_i.equals("deadmau5") && this.func_140_a((TextureLocation)null)) {
 			for(int var19 = 0; var19 < 2; ++var19) {
 				var5 = var1.prevRotationYaw + (var1.rotationYaw - var1.prevRotationYaw) * var2 - (var1.prevRenderYawOffset + (var1.renderYawOffset - var1.prevRenderYawOffset) * var2);
 				float var6 = var1.prevRotationPitch + (var1.rotationPitch - var1.prevRotationPitch) * var2;
@@ -158,7 +158,7 @@ public class RenderPlayer extends RenderLiving {
 			}
 		}
 
-		if(this.func_140_a(var1.field_20067_q, (TextureLocation)null)) {
+		if(this.func_140_a((TextureLocation)null)) {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(0.0F, 0.0F, 2.0F / 16.0F);
 			double var20 = var1.field_20066_r + (var1.field_20063_u - var1.field_20066_r) * (double)var2 - (var1.prevPosX + (var1.posX - var1.prevPosX) * (double)var2);

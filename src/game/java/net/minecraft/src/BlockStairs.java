@@ -66,7 +66,9 @@ public class BlockStairs extends Block {
 	}
 
 	public void randomDisplayTick(World var1, int var2, int var3, int var4, Random var5) {
-		this.modelBlock.randomDisplayTick(var1, var2, var3, var4, var5);
+		if(this.modelBlock != null) { //Vanilla beta crash
+			this.modelBlock.randomDisplayTick(var1, var2, var3, var4, var5);
+		}
 	}
 
 	public void onBlockClicked(World var1, int var2, int var3, int var4, EntityPlayer var5) {

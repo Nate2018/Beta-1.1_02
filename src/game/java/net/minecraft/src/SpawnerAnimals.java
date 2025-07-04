@@ -6,10 +6,14 @@ import com.carrotsearch.hppc.cursors.LongCursor;
 
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.peyton.eagler.minecraft.EntityConstructor;
 
 public final class SpawnerAnimals {
 	private static LongSet eligibleChunksForSpawning = new LongHashSet();
+	private static Logger LOGGER = LogManager.getLogger();
 
 	protected static ChunkPosition getRandomSpawningPointInChunk(World var0, int var1, int var2) {
 		int var3 = var1 + var0.rand.nextInt(16);
@@ -95,7 +99,7 @@ public final class SpawnerAnimals {
 										try {
 											var34 = (EntityLiving)var33[var8].createEntity(var0);
 										} catch (Exception var27) {
-											var27.printStackTrace();
+											LOGGER.debug(var27);
 											return var1;
 										}
 

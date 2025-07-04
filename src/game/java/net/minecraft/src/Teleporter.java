@@ -1,9 +1,13 @@
 package net.minecraft.src;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.lax1dude.eaglercraft.Random;
 
 public class Teleporter {
 	private Random field_4232_a = new Random();
+	private Logger LOGGER = LogManager.getLogger();
 
 	public void func_4107_a(World var1, Entity var2) {
 		if(!this.func_4106_b(var1, var2)) {
@@ -67,7 +71,7 @@ public class Teleporter {
 				var18 += 0.5D;
 			}
 
-			System.out.println("Teleporting to " + var22 + ", " + var16 + ", " + var18);
+			LOGGER.info("Teleporting to {}, {}, {}", var22, var16, var18);
 			var2.setLocationAndAngles(var22, var16, var18, var2.rotationYaw, 0.0F);
 			var2.motionX = var2.motionY = var2.motionZ = 0.0D;
 			return true;

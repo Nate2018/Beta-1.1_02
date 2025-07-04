@@ -34,11 +34,10 @@ public class TexturedQuad {
 		this.field_1195_a = var1;
 	}
 
-	public void func_808_a(Tessellator var1, float var2) {
+	public void render(Tessellator var1, float var2) {
 		Vec3D var3 = this.field_1195_a[1].vector3D.subtract(this.field_1195_a[0].vector3D);
 		Vec3D var4 = this.field_1195_a[1].vector3D.subtract(this.field_1195_a[2].vector3D);
 		Vec3D var5 = var4.crossProduct(var3).normalize();
-		var1.startDrawingQuads();
 		if(this.field_1196_c) {
 			var1.setNormal(-((float)var5.xCoord), -((float)var5.yCoord), -((float)var5.zCoord));
 		} else {
@@ -49,7 +48,5 @@ public class TexturedQuad {
 			PositionTexureVertex var7 = this.field_1195_a[var6];
 			var1.addVertexWithUV((double)((float)var7.vector3D.xCoord * var2), (double)((float)var7.vector3D.yCoord * var2), (double)((float)var7.vector3D.zCoord * var2), (double)var7.texturePositionX, (double)var7.texturePositionY);
 		}
-
-		var1.draw();
 	}
 }

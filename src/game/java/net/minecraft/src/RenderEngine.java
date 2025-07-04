@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 import com.carrotsearch.hppc.IntObjectHashMap;
@@ -31,6 +34,8 @@ public class RenderEngine {
 	private GameSettings options;
 	private boolean clampTexture = false;
 	private boolean blurTexture = false;
+	
+	private Logger LOGGER = LogManager.getLogger();
 
 	public RenderEngine(GameSettings var2) {
 		this.options = var2;
@@ -371,7 +376,7 @@ public class RenderEngine {
 					this.blurTexture = false;
 					this.clampTexture = false;
 				} catch (IOException var6) {
-					var6.printStackTrace();
+					LOGGER.error(var6);
 				}
 			}
 		}

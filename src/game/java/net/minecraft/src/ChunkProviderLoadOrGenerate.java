@@ -2,15 +2,25 @@ package net.minecraft.src;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+
 public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 	private Chunk blankChunk;
 	private IChunkProvider chunkProvider;
 	private IChunkLoader chunkLoader;
-	private Chunk[] chunks = new Chunk[1024];
+	
+	private Long2ObjectMap<Chunk> chunks = new Long2ObjectOpenHashMap<>(1024);
+	
 	private World worldObj;
 	int lastQueriedChunkXPos = -999999999;
 	int lastQueriedChunkZPos = -999999999;
 	private Chunk lastQueriedChunk;
+	
+	private Logger LOGGER = LogManager.getLogger();
 
 	public ChunkProviderLoadOrGenerate(World var1, IChunkLoader var2, IChunkProvider var3) {
 		this.blankChunk = new Chunk(var1, new byte[-Short.MIN_VALUE], 0, 0);
@@ -25,10 +35,8 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 		if(var1 == this.lastQueriedChunkXPos && var2 == this.lastQueriedChunkZPos && this.lastQueriedChunk != null) {
 			return true;
 		} else {
-			int var3 = var1 & 31;
-			int var4 = var2 & 31;
-			int var5 = var3 + var4 * 32;
-			return this.chunks[var5] != null && (this.chunks[var5] == this.blankChunk || this.chunks[var5].isAtLocation(var1, var2));
+			Chunk chunk = chunks.get(ChunkCoordIntPair.chunkXZ2Int(var1, var2));
+			return chunk != null && (chunk == this.blankChunk || chunk.isAtLocation(var1, var2));
 		}
 	}
 
@@ -36,14 +44,13 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 		if(var1 == this.lastQueriedChunkXPos && var2 == this.lastQueriedChunkZPos && this.lastQueriedChunk != null) {
 			return this.lastQueriedChunk;
 		} else {
-			int var3 = var1 & 31;
-			int var4 = var2 & 31;
-			int var5 = var3 + var4 * 32;
+			long hash = ChunkCoordIntPair.chunkXZ2Int(var1, var2);
+			Chunk chunk = this.chunks.get(hash);
 			if(!this.chunkExists(var1, var2)) {
-				if(this.chunks[var5] != null) {
-					this.chunks[var5].onChunkUnload();
-					this.saveChunk(this.chunks[var5]);
-					this.saveExtraChunkData(this.chunks[var5]);
+				if(chunk != null) {
+					chunk.onChunkUnload();
+					this.saveChunk(chunk);
+					this.saveExtraChunkData(chunk);
 				}
 
 				Chunk var6 = this.func_542_c(var1, var2);
@@ -55,13 +62,14 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 					}
 				}
 
-				this.chunks[var5] = var6;
+				this.chunks.put(hash, var6);
+				chunk = var6;
 				var6.func_4143_d();
-				if(this.chunks[var5] != null) {
-					this.chunks[var5].onChunkLoad();
+				if(chunk != null) {
+					chunk.onChunkLoad();
 				}
 
-				if(!this.chunks[var5].isTerrainPopulated && this.chunkExists(var1 + 1, var2 + 1) && this.chunkExists(var1, var2 + 1) && this.chunkExists(var1 + 1, var2)) {
+				if(chunk != null && !chunk.isTerrainPopulated && this.chunkExists(var1 + 1, var2 + 1) && this.chunkExists(var1, var2 + 1) && this.chunkExists(var1 + 1, var2)) {
 					this.populate(this, var1, var2);
 				}
 
@@ -80,8 +88,8 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 
 			this.lastQueriedChunkXPos = var1;
 			this.lastQueriedChunkZPos = var2;
-			this.lastQueriedChunk = this.chunks[var5];
-			return this.chunks[var5];
+			this.lastQueriedChunk = chunk;
+			return chunk;
 		}
 	}
 
@@ -97,7 +105,7 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 
 				return var3;
 			} catch (Exception var4) {
-				var4.printStackTrace();
+				LOGGER.error(var4);
 				return null;
 			}
 		}
@@ -108,7 +116,7 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 			try {
 				this.chunkLoader.saveExtraChunkData(this.worldObj, var1);
 			} catch (Exception var3) {
-				var3.printStackTrace();
+				LOGGER.debug(var3);
 			}
 
 		}
@@ -120,7 +128,7 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 				var1.lastSaveTime = this.worldObj.worldTime;
 				this.chunkLoader.saveChunk(this.worldObj, var1);
 			} catch (IOException var3) {
-				var3.printStackTrace();
+				LOGGER.error(var3);
 			}
 
 		}
@@ -143,8 +151,8 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 		int var4 = 0;
 		int var5;
 		if(var2 != null) {
-			for(var5 = 0; var5 < this.chunks.length; ++var5) {
-				if(this.chunks[var5] != null && this.chunks[var5].needsSaving(var1)) {
+			for(Chunk chunk : this.chunks.values()) {
+				if(chunk != null && chunk.needsSaving(var1)) {
 					++var4;
 				}
 			}
@@ -152,15 +160,15 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 
 		var5 = 0;
 
-		for(int var6 = 0; var6 < this.chunks.length; ++var6) {
-			if(this.chunks[var6] != null) {
-				if(var1 && !this.chunks[var6].neverSave) {
-					this.saveExtraChunkData(this.chunks[var6]);
+		for(Chunk chunk : this.chunks.values()) {
+			if(chunk != null) {
+				if(var1 && !chunk.neverSave) {
+					this.saveExtraChunkData(chunk);
 				}
 
-				if(this.chunks[var6].needsSaving(var1)) {
-					this.saveChunk(this.chunks[var6]);
-					this.chunks[var6].isModified = false;
+				if(chunk.needsSaving(var1)) {
+					this.saveChunk(chunk);
+					chunk.isModified = false;
 					++var3;
 					if(var3 == 2 && !var1) {
 						return false;

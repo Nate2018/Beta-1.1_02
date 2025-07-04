@@ -23,8 +23,6 @@ import net.lax1dude.eaglercraft.vector.Vector3f;
 import net.lax1dude.eaglercraft.vector.Vector4f;
 import net.minecraft.src.MathHelper;
 
-import static net.lax1dude.eaglercraft.opengl.RealOpenGLEnums.*;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

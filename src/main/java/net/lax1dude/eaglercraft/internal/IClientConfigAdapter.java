@@ -1,7 +1,5 @@
 package net.lax1dude.eaglercraft.internal;
 
-import java.util.List;
-
 /**
  * Copyright (c) 2022-2024 lax1dude. All Rights Reserved.
  * 

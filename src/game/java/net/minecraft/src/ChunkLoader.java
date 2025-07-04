@@ -5,11 +5,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 
 public class ChunkLoader implements IChunkLoader {
 	private VFile2 saveDir;
 	private static final String hex = "0123456789ABCDEF";
+	
+	private Logger LOGGER = LogManager.getLogger();
 
 	public ChunkLoader(VFile2 var1, boolean var2) {
 		this.saveDir = var1;
@@ -37,18 +42,18 @@ public class ChunkLoader implements IChunkLoader {
 					var6 = CompressedStreamTools.func_1138_a(is);
 				}
 				if(!var6.hasKey("Level")) {
-					System.out.println("Chunk file at " + var2 + "," + var3 + " is missing level data, skipping");
+					LOGGER.warn("Chunk file at {},{} is missing level data, skipping", var2, var3);
 					return null;
 				}
 
 				if(!var6.getCompoundTag("Level").hasKey("Blocks")) {
-					System.out.println("Chunk file at " + var2 + "," + var3 + " is missing block data, skipping");
+					LOGGER.warn("Chunk file at {},{} is missing block data, skipping", var2, var3);
 					return null;
 				}
 
 				Chunk var7 = loadChunkIntoWorldFromCompound(var1, var6.getCompoundTag("Level"));
 				if(!var7.isAtLocation(var2, var3)) {
-					System.out.println("Chunk file at " + var2 + "," + var3 + " is in the wrong location; relocating. (Expected " + var2 + ", " + var3 + ", got " + var7.xPosition + ", " + var7.zPosition + ")");
+					LOGGER.info("Chunk file at {},{} is is in the wrong location; relocating. (Expected {}, {}, got {}, {})", var2, var3, var2, var3, var7.xPosition, var7.zPosition);
 					var6.setInteger("xPos", var2);
 					var6.setInteger("zPos", var3);
 					var7 = loadChunkIntoWorldFromCompound(var1, var6.getCompoundTag("Level"));
@@ -56,7 +61,7 @@ public class ChunkLoader implements IChunkLoader {
 
 				return var7;
 			} catch (Exception var8) {
-				var8.printStackTrace();
+				LOGGER.error(var8);
 			}
 		}
 
@@ -81,7 +86,7 @@ public class ChunkLoader implements IChunkLoader {
 			
 			var1.sizeOnDisk += var3.length();
 		} catch (Exception var8) {
-			var8.printStackTrace();
+			LOGGER.error(var8);
 		}
 
 	}

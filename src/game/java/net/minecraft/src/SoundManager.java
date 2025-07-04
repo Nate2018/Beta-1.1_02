@@ -85,7 +85,7 @@ public class SoundManager {
 				double var6 = var1.prevPosY + (var1.posY - var1.prevPosY) * (double) var2;
 				double var8 = var1.prevPosZ + (var1.posZ - var1.prevPosZ) * (double) var2;
 				PlatformAudio.setListener((float) var4, (float) var6, (float) var8, (float) var9, (float) var3);
-			} catch (Exception e) {
+			} catch (Throwable t) {
 				// eaglercraft 1.5.2 had Infinity/NaN crashes for this function which
 				// couldn't be resolved via if statement checks in the above variables
 			}

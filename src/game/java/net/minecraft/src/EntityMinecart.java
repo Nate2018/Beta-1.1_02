@@ -88,7 +88,6 @@ public class EntityMinecart extends Entity implements IInventory {
 	}
 
 	public void performHurtAnimation() {
-		System.out.println("Animating hurt");
 		this.c = -this.c;
 		this.b = 10;
 		this.a += this.a * 10;
