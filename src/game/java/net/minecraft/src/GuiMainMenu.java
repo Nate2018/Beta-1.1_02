@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import net.lax1dude.eaglercraft.EagRuntime;
+import net.lax1dude.eaglercraft.EaglercraftVersion;
 import net.lax1dude.eaglercraft.Random;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -134,7 +135,7 @@ public class GuiMainMenu extends GuiScreen {
 		GL11.glScalef(var5, var5, var5);
 		this.drawCenteredString(this.fontRenderer, this.splashText, 0, -8, 16776960);
 		GL11.glPopMatrix();
-		this.drawString(this.fontRenderer, "Minecraft Beta 1.1_02 (25w20a)", 2, 2, 5263440);
+		this.drawString(this.fontRenderer, "Eaglercraft Beta 1.1_02 (" + EaglercraftVersion.versionName + ")", 2, 2, 5263440);
 		String var6 = "Copyright Mojang AB. Do not distribute.";
 		this.drawString(this.fontRenderer, var6, this.width - this.fontRenderer.getStringWidth(var6) - 2, this.height - 10, 16777215);
 		super.drawScreen(var1, var2, var3);
