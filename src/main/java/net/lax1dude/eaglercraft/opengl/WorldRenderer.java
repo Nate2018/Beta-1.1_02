@@ -45,7 +45,7 @@ public class WorldRenderer {
 	private double zOffset;
 	public boolean isDrawing;
 
-	private VertexFormat vertexFormat;
+	public VertexFormat vertexFormat;
 
 	private int vertexCount;
 	private ByteBuffer byteBuffer;
@@ -230,18 +230,6 @@ public class WorldRenderer {
 		this.intBuffer.clear();
 	}
 
-	public void begin(int parInt1) {
-		if (this.isDrawing) {
-			throw new IllegalStateException("WorldRenderer already building you eagler!");
-		} else {
-			this.isDrawing = true;
-			this.reset();
-			this.drawMode = parInt1;
-			this.needsUpdate = false;
-			this.byteBuffer.limit(this.byteBuffer.capacity());
-		}
-	}
-	
 	public void begin(int parInt1, VertexFormat format) {
 		if (this.isDrawing) {
 			throw new IllegalStateException("WorldRenderer already building you eagler!");
@@ -255,37 +243,12 @@ public class WorldRenderer {
 		}
 	}
 	
-	public void setVertexFormat(VertexFormat parVertexFormat) {
-		this.vertexFormat = parVertexFormat;
-	}
-	
 	public WorldRenderer tex(double parDouble1, double parDouble2) {
 		VertexFormat fmt = this.vertexFormat;
 		int i = this.vertexCount * fmt.attribStride + fmt.attribTextureOffset;
 		this.byteBuffer.putFloat(i, (float) parDouble1);
 		this.byteBuffer.putFloat(i + 4, (float) parDouble2);
 		return this;
-	}
-
-	public WorldRenderer lightmap(int parInt1, int parInt2) {
-		VertexFormat fmt = this.vertexFormat;
-		int i = this.vertexCount * fmt.attribStride + fmt.attribLightmapOffset;
-		this.byteBuffer.putShort(i, (short) parInt2);
-		this.byteBuffer.putShort(i + 2, (short) parInt1);
-		return this;
-	}
-
-	/**
-	 * update lightmap color of the last 4 verticies, used in AO calculation
-	 */
-	public void putBrightness4(int parInt1, int parInt2, int parInt3, int parInt4) {
-		VertexFormat fmt = this.vertexFormat;
-		int j = fmt.attribStride >> 2;
-		int i = (this.vertexCount - 4) * j + (fmt.attribLightmapOffset >> 2);
-		this.intBuffer.put(i, parInt1);
-		this.intBuffer.put(i + j, parInt2);
-		this.intBuffer.put(i + j * 2, parInt3);
-		this.intBuffer.put(i + j * 3, parInt4);
 	}
 
 	/**
@@ -576,6 +539,18 @@ public class WorldRenderer {
 			this.putColorRGB_F(red, green, blue, i + 1);
 		}
 
+	}
+	
+	public WorldRenderer color(int var1) {
+		int var2 = var1 >> 16 & 255;
+		int var3 = var1 >> 8 & 255;
+		int var4 = var1 & 255;
+		this.color(var2, var3, var4);
+		return this;
+	}
+	
+	private void color(int var1, int var2, int var3) {
+		this.setColorRGBA(var1, var2, var3, 255);
 	}
 
 	public class State {

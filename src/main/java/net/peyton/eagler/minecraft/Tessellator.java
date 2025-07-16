@@ -7,7 +7,7 @@ public class Tessellator {
 	
 	private net.lax1dude.eaglercraft.opengl.WorldRenderer worldRenderer;
 	public static final Tessellator instance = new Tessellator(524288);
-	private VertexFormat format;
+	private final VertexFormat format = VertexFormat.MODIFIABLE;
 	
 	private double textureU = 0;
 	private double textureV = 0;
@@ -35,7 +35,7 @@ public class Tessellator {
 	public void draw() {
 		this.worldRenderer.finishDrawing();
 		WorldVertexBufferUploader.func_181679_a(this.worldRenderer);
-		format = null;
+		this.format.reset();
 	}
 
 	public void startDrawingQuads() {
@@ -43,15 +43,11 @@ public class Tessellator {
 	}
 
 	public void startDrawing(int var1) {
-		this.worldRenderer.begin(var1);
+		this.worldRenderer.begin(var1, format);
 	}
 
 	public void setTextureUV(double var1, double var3) {
-		if(this.format == null) {
-			this.format = VertexFormat.createVertexFormat(true, false, false);
-		} else {
-			this.format = VertexFormat.createVertexFormat(true, format.attribColorEnabled, format.attribNormalEnabled);
-		}
+		this.format.setTex();
 		textureU = var1;
 		textureV = var3;
 	}
@@ -70,11 +66,7 @@ public class Tessellator {
 
 	public void setColorRGBA(int var1, int var2, int var3, int var4) {
 		if(!this.worldRenderer.needsUpdate) {
-			if(this.format == null) {
-				this.format = VertexFormat.createVertexFormat(false, true, false);
-			} else {
-				this.format = VertexFormat.createVertexFormat(format.attribTextureEnabled, true, format.attribNormalEnabled);
-			}
+			this.format.setColor();
 			this.colorR = var1;
 			this.colorG = var2;
 			this.colorB = var3;
@@ -88,7 +80,11 @@ public class Tessellator {
 	}
 
 	public void addVertex(double var1, double var3, double var5) {
-		worldRenderer.setVertexFormat(format == null ? (format = VertexFormat.createVertexFormat(false, false, false)) : format);
+		if(format.needsUpdate()) {
+			format.updateVertexFormat();
+		}
+		
+		worldRenderer.vertexFormat = this.format;
 		
 		worldRenderer.pos(var1 + this.xOffset, var3 + this.yOffset, var5 + this.zOffset);
 		
@@ -126,11 +122,7 @@ public class Tessellator {
 	}
 
 	public void setNormal(float var1, float var2, float var3) {
-		if(this.format == null) {
-			this.format = VertexFormat.createVertexFormat(false, false, true);
-		} else {
-			this.format = VertexFormat.createVertexFormat(format.attribTextureEnabled, format.attribColorEnabled, true);
-		}
+		this.format.setNormal();
 		normalX = var1;
 		normalY = var2;
 		normalZ = var3;

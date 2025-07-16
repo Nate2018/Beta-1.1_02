@@ -36,17 +36,20 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 			return true;
 		} else {
 			Chunk chunk = chunks.get(ChunkCoordIntPair.chunkXZ2Int(var1, var2));
+			dummyChunk = chunk;
 			return chunk != null && (chunk == this.blankChunk || chunk.isAtLocation(var1, var2));
 		}
 	}
 
+	private Chunk dummyChunk = null; //Avoid redundant chunk lookups
 	public Chunk provideChunk(int var1, int var2) {
 		if(var1 == this.lastQueriedChunkXPos && var2 == this.lastQueriedChunkZPos && this.lastQueriedChunk != null) {
 			return this.lastQueriedChunk;
 		} else {
 			long hash = ChunkCoordIntPair.chunkXZ2Int(var1, var2);
-			Chunk chunk = this.chunks.get(hash);
+			Chunk chunk;
 			if(!this.chunkExists(var1, var2)) {
+				chunk = dummyChunk;
 				if(chunk != null) {
 					chunk.onChunkUnload();
 					this.saveChunk(chunk);
@@ -84,6 +87,8 @@ public class ChunkProviderLoadOrGenerate implements IChunkProvider {
 				if(this.chunkExists(var1 - 1, var2 - 1) && !this.provideChunk(var1 - 1, var2 - 1).isTerrainPopulated && this.chunkExists(var1 - 1, var2 - 1) && this.chunkExists(var1, var2 - 1) && this.chunkExists(var1 - 1, var2)) {
 					this.populate(this, var1 - 1, var2 - 1);
 				}
+			} else {
+				chunk = dummyChunk;
 			}
 
 			this.lastQueriedChunkXPos = var1;

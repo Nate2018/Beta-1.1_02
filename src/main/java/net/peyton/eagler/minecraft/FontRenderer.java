@@ -167,7 +167,6 @@ public class FontRenderer {
 	 * Render a single character with the default.png font at
 	 * current (posX,posY) location...
 	 */
-	private VertexFormat format = VertexFormat.createVertexFormat(true, false, false);
 	private float renderDefaultChar(int parInt1) {
 		int i = parInt1 % 16 * 8;
 		int j = parInt1 / 16 * 8;
@@ -178,7 +177,7 @@ public class FontRenderer {
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
-		worldrenderer.begin(Tessellator.GL_TRIANGLE_STRIP, format);
+		worldrenderer.begin(Tessellator.GL_TRIANGLE_STRIP, VertexFormat.POSITION_TEX);
 
 		worldrenderer.pos(this.posX + (float) k, this.posY, 0.0F).tex((float) i / 128.0F, (float) j / 128.0F)
 				.endVertex();

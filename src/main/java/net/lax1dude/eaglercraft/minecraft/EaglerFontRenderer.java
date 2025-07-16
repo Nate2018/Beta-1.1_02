@@ -87,7 +87,7 @@ public class EaglerFontRenderer extends FontRenderer {
 
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-		worldrenderer.begin(7, new VertexFormat(true, false, false, false));
+		worldrenderer.begin(7, VertexFormat.POSITION_TEX);
 
 		for (int i = 0; i < parString1.length(); ++i) {
 			char c0 = parString1.charAt(i);

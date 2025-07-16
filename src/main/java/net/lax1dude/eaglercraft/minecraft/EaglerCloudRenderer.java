@@ -235,8 +235,6 @@ public class EaglerCloudRenderer {
 		GlStateManager.disableBlend();
 	}
 
-	private VertexFormat texColorFormat = new VertexFormat(true, true, false, false);
-	private VertexFormat texFormat = new VertexFormat(true, false, false, false);
 	private void rebuild(int newState) {
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
@@ -249,7 +247,7 @@ public class EaglerCloudRenderer {
 				if(renderListFancy[i] == -1) {
 					renderListFancy[i] = EaglercraftGPU.glGenLists();
 				}
-				worldrenderer.begin(7, texColorFormat);
+				worldrenderer.begin(7, VertexFormat.POSITION_TEX_COLOR);
 				generateFancyClouds(worldrenderer, i, newState != RENDER_STATE_FANCY_BELOW, newState != RENDER_STATE_FANCY_ABOVE);
 				tessellator.uploadDisplayList(renderListFancy[i]);
 			}
@@ -263,7 +261,7 @@ public class EaglerCloudRenderer {
 					renderListFancy[i] = -1;
 				}
 			}
-			worldrenderer.begin(7, texFormat);
+			worldrenderer.begin(7, VertexFormat.POSITION_TEX);
 			final double d = 4.8828125E-4;
 			worldrenderer.pos(-256.0f, 0.0f, 256.0f).tex(-256.0f * d, 256.0f * d).endVertex();
 			worldrenderer.pos(256.0f, 0.0f, 256.0f).tex(256.0f * d, 256.0f * d).endVertex();

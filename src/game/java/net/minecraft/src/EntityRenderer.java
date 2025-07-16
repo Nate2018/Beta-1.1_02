@@ -291,8 +291,6 @@ public class EntityRenderer {
 
 	}
 
-	//Learned my lesson this time :D
-	private final VertexFormat format = VertexFormat.createVertexFormat(true, false, false);
 	public void func_4136_b(float var1) {
 		World world = this.mc.theWorld;
 		
@@ -369,7 +367,7 @@ public class EntityRenderer {
 					GL11.glDepthMask(false);
 					Tessellator tessellator = Tessellator.getInstance();
 					net.lax1dude.eaglercraft.opengl.WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-					worldrenderer.begin(7, format);
+					worldrenderer.begin(7, VertexFormat.POSITION_TEX);
 					worldrenderer.pos(0.0D, (double) var9, -90.0D).tex(0.0D, 0.0D).endVertex();
 					worldrenderer.pos((double) var8, (double) var9, -90.0D).tex(1.0D, 0.0D).endVertex();
 					worldrenderer.pos((double) var8, 0.0D, -90.0D).tex(1.0D, 1.0D).endVertex();
