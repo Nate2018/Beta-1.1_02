@@ -33,9 +33,7 @@ import net.lax1dude.eaglercraft.internal.IVertexArrayGL;
 import net.lax1dude.eaglercraft.internal.IProgramGL;
 import net.lax1dude.eaglercraft.internal.IShaderGL;
 import net.lax1dude.eaglercraft.internal.IUniformGL;
-import net.lax1dude.eaglercraft.internal.PlatformOpenGL;
 import net.lax1dude.eaglercraft.internal.PlatformRuntime;
-import net.lax1dude.eaglercraft.opengl.StreamBuffer.StreamBufferInstance;
 import net.lax1dude.eaglercraft.vector.Matrix4f;
 import net.lax1dude.eaglercraft.vector.Vector4f;
 import net.minecraft.src.MathHelper;
@@ -58,7 +56,7 @@ public class FixedFunctionPipeline {
 				| (GlStateManager.stateEnableShaderBlendColor ? STATE_ENABLE_BLEND_ADD : 0);
 	}
 
-	static FixedFunctionPipeline setupDirect(ByteBuffer buffer, int attrib) {
+	static FixedFunctionPipeline setupDirect(ByteBuffer buffer, int attrib, boolean quads) {
 		FixedFunctionPipeline self;
 		int baseState = attrib | getFragmentState();
 		if (GlStateManager.stateUseExtensionPipeline) {
@@ -71,13 +69,10 @@ public class FixedFunctionPipeline {
 			self = getPipelineInstanceCore(baseState);
 		}
 
-		StreamBufferInstance sb = self.streamBuffer.getBuffer(buffer.remaining());
-		self.currentVertexArray = sb;
-
-		EaglercraftGPU.bindGLVertexArray(sb.getVertexArray());
-		EaglercraftGPU.bindGLArrayBuffer(sb.getVertexBuffer());
-
-		_wglBufferSubData(GL_ARRAY_BUFFER, 0, buffer);
+		EaglercraftGPU.bindGLVertexArray(self.getDirectModeVertexArray());
+		int off = StreamBuffer.uploadData(self.attribStride, buffer.remaining() / self.attribStride, quads);
+		_wglBufferSubData(GL_ARRAY_BUFFER, off * self.attribStride, buffer);
+		self.directBaseOffset = off;
 
 		return self;
 	}
@@ -129,16 +124,19 @@ public class FixedFunctionPipeline {
 	}
 
 	static FixedFunctionPipeline setupRenderDisplayList(int attribs) {
+		FixedFunctionPipeline self;
 		int baseState = attribs | getFragmentState();
 		if (GlStateManager.stateUseExtensionPipeline) {
 			if (extensionProvider != null) {
-				return getPipelineInstanceExt(baseState, extensionProvider.getCurrentExtensionStateBits(baseState));
+				self = getPipelineInstanceExt(baseState, extensionProvider.getCurrentExtensionStateBits(baseState));
 			} else {
 				throw new IllegalStateException("No extension pipeline is available!");
 			}
 		} else {
-			return getPipelineInstanceCore(baseState);
+			self = getPipelineInstanceCore(baseState);
 		}
+		
+		return self;
 	}
 
 	void drawArrays(int mode, int offset, int count) {
@@ -148,24 +146,26 @@ public class FixedFunctionPipeline {
 
 	void drawDirectArrays(int mode, int offset, int count) {
 		EaglercraftGPU.bindGLShaderProgram(shaderProgram);
+		offset += directBaseOffset;
 		if (mode == GL_QUADS) {
-			StreamBufferInstance sb = currentVertexArray;
-			if (count > EaglercraftGPU.quad16MaxVertices) {
-				if (!sb.bindQuad32) {
-					sb.bindQuad16 = false;
-					sb.bindQuad32 = true;
+			int offset2 = (offset >> 2) * 6;
+			int count2 = (count >> 2) * 6;
+			if(offset + count > EaglercraftGPU.quad16MaxVertices) {
+				if(directQuads != 32) {
+					directQuads = 32;
 					EaglercraftGPU.attachQuad32EmulationBuffer(count, true);
 				} else {
 					EaglercraftGPU.attachQuad32EmulationBuffer(count, false);
 				}
-				EaglercraftGPU.drawElements(GL_TRIANGLES, (count >> 2) * 6, GL_UNSIGNED_INT, 0);
+				EaglercraftGPU.drawRangeElements(GL_TRIANGLES, offset, offset + count - 1, count2, GL_UNSIGNED_INT,
+						offset2 << 2);
 			} else {
-				if (!sb.bindQuad16) {
-					sb.bindQuad16 = true;
-					sb.bindQuad32 = false;
+				if(directQuads != 16) {
+					directQuads = 16;
 					EaglercraftGPU.attachQuad16EmulationBuffer(true);
 				}
-				EaglercraftGPU.drawElements(GL_TRIANGLES, (count >> 2) * 6, GL_UNSIGNED_SHORT, 0);
+				EaglercraftGPU.drawRangeElements(GL_TRIANGLES, offset, offset + count - 1, count2, GL_UNSIGNED_SHORT,
+						offset2 << 1);
 			}
 		} else {
 			EaglercraftGPU.drawArrays(mode, offset, count);
@@ -175,6 +175,11 @@ public class FixedFunctionPipeline {
 	void drawElements(int mode, int count, int type, int offset) {
 		EaglercraftGPU.bindGLShaderProgram(shaderProgram);
 		EaglercraftGPU.drawElements(mode, count, type, offset);
+	}
+	
+	void drawRangeElements(int mode, int start, int end, int count, int type, int offset) {
+		EaglercraftGPU.bindGLShaderProgram(shaderProgram);
+		EaglercraftGPU.drawRangeElements(mode, start, end, count, type, offset);
 	}
 
 	private static IExtPipelineCompiler extensionProvider;
@@ -424,9 +429,9 @@ public class FixedFunctionPipeline {
 	private float stateAlphaTestRef = -999.0f;
 
 	private final IUniformGL stateLightsEnabledUniform1i;
-	private final IUniformGL[] stateLightsVectorsArrayUniform4f = new IUniformGL[4];
+	private final IUniformGL[] stateLightsVectorsArrayUniform4f = new IUniformGL[2];
 	private int stateLightsEnabled = -1;
-	private final Vector4f[] stateLightsVectors = new Vector4f[4];
+	private final Vector4f[] stateLightsVectors = new Vector4f[2];
 	private int stateLightingSerial = -1;
 
 	private final IUniformGL stateLightingAmbientUniform3f;
@@ -497,8 +502,9 @@ public class FixedFunctionPipeline {
 	private float stateAnisotropicFixH = -999.0f;
 	private float stateAnisotropicFixSerial = 0;
 
-	private final StreamBuffer streamBuffer;
-	private StreamBufferInstance currentVertexArray = null;
+	private IVertexArrayGL directVertexArray;
+	private int directBaseOffset;
+	private byte directQuads;
 
 	private static FloatBuffer matrixCopyBuffer = null;
 
@@ -573,39 +579,6 @@ public class FixedFunctionPipeline {
 			}
 			throw new IllegalStateException("Program could not be linked!");
 		}
-
-		streamBuffer = new StreamBuffer((vertexArray, vertexBuffer) -> {
-			EaglercraftGPU.bindGLVertexArray(vertexArray);
-			EaglercraftGPU.bindVAOGLArrayBuffer(vertexBuffer);
-
-			EaglercraftGPU.enableVertexAttribArray(0);
-			EaglercraftGPU.vertexAttribPointer(0, VertexFormat.COMPONENT_POSITION_SIZE,
-					VertexFormat.COMPONENT_POSITION_FORMAT, false, attribStride, 0);
-
-			if (attribTextureIndex != -1) {
-				EaglercraftGPU.enableVertexAttribArray(attribTextureIndex);
-				EaglercraftGPU.vertexAttribPointer(attribTextureIndex, VertexFormat.COMPONENT_TEX_SIZE,
-						VertexFormat.COMPONENT_TEX_FORMAT, false, attribStride, attribTextureOffset);
-			}
-
-			if (attribColorIndex != -1) {
-				EaglercraftGPU.enableVertexAttribArray(attribColorIndex);
-				EaglercraftGPU.vertexAttribPointer(attribColorIndex, VertexFormat.COMPONENT_COLOR_SIZE,
-						VertexFormat.COMPONENT_COLOR_FORMAT, true, attribStride, attribColorOffset);
-			}
-
-			if (attribNormalIndex != -1) {
-				EaglercraftGPU.enableVertexAttribArray(attribNormalIndex);
-				EaglercraftGPU.vertexAttribPointer(attribNormalIndex, VertexFormat.COMPONENT_NORMAL_SIZE,
-						VertexFormat.COMPONENT_NORMAL_FORMAT, true, attribStride, attribNormalOffset);
-			}
-
-			if (attribLightmapIndex != -1) {
-				EaglercraftGPU.enableVertexAttribArray(attribLightmapIndex);
-				EaglercraftGPU.vertexAttribPointer(attribLightmapIndex, VertexFormat.COMPONENT_LIGHTMAP_SIZE,
-						VertexFormat.COMPONENT_LIGHTMAP_FORMAT, false, attribStride, attribLightmapOffset);
-			}
-		});
 
 		stateEnableTexture2D = (bits & STATE_ENABLE_TEXTURE2D) != 0;
 		stateEnableLightmap = (bits & STATE_ENABLE_LIGHTMAP) != 0;
@@ -909,9 +882,7 @@ public class FixedFunctionPipeline {
 					_wglUniform3f(stateLightingAmbientUniform3f, r, g, b);
 				}
 			}
-		}
 
-		if (stateEnableMCLighting) {
 			if (!stateHasAttribNormal) {
 				serial = GlStateManager.stateNormalSerial;
 				if (stateNormalSerial != serial) {
@@ -1102,12 +1073,49 @@ public class FixedFunctionPipeline {
 		pipelineListTracker.clear();
 	}
 
-	public void destroy() {
-		PlatformOpenGL._wglDeleteProgram(shaderProgram);
-		streamBuffer.destroy();
-	}
-
 	public IVertexArrayGL getDirectModeVertexArray() {
-		return currentVertexArray.vertexArray;
+		if (directVertexArray == null) {
+			directVertexArray = EaglercraftGPU.createGLVertexArray();
+			EaglercraftGPU.bindGLVertexArray(directVertexArray);
+			EaglercraftGPU.bindVAOGLArrayBuffer(StreamBuffer.getBuffer());
+
+			EaglercraftGPU.enableVertexAttribArray(0);
+			EaglercraftGPU.vertexAttribPointer(0, VertexFormat.COMPONENT_POSITION_SIZE,
+					VertexFormat.COMPONENT_POSITION_FORMAT, false, attribStride, 0);
+
+			if (attribTextureIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribTextureIndex);
+				EaglercraftGPU.vertexAttribPointer(attribTextureIndex, VertexFormat.COMPONENT_TEX_SIZE,
+						VertexFormat.COMPONENT_TEX_FORMAT, false, attribStride, attribTextureOffset);
+			}
+
+			if (attribColorIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribColorIndex);
+				EaglercraftGPU.vertexAttribPointer(attribColorIndex, VertexFormat.COMPONENT_COLOR_SIZE,
+						VertexFormat.COMPONENT_COLOR_FORMAT, true, attribStride, attribColorOffset);
+			}
+
+			if (attribNormalIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribNormalIndex);
+				EaglercraftGPU.vertexAttribPointer(attribNormalIndex, VertexFormat.COMPONENT_NORMAL_SIZE,
+						VertexFormat.COMPONENT_NORMAL_FORMAT, true, attribStride, attribNormalOffset);
+			}
+
+			if (attribLightmapIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribLightmapIndex);
+				EaglercraftGPU.vertexAttribPointer(attribLightmapIndex, VertexFormat.COMPONENT_LIGHTMAP_SIZE,
+						VertexFormat.COMPONENT_LIGHTMAP_FORMAT, false, attribStride, attribLightmapOffset);
+			}
+
+			return directVertexArray;
+		}
+		return directVertexArray;
+	}
+	
+	public void destroy() {
+		_wglDeleteProgram(shaderProgram);
+		if (directVertexArray != null) {
+			EaglercraftGPU.destroyGLVertexArray(directVertexArray);
+		}
 	}
 }

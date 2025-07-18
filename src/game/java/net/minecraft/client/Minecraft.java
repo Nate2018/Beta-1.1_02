@@ -403,7 +403,6 @@ public class Minecraft {
 					GL11.glViewport(0, 0, this.displayWidth, this.displayHeight);
 					GL11.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 					GL11.glPushMatrix();
-					//GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 					GL11.glEnable(GL11.GL_TEXTURE_2D);
 					
 					if(this.theWorld != null && !this.theWorld.multiplayerWorld) {

@@ -46,6 +46,9 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 	private boolean eaglerNoDelay = false;
 	private boolean ramdiskMode = false;
 	private boolean enableEPKVersionCheck = true;
+	
+	private boolean keepAliveHack = true;
+	private boolean finishOnSwap = true;
 
 	public void loadNative(JSObject jsObject) {
 		JSEaglercraftXOptsRoot eaglercraftXOpts = (JSEaglercraftXOptsRoot)jsObject;
@@ -67,6 +70,8 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 		eaglerNoDelay = eaglercraftXOpts.getEaglerNoDelay(false);
 		ramdiskMode = eaglercraftXOpts.getRamdiskMode(false);
 		enableEPKVersionCheck = eaglercraftXOpts.getEnableEPKVersionCheck(true);
+		keepAliveHack = eaglercraftXOpts.getKeepAliveHack(true);
+		finishOnSwap = eaglercraftXOpts.getFinishOnSwap(true);
 		JSEaglercraftXOptsHooks hooksObj = eaglercraftXOpts.getHooks();
 		if(hooksObj != null) {
 			hooks.loadHooks(hooksObj);
@@ -155,5 +160,13 @@ public class TeaVMClientConfigAdapter implements IClientConfigAdapter {
 	@Override
 	public String getResourcePacksDB() {
 		return this.resourcePacksDB;
+	}
+	
+	public boolean isKeepAliveHackTeaVM() {
+		return keepAliveHack;
+	}
+	
+	public boolean isFinishOnSwapTeaVM() {
+		return finishOnSwap;
 	}
 }
