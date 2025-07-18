@@ -3,7 +3,9 @@ package net.minecraft.src;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,13 +106,12 @@ public class ChunkLoader implements IChunkLoader {
 		var1.hasEntities = false;
 		NBTTagList var4 = new NBTTagList();
 
-		Iterator var6;
 		NBTTagCompound var8;
-		for(int var5 = 0; var5 < var1.entities.length; ++var5) {
-			var6 = var1.entities[var5].iterator();
+		for(int var5 = 0, var6 = var1.mapSize; var5 < var6; ++var5) {
+			List<Entity> list = var1.entities.get(var5);
 
-			while(var6.hasNext()) {
-				Entity var7 = (Entity)var6.next();
+			for(int i = 0, j = list.size(); i < j; ++i) {
+				Entity var7 = (Entity)list.get(i);
 				var1.hasEntities = true;
 				var8 = new NBTTagCompound();
 				if(var7.func_358_c(var8)) {
@@ -121,10 +122,10 @@ public class ChunkLoader implements IChunkLoader {
 
 		var3.setTag("Entities", var4);
 		NBTTagList var9 = new NBTTagList();
-		var6 = var1.chunkTileEntityMap.values().iterator();
+		Iterator<TileEntity> var6 = var1.chunkTileEntityMap.values().iterator();
 
 		while(var6.hasNext()) {
-			TileEntity var10 = (TileEntity)var6.next();
+			TileEntity var10 = var6.next();
 			var8 = new NBTTagCompound();
 			var10.writeToNBT(var8);
 			var9.setTag(var8);

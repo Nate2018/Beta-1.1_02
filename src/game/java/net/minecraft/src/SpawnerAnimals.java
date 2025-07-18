@@ -4,12 +4,12 @@ import com.carrotsearch.hppc.LongHashSet;
 import com.carrotsearch.hppc.LongSet;
 import com.carrotsearch.hppc.cursors.LongCursor;
 
+import net.peyton.eagler.minecraft.suppliers.EntitySupplier;
+
 import java.util.Iterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.peyton.eagler.minecraft.EntityConstructor;
 
 public final class SpawnerAnimals {
 	private static LongSet eligibleChunksForSpawning = new LongHashSet();
@@ -55,7 +55,7 @@ public final class SpawnerAnimals {
 					int var10;
 					int var11;
 					int var12;
-					EntityConstructor<Entity>[] var33;
+					EntitySupplier<Entity>[] var33;
 					do {
 						do {
 							do {

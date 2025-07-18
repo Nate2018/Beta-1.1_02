@@ -4,7 +4,6 @@ import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.FloatBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 
-import java.nio.ByteOrder;
 import java.util.BitSet;
 import java.util.function.IntBinaryOperator;
 
@@ -625,11 +624,7 @@ public class WorldRenderer {
 
 			VertexFormat fmt = this.vertexFormat;
 			int i = this.vertexCount * fmt.attribStride + fmt.attribColorOffset;
-			if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-				this.byteBuffer.putInt(i, var4 << 24 | var3 << 16 | var2 << 8 | var1);
-			} else {
-				this.byteBuffer.putInt(i, var1 << 24 | var2 << 16 | var3 << 8 | var4);
-			}
+			this.byteBuffer.putInt(i, var4 << 24 | var3 << 16 | var2 << 8 | var1);
 		}
 		return this;
 	}

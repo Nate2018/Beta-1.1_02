@@ -1,10 +1,10 @@
 package net.minecraft.src;
 
-import net.peyton.eagler.minecraft.EntityConstructor;
+import net.peyton.eagler.minecraft.suppliers.EntitySupplier;
 
 public class MobSpawnerHell extends MobSpawnerBase {
 	public MobSpawnerHell() {
-		this.biomeMonsters = new EntityConstructor[]{EntityGhast::new, EntityPigZombie::new};
-		this.biomeCreatures = new EntityConstructor[0];
+		this.biomeMonsters = new EntitySupplier[]{EntityGhast::new, EntityPigZombie::new};
+		this.biomeCreatures = new EntitySupplier[0];
 	}
 }

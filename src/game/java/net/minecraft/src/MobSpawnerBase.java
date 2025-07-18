@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import net.peyton.eagler.minecraft.EntityConstructor;
+import net.peyton.eagler.minecraft.suppliers.EntitySupplier;
 import net.peyton.java.awt.Color;
 
 public class MobSpawnerBase {
@@ -21,8 +21,8 @@ public class MobSpawnerBase {
 	public byte topBlock = (byte)Block.grass.blockID;
 	public byte fillerBlock = (byte)Block.dirt.blockID;
 	public int field_6502_q = 5169201;
-	protected EntityConstructor[] biomeMonsters = new EntityConstructor[]{EntitySpider::new, EntityZombie::new, EntitySkeleton::new, EntityCreeper::new};
-	protected EntityConstructor[] biomeCreatures = new EntityConstructor[]{EntitySheep::new, EntityPig::new, EntityChicken::new, EntityCow::new};
+	protected EntitySupplier[] biomeMonsters = new EntitySupplier[]{EntitySpider::new, EntityZombie::new, EntitySkeleton::new, EntityCreeper::new};
+	protected EntitySupplier[] biomeCreatures = new EntitySupplier[]{EntitySheep::new, EntityPig::new, EntityChicken::new, EntityCow::new};
 	private static MobSpawnerBase[] biomeLookupTable = new MobSpawnerBase[4096];
 
 	public static void generateBiomeLookup() {
@@ -79,7 +79,7 @@ public class MobSpawnerBase {
 		return Color.getHSBColor(224.0F / 360.0F - var1 * 0.05F, 0.5F + var1 * 0.1F, 1.0F).getRGB();
 	}
 
-	public EntityConstructor[] getEntitiesForType(EnumCreatureType var1) {
+	public EntitySupplier[] getEntitiesForType(EnumCreatureType var1) {
 		return var1 == EnumCreatureType.monster ? this.biomeMonsters : (var1 == EnumCreatureType.creature ? this.biomeCreatures : null);
 	}
 

@@ -1,15 +1,11 @@
 package net.minecraft.src;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.EagUtils;
 import net.lax1dude.eaglercraft.Random;
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
@@ -22,13 +18,13 @@ import org.apache.logging.log4j.Logger;
 
 public class World implements IBlockAccess {
 	public boolean field_4214_a;
-	private List field_1051_z;
-	public List loadedEntityList;
-	private List field_1024_A;
-	private TreeSet scheduledTickTreeSet;
-	private Set scheduledTickSet;
-	public List loadedTileEntityList;
-	public List playerEntities;
+	private List<MetadataChunkBlock> field_1051_z;
+	public List<Entity> loadedEntityList;
+	private List<Entity> field_1024_A;
+	private TreeSet<NextTickListEntry> scheduledTickTreeSet;
+	private Set<NextTickListEntry> scheduledTickSet;
+	public List<TileEntity> loadedTileEntityList;
+	public List<EntityPlayer> playerEntities;
 	public long worldTime;
 	private long field_1019_F;
 	public int skylightSubtracted;
@@ -43,7 +39,7 @@ public class World implements IBlockAccess {
 	public int spawnZ;
 	public boolean field_1033_r;
 	public final WorldProvider worldProvider;
-	protected List worldAccesses;
+	protected List<IWorldAccess> worldAccesses;
 	private IChunkProvider chunkProvider;
 	public VFile2 field_9433_s;
 	public VFile2 field_9432_t;
@@ -52,12 +48,12 @@ public class World implements IBlockAccess {
 	public long sizeOnDisk;
 	public final String field_9431_w;
 	public boolean field_9430_x;
-	private ArrayList field_9428_I;
+	private ArrayList<AxisAlignedBB> field_9428_I;
 	private int field_4204_J;
 	static int field_9429_y = 0;
-	private Set field_9427_K;
+	private Set<ChunkCoordIntPair> field_9427_K;
 	private int field_9426_L;
-	private List field_1012_M;
+	private List<Entity> field_1012_M;
 	public boolean multiplayerWorld;
 	
 	private static Logger LOGGER = LogManager.getLogger();
@@ -118,13 +114,13 @@ public class World implements IBlockAccess {
 
 	public World(String var1, WorldProvider var2, long var3) {
 		this.field_4214_a = false;
-		this.field_1051_z = new ArrayList();
-		this.loadedEntityList = new ArrayList();
-		this.field_1024_A = new ArrayList();
-		this.scheduledTickTreeSet = new TreeSet();
-		this.scheduledTickSet = new HashSet();
-		this.loadedTileEntityList = new ArrayList();
-		this.playerEntities = new ArrayList();
+		this.field_1051_z = new ArrayList<>();
+		this.loadedEntityList = new ArrayList<>();
+		this.field_1024_A = new ArrayList<>();
+		this.scheduledTickTreeSet = new TreeSet<>();
+		this.scheduledTickSet = new HashSet<>();
+		this.loadedTileEntityList = new ArrayList<>();
+		this.playerEntities = new ArrayList<>();
 		this.worldTime = 0L;
 		this.field_1019_F = 16777215L;
 		this.skylightSubtracted = 0;
@@ -134,14 +130,14 @@ public class World implements IBlockAccess {
 		this.autosavePeriod = 40;
 		this.rand = new Random();
 		this.field_1033_r = false;
-		this.worldAccesses = new ArrayList();
+		this.worldAccesses = new ArrayList<>();
 		this.randomSeed = 0L;
 		this.sizeOnDisk = 0L;
-		this.field_9428_I = new ArrayList();
+		this.field_9428_I = new ArrayList<>();
 		this.field_4204_J = 0;
-		this.field_9427_K = new HashSet();
+		this.field_9427_K = new HashSet<>();
 		this.field_9426_L = this.rand.nextInt(12000);
-		this.field_1012_M = new ArrayList();
+		this.field_1012_M = new ArrayList<>();
 		this.multiplayerWorld = false;
 		this.field_9431_w = var1;
 		this.randomSeed = var3;
@@ -153,13 +149,13 @@ public class World implements IBlockAccess {
 
 	public World(World var1, WorldProvider var2) {
 		this.field_4214_a = false;
-		this.field_1051_z = new ArrayList();
-		this.loadedEntityList = new ArrayList();
-		this.field_1024_A = new ArrayList();
-		this.scheduledTickTreeSet = new TreeSet();
-		this.scheduledTickSet = new HashSet();
-		this.loadedTileEntityList = new ArrayList();
-		this.playerEntities = new ArrayList();
+		this.field_1051_z = new ArrayList<>();
+		this.loadedEntityList = new ArrayList<>();
+		this.field_1024_A = new ArrayList<>();
+		this.scheduledTickTreeSet = new TreeSet<>();
+		this.scheduledTickSet = new HashSet<>();
+		this.loadedTileEntityList = new ArrayList<>();
+		this.playerEntities = new ArrayList<>();
 		this.worldTime = 0L;
 		this.field_1019_F = 16777215L;
 		this.skylightSubtracted = 0;
@@ -169,14 +165,14 @@ public class World implements IBlockAccess {
 		this.autosavePeriod = 40;
 		this.rand = new Random();
 		this.field_1033_r = false;
-		this.worldAccesses = new ArrayList();
+		this.worldAccesses = new ArrayList<>();
 		this.randomSeed = 0L;
 		this.sizeOnDisk = 0L;
-		this.field_9428_I = new ArrayList();
+		this.field_9428_I = new ArrayList<>();
 		this.field_4204_J = 0;
-		this.field_9427_K = new HashSet();
+		this.field_9427_K = new HashSet<>();
 		this.field_9426_L = this.rand.nextInt(12000);
-		this.field_1012_M = new ArrayList();
+		this.field_1012_M = new ArrayList<>();
 		this.multiplayerWorld = false;
 		this.field_9433_s = var1.field_9433_s;
 		this.field_9432_t = var1.field_9432_t;
@@ -199,13 +195,13 @@ public class World implements IBlockAccess {
 
 	public World(VFile2 var1, String var2, long var3, WorldProvider var5) {
 		this.field_4214_a = false;
-		this.field_1051_z = new ArrayList();
-		this.loadedEntityList = new ArrayList();
-		this.field_1024_A = new ArrayList();
-		this.scheduledTickTreeSet = new TreeSet();
-		this.scheduledTickSet = new HashSet();
-		this.loadedTileEntityList = new ArrayList();
-		this.playerEntities = new ArrayList();
+		this.field_1051_z = new ArrayList<>();
+		this.loadedEntityList = new ArrayList<>();
+		this.field_1024_A = new ArrayList<>();
+		this.scheduledTickTreeSet = new TreeSet<>();
+		this.scheduledTickSet = new HashSet<>();
+		this.loadedTileEntityList = new ArrayList<>();
+		this.playerEntities = new ArrayList<>();
 		this.worldTime = 0L;
 		this.field_1019_F = 16777215L;
 		this.skylightSubtracted = 0;
@@ -215,14 +211,14 @@ public class World implements IBlockAccess {
 		this.autosavePeriod = 40;
 		this.rand = new Random();
 		this.field_1033_r = false;
-		this.worldAccesses = new ArrayList();
+		this.worldAccesses = new ArrayList<>();
 		this.randomSeed = 0L;
 		this.sizeOnDisk = 0L;
-		this.field_9428_I = new ArrayList();
+		this.field_9428_I = new ArrayList<>();
 		this.field_4204_J = 0;
-		this.field_9427_K = new HashSet();
+		this.field_9427_K = new HashSet<>();
 		this.field_9426_L = this.rand.nextInt(12000);
-		this.field_1012_M = new ArrayList();
+		this.field_1012_M = new ArrayList<>();
 		this.multiplayerWorld = false;
 		this.field_9433_s = var1;
 		this.field_9431_w = var2;
@@ -860,7 +856,6 @@ public class World implements IBlockAccess {
 						var21 = (var15 - var1.zCoord) / var27;
 					}
 
-					boolean var29 = false;
 					byte var35;
 					if(var17 < var19 && var17 < var21) {
 						if(var4 > var7) {
@@ -1014,7 +1009,7 @@ public class World implements IBlockAccess {
 		this.worldAccesses.remove(var1);
 	}
 
-	public List getCollidingBoundingBoxes(Entity var1, AxisAlignedBB var2) {
+	public List<AxisAlignedBB> getCollidingBoundingBoxes(Entity var1, AxisAlignedBB var2) {
 		this.field_9428_I.clear();
 		int var3 = MathHelper.floor_double(var2.minX);
 		int var4 = MathHelper.floor_double(var2.maxX + 1.0D);
@@ -1037,7 +1032,7 @@ public class World implements IBlockAccess {
 		}
 
 		double var14 = 0.25D;
-		List var15 = this.getEntitiesWithinAABBExcludingEntity(var1, var2.expand(var14, var14, var14));
+		List<Entity> var15 = this.getEntitiesWithinAABBExcludingEntity(var1, var2.expand(var14, var14, var14));
 
 		for(int var16 = 0; var16 < var15.size(); ++var16) {
 			AxisAlignedBB var13 = ((Entity)var15.get(var16)).func_372_f_();
@@ -1311,7 +1306,7 @@ public class World implements IBlockAccess {
 	}
 
 	public boolean checkIfAABBIsClear(AxisAlignedBB var1) {
-		List var2 = this.getEntitiesWithinAABBExcludingEntity((Entity)null, var1);
+		List<Entity> var2 = this.getEntitiesWithinAABBExcludingEntity((Entity)null, var1);
 
 		for(int var3 = 0; var3 < var2.size(); ++var3) {
 			Entity var4 = (Entity)var2.get(var3);
@@ -1535,10 +1530,6 @@ public class World implements IBlockAccess {
 
 	}
 
-	public Entity func_4085_a(Class var1) {
-		return null;
-	}
-
 	public String func_687_d() {
 		return "All: " + this.loadedEntityList.size();
 	}
@@ -1696,7 +1687,7 @@ public class World implements IBlockAccess {
 			--this.field_9426_L;
 		}
 
-		Iterator var12 = this.field_9427_K.iterator();
+		Iterator<ChunkCoordIntPair> var12 = this.field_9427_K.iterator();
 
 		while(var12.hasNext()) {
 			ChunkCoordIntPair var13 = (ChunkCoordIntPair)var12.next();
@@ -1793,7 +1784,7 @@ public class World implements IBlockAccess {
 
 	}
 
-	public List getEntitiesWithinAABBExcludingEntity(Entity var1, AxisAlignedBB var2) {
+	public List<Entity> getEntitiesWithinAABBExcludingEntity(Entity var1, AxisAlignedBB var2) {
 		this.field_1012_M.clear();
 		int var3 = MathHelper.floor_double((var2.minX - 2.0D) / 16.0D);
 		int var4 = MathHelper.floor_double((var2.maxX + 2.0D) / 16.0D);
@@ -1811,12 +1802,12 @@ public class World implements IBlockAccess {
 		return this.field_1012_M;
 	}
 
-	public List getEntitiesWithinAABB(Class var1, AxisAlignedBB var2) {
+	public List<Entity> getEntitiesWithinAABB(Class<?> var1, AxisAlignedBB var2) {
 		int var3 = MathHelper.floor_double((var2.minX - 2.0D) / 16.0D);
 		int var4 = MathHelper.floor_double((var2.maxX + 2.0D) / 16.0D);
 		int var5 = MathHelper.floor_double((var2.minZ - 2.0D) / 16.0D);
 		int var6 = MathHelper.floor_double((var2.maxZ + 2.0D) / 16.0D);
-		ArrayList var7 = new ArrayList();
+		ArrayList<Entity> var7 = new ArrayList<Entity>();
 
 		for(int var8 = var3; var8 <= var4; ++var8) {
 			for(int var9 = var5; var9 <= var6; ++var9) {
@@ -1829,7 +1820,7 @@ public class World implements IBlockAccess {
 		return var7;
 	}
 
-	public List func_658_i() {
+	public List<Entity> func_658_i() {
 		return this.loadedEntityList;
 	}
 
@@ -1844,7 +1835,7 @@ public class World implements IBlockAccess {
 
 	}
 
-	public int countEntities(Class var1) {
+	public int countEntities(Class<?> var1) {
 		int var2 = 0;
 
 		for(int var3 = 0; var3 < this.loadedEntityList.size(); ++var3) {
@@ -1857,7 +1848,7 @@ public class World implements IBlockAccess {
 		return var2;
 	}
 
-	public void func_636_a(List var1) {
+	public void func_636_a(List<Entity> var1) {
 		this.loadedEntityList.addAll(var1);
 
 		for(int var2 = 0; var2 < var1.size(); ++var2) {
@@ -1866,7 +1857,7 @@ public class World implements IBlockAccess {
 
 	}
 
-	public void func_632_b(List var1) {
+	public void func_632_b(List<Entity> var1) {
 		this.field_1024_A.addAll(var1);
 	}
 

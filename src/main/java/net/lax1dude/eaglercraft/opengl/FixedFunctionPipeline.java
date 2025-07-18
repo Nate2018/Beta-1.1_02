@@ -150,7 +150,7 @@ public class FixedFunctionPipeline {
 		EaglercraftGPU.bindGLShaderProgram(shaderProgram);
 		if (mode == GL_QUADS) {
 			StreamBufferInstance sb = currentVertexArray;
-			if(count > EaglercraftGPU.quad16MaxVertices) {
+			if (count > EaglercraftGPU.quad16MaxVertices) {
 				if (!sb.bindQuad32) {
 					sb.bindQuad16 = false;
 					sb.bindQuad32 = true;
@@ -575,37 +575,37 @@ public class FixedFunctionPipeline {
 		}
 
 		streamBuffer = new StreamBuffer((vertexArray, vertexBuffer) -> {
-					EaglercraftGPU.bindGLVertexArray(vertexArray);
-					EaglercraftGPU.bindVAOGLArrayBuffer(vertexBuffer);
+			EaglercraftGPU.bindGLVertexArray(vertexArray);
+			EaglercraftGPU.bindVAOGLArrayBuffer(vertexBuffer);
 
-					EaglercraftGPU.enableVertexAttribArray(0);
-					EaglercraftGPU.vertexAttribPointer(0, VertexFormat.COMPONENT_POSITION_SIZE,
-							VertexFormat.COMPONENT_POSITION_FORMAT, false, attribStride, 0);
+			EaglercraftGPU.enableVertexAttribArray(0);
+			EaglercraftGPU.vertexAttribPointer(0, VertexFormat.COMPONENT_POSITION_SIZE,
+					VertexFormat.COMPONENT_POSITION_FORMAT, false, attribStride, 0);
 
-					if (attribTextureIndex != -1) {
-						EaglercraftGPU.enableVertexAttribArray(attribTextureIndex);
-						EaglercraftGPU.vertexAttribPointer(attribTextureIndex, VertexFormat.COMPONENT_TEX_SIZE,
-								VertexFormat.COMPONENT_TEX_FORMAT, false, attribStride, attribTextureOffset);
-					}
+			if (attribTextureIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribTextureIndex);
+				EaglercraftGPU.vertexAttribPointer(attribTextureIndex, VertexFormat.COMPONENT_TEX_SIZE,
+						VertexFormat.COMPONENT_TEX_FORMAT, false, attribStride, attribTextureOffset);
+			}
 
-					if (attribColorIndex != -1) {
-						EaglercraftGPU.enableVertexAttribArray(attribColorIndex);
-						EaglercraftGPU.vertexAttribPointer(attribColorIndex, VertexFormat.COMPONENT_COLOR_SIZE,
-								VertexFormat.COMPONENT_COLOR_FORMAT, true, attribStride, attribColorOffset);
-					}
+			if (attribColorIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribColorIndex);
+				EaglercraftGPU.vertexAttribPointer(attribColorIndex, VertexFormat.COMPONENT_COLOR_SIZE,
+						VertexFormat.COMPONENT_COLOR_FORMAT, true, attribStride, attribColorOffset);
+			}
 
-					if (attribNormalIndex != -1) {
-						EaglercraftGPU.enableVertexAttribArray(attribNormalIndex);
-						EaglercraftGPU.vertexAttribPointer(attribNormalIndex, VertexFormat.COMPONENT_NORMAL_SIZE,
-								VertexFormat.COMPONENT_NORMAL_FORMAT, true, attribStride, attribNormalOffset);
-					}
+			if (attribNormalIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribNormalIndex);
+				EaglercraftGPU.vertexAttribPointer(attribNormalIndex, VertexFormat.COMPONENT_NORMAL_SIZE,
+						VertexFormat.COMPONENT_NORMAL_FORMAT, true, attribStride, attribNormalOffset);
+			}
 
-					if (attribLightmapIndex != -1) {
-						EaglercraftGPU.enableVertexAttribArray(attribLightmapIndex);
-						EaglercraftGPU.vertexAttribPointer(attribLightmapIndex, VertexFormat.COMPONENT_LIGHTMAP_SIZE,
-								VertexFormat.COMPONENT_LIGHTMAP_FORMAT, false, attribStride, attribLightmapOffset);
-					}
-				});
+			if (attribLightmapIndex != -1) {
+				EaglercraftGPU.enableVertexAttribArray(attribLightmapIndex);
+				EaglercraftGPU.vertexAttribPointer(attribLightmapIndex, VertexFormat.COMPONENT_LIGHTMAP_SIZE,
+						VertexFormat.COMPONENT_LIGHTMAP_FORMAT, false, attribStride, attribLightmapOffset);
+			}
+		});
 
 		stateEnableTexture2D = (bits & STATE_ENABLE_TEXTURE2D) != 0;
 		stateEnableLightmap = (bits & STATE_ENABLE_LIGHTMAP) != 0;

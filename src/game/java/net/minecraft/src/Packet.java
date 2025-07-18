@@ -10,17 +10,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.lax1dude.eaglercraft.EagRuntime;
-import net.peyton.eagler.minecraft.PacketConstructor;
+import net.peyton.eagler.minecraft.suppliers.PacketSupplier;
 
 public abstract class Packet {
-	private static Map<Integer, PacketConstructor> packetIdToClassMap = new HashMap();
+	private static Map<Integer, PacketSupplier> packetIdToClassMap = new HashMap();
 	private static Map packetClassToIdMap = new HashMap();
 	public final long field_20018_j = EagRuntime.steadyTimeMillis();
 	public boolean isChunkDataPacket = false;
 	
 	private static Logger LOGGER = LogManager.getLogger();
 
-	static void addIdClassMapping(int var0, Class var1, PacketConstructor var2) {
+	static void addIdClassMapping(int var0, Class var1, PacketSupplier var2) {
 		if(packetIdToClassMap.containsKey(Integer.valueOf(var0))) {
 			throw new IllegalArgumentException("Duplicate packet id:" + var0);
 		} else if(packetClassToIdMap.containsKey(var1)) {
@@ -33,7 +33,7 @@ public abstract class Packet {
 
 	public static Packet getNewPacket(int var0) {
 		try {
-			PacketConstructor var1 = packetIdToClassMap.get(Integer.valueOf(var0));
+			PacketSupplier var1 = packetIdToClassMap.get(Integer.valueOf(var0));
 			return var1 == null ? null : var1.createPacket();
 		} catch (Exception var2) {
 			LOGGER.error("Skipping packet with id {}", var0);

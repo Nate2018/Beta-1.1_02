@@ -103,7 +103,7 @@ public class ModelRenderer {
 					GL11.glPushMatrix();
 					GL11.glTranslatef(this.offsetX * var1, this.offsetY * var1, this.offsetZ * var1);
 
-					GL11.rotateZYXRad(this.rotateAngleX, this.rotateAngleY, this.rotateAngleZ);
+					GL11.glRotateZYXRad(this.rotateAngleX, this.rotateAngleY, this.rotateAngleZ);
 
 					GL11.glCallList(this.displayList);
 					GL11.glPopMatrix();
@@ -126,7 +126,7 @@ public class ModelRenderer {
 					}
 				} else {
 					GL11.glTranslatef(this.offsetX * var1, this.offsetY * var1, this.offsetZ * var1);
-					GL11.rotateZYXRad(this.rotateAngleX, this.rotateAngleY, this.rotateAngleZ);
+					GL11.glRotateZYXRad(this.rotateAngleX, this.rotateAngleY, this.rotateAngleZ);
 				}
 
 			}

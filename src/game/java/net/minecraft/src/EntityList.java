@@ -9,17 +9,17 @@ import org.apache.logging.log4j.Logger;
 import com.carrotsearch.hppc.ObjectIntHashMap;
 import com.carrotsearch.hppc.ObjectIntMap;
 
-import net.peyton.eagler.minecraft.EntityConstructor;
+import net.peyton.eagler.minecraft.suppliers.EntitySupplier;
 
 public class EntityList {
-	private static Map<String, EntityConstructor<Entity>> stringToClassMapping = new HashMap<String, EntityConstructor<Entity>>();
+	private static Map<String, EntitySupplier<Entity>> stringToClassMapping = new HashMap<String, EntitySupplier<Entity>>();
 	private static Map<Class<? extends Entity>, String> classToStringMapping = new HashMap<Class<? extends Entity>, String>();
-	private static Map<Integer, EntityConstructor<Entity>> IDtoClassMapping = new HashMap<Integer, EntityConstructor<Entity>>();
+	private static Map<Integer, EntitySupplier<Entity>> IDtoClassMapping = new HashMap<Integer, EntitySupplier<Entity>>();
 	private static final ObjectIntMap<Class<? extends Entity>> classToIDMapping = new ObjectIntHashMap<>();
 	
 	private static Logger LOGGER = LogManager.getLogger();
 
-	private static void addMapping(Class<? extends Entity> var0, EntityConstructor<Entity> var3, String var1, int var2) {
+	private static void addMapping(Class<? extends Entity> var0, EntitySupplier<Entity> var3, String var1, int var2) {
 		stringToClassMapping.put(var1, var3);
 		classToStringMapping.put(var0, var1);
 		IDtoClassMapping.put(Integer.valueOf(var2), var3);
@@ -30,7 +30,7 @@ public class EntityList {
 		Entity var2 = null;
 
 		try {
-			EntityConstructor<Entity> var3 = stringToClassMapping.get(var0);
+			EntitySupplier<Entity> var3 = stringToClassMapping.get(var0);
 			if(var3 != null) {
 				var2 = var3.createEntity(var1);
 			}
@@ -45,7 +45,7 @@ public class EntityList {
 		Entity var2 = null;
 
 		try {
-			EntityConstructor<Entity> var3 = stringToClassMapping.get(var0.getString("id"));
+			EntitySupplier<Entity> var3 = stringToClassMapping.get(var0.getString("id"));
 			if(var3 != null) {
 				var2 = var3.createEntity(var1);
 			}
@@ -66,7 +66,7 @@ public class EntityList {
 		Entity var2 = null;
 
 		try {
-			EntityConstructor<Entity> var3 = IDtoClassMapping.get(Integer.valueOf(var0));
+			EntitySupplier<Entity> var3 = IDtoClassMapping.get(Integer.valueOf(var0));
 			if(var3 != null) {
 				var2 = var3.createEntity(var1);
 			}

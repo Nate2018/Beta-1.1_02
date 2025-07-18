@@ -161,65 +161,75 @@ public class GameSettings {
 			BufferedReader var1 = new BufferedReader(new InputStreamReader(this.optionsFile.getInputStream()));
 			String var2 = "";
 
+			int line = 0;
 			while(true) {
 				var2 = var1.readLine();
+				line++;
 				if(var2 == null) {
 					var1.close();
 					break;
 				}
 
 				String[] var3 = var2.split(":");
-				if(var3[0].equals("music")) {
-					this.musicVolume = this.parseFloat(var3[1]);
-				}
+				if(var3.length >= 2) {
+					if(var3[0].equals("music")) {
+						this.musicVolume = this.parseFloat(var3[1]);
+					}
 
-				if(var3[0].equals("sound")) {
-					this.soundVolume = this.parseFloat(var3[1]);
-				}
+					if(var3[0].equals("sound")) {
+						this.soundVolume = this.parseFloat(var3[1]);
+					}
 
-				if(var3[0].equals("mouseSensitivity")) {
-					this.mouseSensitivity = this.parseFloat(var3[1]);
-				}
+					if(var3[0].equals("mouseSensitivity")) {
+						this.mouseSensitivity = this.parseFloat(var3[1]);
+					}
 
-				if(var3[0].equals("invertYMouse")) {
-					this.invertMouse = var3[1].equals("true");
-				}
+					if(var3[0].equals("invertYMouse")) {
+						this.invertMouse = var3[1].equals("true");
+					}
 
-				if(var3[0].equals("viewDistance")) {
-					this.renderDistance = Integer.parseInt(var3[1]);
-				}
+					if(var3[0].equals("viewDistance")) {
+						this.renderDistance = Integer.parseInt(var3[1]);
+					}
 
-				if(var3[0].equals("bobView")) {
-					this.viewBobbing = var3[1].equals("true");
-				}
+					if(var3[0].equals("bobView")) {
+						this.viewBobbing = var3[1].equals("true");
+					}
 
-				if(var3[0].equals("anaglyph3d")) {
-					this.anaglyph = var3[1].equals("true");
-				}
+					if(var3[0].equals("anaglyph3d")) {
+						this.anaglyph = var3[1].equals("true");
+					}
 
-				if(var3[0].equals("limitFramerate")) {
-					this.limitFramerate = var3[1].equals("true");
-				}
+					if(var3[0].equals("limitFramerate")) {
+						this.limitFramerate = var3[1].equals("true");
+					}
 
-				if(var3[0].equals("difficulty")) {
-					this.difficulty = Integer.parseInt(var3[1]);
-				}
+					if(var3[0].equals("difficulty")) {
+						this.difficulty = Integer.parseInt(var3[1]);
+					}
 
-				if(var3[0].equals("fancyGraphics")) {
-					this.fancyGraphics = var3[1].equals("true");
-				}
+					if(var3[0].equals("fancyGraphics")) {
+						this.fancyGraphics = var3[1].equals("true");
+					}
 
-				if(var3[0].equals("skin")) {
-					this.skin = var3[1];
-				}
+					if(var3[0].equals("skin")) {
+						this.skin = var3[1];
+					}
 
-				if(var3[0].equals("lastServer")) {
-					this.lastServer = var3[1];
-				}
+					if(var3[0].equals("lastServer")) {
+						this.lastServer = var3[1];
+					}
 
-				for(int var4 = 0; var4 < this.keyBindings.length; ++var4) {
-					if(var3[0].equals("key_" + this.keyBindings[var4].keyDescription)) {
-						this.keyBindings[var4].keyCode = Integer.parseInt(var3[1]);
+					for(int var4 = 0; var4 < this.keyBindings.length; ++var4) {
+						if(var3[0].equals("key_" + this.keyBindings[var4].keyDescription)) {
+							this.keyBindings[var4].keyCode = Integer.parseInt(var3[1]);
+						}
+					}
+				} else {
+					if(var3.length >= 1) {
+						LOGGER.warn("Skipping bad option {} on line #{}", var3[0], line);
+					} else {
+						LOGGER.warn("Failed to parse '{}' one line #{}", var2, line);
 					}
 				}
 			}

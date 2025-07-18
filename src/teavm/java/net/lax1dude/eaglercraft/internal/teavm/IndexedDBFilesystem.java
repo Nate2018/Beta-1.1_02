@@ -50,6 +50,7 @@ public class IndexedDBFilesystem implements IEaglerFilesystem {
 
 	public static IEaglerFilesystem createFilesystem(String dbName) {
 		String filesystemDB = "_net_PeytonPlayz585_eaglercraft_internal_PlatformFilesystem_Beta_1.1_02_" + dbName;
+		System.out.println(filesystemDB);
 		DatabaseOpen dbOpen = AsyncHandlers.openDB(filesystemDB);
 		
 		if(dbOpen.failedLocked) {

@@ -3,7 +3,6 @@ package net.minecraft.client;
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.beta.TextureNewClockFX;
 import net.lax1dude.eaglercraft.beta.TextureNewCompassFX;
-import net.lax1dude.eaglercraft.internal.EnumPlatformType;
 import net.lax1dude.eaglercraft.internal.PlatformOpenGL;
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.lax1dude.eaglercraft.minecraft.EaglerFontRenderer;
@@ -76,7 +75,6 @@ public class Minecraft {
 	public EntityPlayerSP thePlayer;
 	public EffectRenderer effectRenderer;
 	public Session session = null;
-	public String minecraftUri;
 	public boolean field_6317_l = true;
 	public volatile boolean isWorldLoaded = false;
 	public RenderEngine renderEngine;
@@ -133,7 +131,7 @@ public class Minecraft {
 	public void updateDisplay() {
 		if(Display.isVSyncSupported()) {
 			//Fix for WASM and menu input lag
-			if(EagRuntime.getPlatformType() == EnumPlatformType.WASM_GC || (this.theWorld == null || this.currentScreen != null)) {
+			if(/*EagRuntime.getPlatformType() == EnumPlatformType.WASM_GC ||*/ (this.theWorld == null || this.currentScreen != null)) {
 				Display.setVSync(true);
 			} else {
 				Display.setVSync(this.gameSettings.limitFramerate);
@@ -974,7 +972,7 @@ public class Minecraft {
 			this.playerController.func_717_a(var1);
 			if(!this.isMultiplayerWorld()) {
 				if(var3 == null) {
-					this.thePlayer = (EntityPlayerSP)var1.func_4085_a(EntityPlayerSP.class);
+					this.thePlayer = (EntityPlayerSP)null;
 				}
 			} else if(this.thePlayer != null) {
 				this.thePlayer.preparePlayerToSpawn();

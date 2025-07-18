@@ -174,11 +174,11 @@ public class WorldRenderer {
 			}
 			
 			if(skipRenderPass[0]) {
-				GL11.flushDisplayList(glRenderList, true);
+				GL11.glFlushList(glRenderList);
 			}
 			
 			if(skipRenderPass[1]) {
-				GL11.flushDisplayList(glRenderList + 1, true);
+				GL11.glFlushList(glRenderList + 1);
 			}
 
 			HashSet var27 = new HashSet();
@@ -202,8 +202,8 @@ public class WorldRenderer {
 	public void func_1195_b() {
 		for(int var1 = 0; var1 < 2; ++var1) {
 			this.skipRenderPass[var1] = true;
-			GL11.flushDisplayList(glRenderList, true);
-			GL11.flushDisplayList(glRenderList + 1, true);
+			GL11.glFlushList(glRenderList);
+			GL11.glFlushList(glRenderList + 1);
 		}
 
 		this.isInFrustrum = false;

@@ -28,7 +28,7 @@ public class GuiMainMenu extends GuiScreen {
 	public GuiMainMenu() {
 		try {
 			ArrayList var1 = new ArrayList();
-			BufferedReader var2 = new BufferedReader(new InputStreamReader(GuiMainMenu.class.getResourceAsStream("/title/splashes.txt")));
+			BufferedReader var2 = new BufferedReader(new InputStreamReader(EagRuntime.getResourceStream("/title/splashes.txt")));
 			String var3 = "";
 
 			while(true) {

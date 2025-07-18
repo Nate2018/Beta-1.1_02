@@ -8,6 +8,8 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.lax1dude.eaglercraft.Random;
 
 public class Chunk {
@@ -22,8 +24,9 @@ public class Chunk {
 	public int field_1532_i;
 	public final int xPosition;
 	public final int zPosition;
-	public Map chunkTileEntityMap;
-	public List[] entities;
+	public Map<ChunkPosition, TileEntity> chunkTileEntityMap;
+	public Int2ObjectMap<List<Entity>> entities;
+	public final int mapSize;
 	public boolean isTerrainPopulated;
 	public boolean isModified;
 	public boolean neverSave;
@@ -34,8 +37,9 @@ public class Chunk {
 	private Logger LOGGER = LogManager.getLogger();
 
 	public Chunk(World var1, int var2, int var3) {
-		this.chunkTileEntityMap = new HashMap();
-		this.entities = new List[8];
+		this.chunkTileEntityMap = new HashMap<>();
+		this.mapSize = 8;
+		this.entities = new Int2ObjectOpenHashMap<>(this.mapSize);
 		this.isTerrainPopulated = false;
 		this.isModified = false;
 		this.field_1524_q = false;
@@ -46,10 +50,9 @@ public class Chunk {
 		this.zPosition = var3;
 		this.heightMap = new byte[256];
 
-		for(int var4 = 0; var4 < this.entities.length; ++var4) {
-			this.entities[var4] = new ArrayList();
+		for(int var4 = 0, var5 = this.mapSize; var4 < var5; ++var4) {
+			this.entities.put(var4, new ArrayList<Entity>());
 		}
-
 	}
 
 	public Chunk(World var1, byte[] var2, int var3, int var4) {
@@ -391,15 +394,15 @@ public class Chunk {
 				var4 = 0;
 			}
 
-			if(var4 >= this.entities.length) {
-				var4 = this.entities.length - 1;
+			if(var4 >= this.mapSize) {
+				var4 = this.mapSize - 1;
 			}
 
 			var1.addedToChunk = true;
 			var1.chunkCoordX = this.xPosition;
 			var1.chunkCoordY = var4;
 			var1.chunkCoordZ = this.zPosition;
-			this.entities[var4].add(var1);
+			this.entities.get(var4).add(var1);
 		}
 	}
 
@@ -412,11 +415,11 @@ public class Chunk {
 			var2 = 0;
 		}
 
-		if(var2 >= this.entities.length) {
-			var2 = this.entities.length - 1;
+		if(var2 >= this.mapSize) {
+			var2 = this.mapSize - 1;
 		}
 
-		this.entities[var2].remove(var1);
+		this.entities.get(var2).remove(var1);
 	}
 
 	public boolean canBlockSeeTheSky(int var1, int var2, int var3) {
@@ -480,8 +483,8 @@ public class Chunk {
 		this.isChunkLoaded = true;
 		this.worldObj.loadedTileEntityList.addAll(this.chunkTileEntityMap.values());
 
-		for(int var1 = 0; var1 < this.entities.length; ++var1) {
-			this.worldObj.func_636_a(this.entities[var1]);
+		for(int var1 = 0, var2 = this.mapSize; var1 < var2; ++var1) {
+			this.worldObj.func_636_a(this.entities.get(var1));
 		}
 
 	}
@@ -490,8 +493,8 @@ public class Chunk {
 		this.isChunkLoaded = false;
 		this.worldObj.loadedTileEntityList.removeAll(this.chunkTileEntityMap.values());
 
-		for(int var1 = 0; var1 < this.entities.length; ++var1) {
-			this.worldObj.func_632_b(this.entities[var1]);
+		for(int var1 = 0, var2 = this.mapSize; var1 < var2; ++var1) {
+			this.worldObj.func_632_b(this.entities.get(var1));
 		}
 
 	}
@@ -500,19 +503,19 @@ public class Chunk {
 		this.isModified = true;
 	}
 
-	public void getEntitiesWithinAABBForEntity(Entity var1, AxisAlignedBB var2, List var3) {
+	public void getEntitiesWithinAABBForEntity(Entity var1, AxisAlignedBB var2, List<Entity> var3) {
 		int var4 = MathHelper.floor_double((var2.minY - 2.0D) / 16.0D);
 		int var5 = MathHelper.floor_double((var2.maxY + 2.0D) / 16.0D);
 		if(var4 < 0) {
 			var4 = 0;
 		}
 
-		if(var5 >= this.entities.length) {
-			var5 = this.entities.length - 1;
+		if(var5 >= this.mapSize) {
+			var5 = this.mapSize - 1;
 		}
 
 		for(int var6 = var4; var6 <= var5; ++var6) {
-			List var7 = this.entities[var6];
+			List<Entity> var7 = this.entities.get(var6);
 
 			for(int var8 = 0; var8 < var7.size(); ++var8) {
 				Entity var9 = (Entity)var7.get(var8);
@@ -524,19 +527,19 @@ public class Chunk {
 
 	}
 
-	public void getEntitiesOfTypeWithinAAAB(Class var1, AxisAlignedBB var2, List var3) {
+	public void getEntitiesOfTypeWithinAAAB(Class<?> var1, AxisAlignedBB var2, List<Entity> var3) {
 		int var4 = MathHelper.floor_double((var2.minY - 2.0D) / 16.0D);
 		int var5 = MathHelper.floor_double((var2.maxY + 2.0D) / 16.0D);
 		if(var4 < 0) {
 			var4 = 0;
 		}
 
-		if(var5 >= this.entities.length) {
-			var5 = this.entities.length - 1;
+		if(var5 >= this.mapSize) {
+			var5 = this.mapSize - 1;
 		}
 
 		for(int var6 = var4; var6 <= var5; ++var6) {
-			List var7 = this.entities[var6];
+			List<Entity> var7 = this.entities.get(var6);
 
 			for(int var8 = 0; var8 < var7.size(); ++var8) {
 				Entity var9 = (Entity)var7.get(var8);

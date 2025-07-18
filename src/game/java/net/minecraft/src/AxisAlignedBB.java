@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AxisAlignedBB {
-	private static List boundingBoxes = new ArrayList();
+	private static List<AxisAlignedBB> boundingBoxes = new ArrayList<>();
 	private static int numBoundingBoxesInUse = 0;
 	public double minX;
 	public double minY;
