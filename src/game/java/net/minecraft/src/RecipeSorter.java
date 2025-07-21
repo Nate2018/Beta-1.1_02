@@ -2,7 +2,7 @@ package net.minecraft.src;
 
 import java.util.Comparator;
 
-class RecipeSorter implements Comparator {
+class RecipeSorter implements Comparator<Object> {
 	final CraftingManager craftingManager;
 
 	RecipeSorter(CraftingManager var1) {

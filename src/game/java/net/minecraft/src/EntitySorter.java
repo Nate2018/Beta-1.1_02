@@ -2,7 +2,7 @@ package net.minecraft.src;
 
 import java.util.Comparator;
 
-public class EntitySorter implements Comparator {
+public class EntitySorter implements Comparator<Object> {
 	private double field_30008_a;
 	private double field_30007_b;
 	private double field_30009_c;
