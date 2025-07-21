@@ -51,7 +51,10 @@ public class FixedFunctionPipeline {
 				| (GlStateManager.stateAlphaTest ? STATE_ENABLE_ALPHA_TEST : 0)
 				| ((GlStateManager.stateLighting && GlStateManager.stateMaterial) ? STATE_ENABLE_MC_LIGHTING : 0)
 				| ((GlStateManager.stateTexture[0] && GlStateManager.stateTexGen) ? STATE_ENABLE_END_PORTAL : 0) |
-				/* TODO: (GlStateManager.??? ? STATE_ENABLE_ANISOTROPIC_FIX : 0) | */
+				
+				(GlStateManager.stateTexture[0] && (GlStateManager.enableAnisotropicFix 
+						|| (GlStateManager.enableAnisotropicFix && GlStateManager.enableAnisotropicPatch)) ? STATE_ENABLE_ANISOTROPIC_FIX : 0) |
+				
 				((GlStateManager.stateFog && GlStateManager.stateFogDensity > 0.0f) ? STATE_ENABLE_FOG : 0)
 				| (GlStateManager.stateEnableShaderBlendColor ? STATE_ENABLE_BLEND_ADD : 0);
 	}
@@ -933,14 +936,14 @@ public class FixedFunctionPipeline {
 				}
 			}
 		}
-
-		if (stateEnableAnisotropicFix) {
+		
+		if(stateEnableAnisotropicFix) {
 			serial = GlStateManager.stateAnisotropicFixSerial;
-			if (stateAnisotropicFixSerial != serial) {
+			if(stateAnisotropicFixSerial != serial) {
 				stateAnisotropicFixSerial = serial;
 				float w = GlStateManager.stateAnisotropicFixW;
 				float h = GlStateManager.stateAnisotropicFixH;
-				if (stateAnisotropicFixW != w || stateAnisotropicFixH != h) {
+				if(stateAnisotropicFixW != w || stateAnisotropicFixH != h) {
 					stateAnisotropicFixW = w;
 					stateAnisotropicFixH = h;
 					_wglUniform2f(stateAnisotropicFix2f, w, h);

@@ -16,6 +16,8 @@ import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+
 public class World implements IBlockAccess {
 	public boolean field_4214_a;
 	private List<MetadataChunkBlock> field_1051_z;
@@ -51,7 +53,7 @@ public class World implements IBlockAccess {
 	private ArrayList<AxisAlignedBB> field_9428_I;
 	private int field_4204_J;
 	static int field_9429_y = 0;
-	private Set<ChunkCoordIntPair> field_9427_K;
+	private LongArrayList field_9427_K;
 	private int field_9426_L;
 	private List<Entity> field_1012_M;
 	public boolean multiplayerWorld;
@@ -135,7 +137,7 @@ public class World implements IBlockAccess {
 		this.sizeOnDisk = 0L;
 		this.field_9428_I = new ArrayList<>();
 		this.field_4204_J = 0;
-		this.field_9427_K = new HashSet<>();
+		this.field_9427_K = new LongArrayList();
 		this.field_9426_L = this.rand.nextInt(12000);
 		this.field_1012_M = new ArrayList<>();
 		this.multiplayerWorld = false;
@@ -170,7 +172,7 @@ public class World implements IBlockAccess {
 		this.sizeOnDisk = 0L;
 		this.field_9428_I = new ArrayList<>();
 		this.field_4204_J = 0;
-		this.field_9427_K = new HashSet<>();
+		this.field_9427_K = new LongArrayList();
 		this.field_9426_L = this.rand.nextInt(12000);
 		this.field_1012_M = new ArrayList<>();
 		this.multiplayerWorld = false;
@@ -216,7 +218,7 @@ public class World implements IBlockAccess {
 		this.sizeOnDisk = 0L;
 		this.field_9428_I = new ArrayList<>();
 		this.field_4204_J = 0;
-		this.field_9427_K = new HashSet<>();
+		this.field_9427_K = new LongArrayList();
 		this.field_9426_L = this.rand.nextInt(12000);
 		this.field_1012_M = new ArrayList<>();
 		this.multiplayerWorld = false;
@@ -1670,15 +1672,15 @@ public class World implements IBlockAccess {
 		int var4;
 		int var6;
 		int var7;
-		for(int var1 = 0; var1 < this.playerEntities.size(); ++var1) {
-			EntityPlayer var2 = (EntityPlayer)this.playerEntities.get(var1);
-			var3 = MathHelper.floor_double(var2.posX / 16.0D);
-			var4 = MathHelper.floor_double(var2.posZ / 16.0D);
+		for(int var1 = 0, var2 = this.playerEntities.size(); var1 < var2; ++var1) {
+			EntityPlayer player = (EntityPlayer)this.playerEntities.get(var1);
+			var3 = MathHelper.floor_double(player.posX / 16.0D);
+			var4 = MathHelper.floor_double(player.posZ / 16.0D);
 			byte var5 = 9;
 
 			for(var6 = -var5; var6 <= var5; ++var6) {
 				for(var7 = -var5; var7 <= var5; ++var7) {
-					this.field_9427_K.add(new ChunkCoordIntPair(var6 + var3, var7 + var4));
+					this.field_9427_K.add(ChunkCoordIntPair.chunkXZ2Int(var6 + var3, var7 + var4));
 				}
 			}
 		}
@@ -1687,13 +1689,13 @@ public class World implements IBlockAccess {
 			--this.field_9426_L;
 		}
 
-		Iterator<ChunkCoordIntPair> var12 = this.field_9427_K.iterator();
-
-		while(var12.hasNext()) {
-			ChunkCoordIntPair var13 = (ChunkCoordIntPair)var12.next();
-			var3 = var13.chunkXPos * 16;
-			var4 = var13.chunkZPos * 16;
-			Chunk var14 = this.getChunkFromChunkCoords(var13.chunkXPos, var13.chunkZPos);
+		for(int i = 0, j = this.field_9427_K.size(); i < j; ++ i) {
+			long var13 = this.field_9427_K.getLong(i);
+			int x = (int) (var13 & 4294967295L);
+			int y = (int) (var13 >>> 32);
+			var3 = x * 16;
+			var4 = y * 16;
+			Chunk var14 = this.getChunkFromChunkCoords(x, y);
 			int var8;
 			int var9;
 			int var10;

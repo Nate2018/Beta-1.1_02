@@ -342,4 +342,8 @@ public class GL11 extends RealOpenGLEnums {
 	public static void glFlushList(int list) {
 		EaglercraftGPU.flushDisplayList(list, true);
 	}
+
+	public static void glTexParameterf(int target, int param, float value) {
+		EaglercraftGPU.glTexParameterf(target, param, value);
+	}
 }

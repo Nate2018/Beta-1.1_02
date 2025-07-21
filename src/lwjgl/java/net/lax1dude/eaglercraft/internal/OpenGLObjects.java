@@ -77,6 +77,9 @@ class OpenGLObjects {
 		final int ptr;
 		int width;
 		int height;
+		
+		boolean nearest = false;
+		boolean anisotropic = false;
 
 		TextureGL(int ptr) {
 			this.ptr = ptr;
@@ -105,6 +108,26 @@ class OpenGLObjects {
 		@Override
 		public int getHeight() {
 			return height;
+		}
+		
+		@Override
+		public void setNearest(boolean nearest) {
+			this.nearest = nearest;
+		}
+
+		@Override
+		public void setAnisotropic(boolean anisotropic) {
+			this.anisotropic = anisotropic;
+		}
+
+		@Override
+		public boolean isNearest() {
+			return this.nearest;
+		}
+
+		@Override
+		public boolean isAnisotropic() {
+			return this.anisotropic;
 		}
 
 	}

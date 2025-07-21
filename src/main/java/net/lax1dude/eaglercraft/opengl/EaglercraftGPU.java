@@ -163,11 +163,22 @@ public class EaglercraftGPU extends GlStateManager {
 
 	public static void glTexParameteri(int target, int param, int value) {
 		if(value == GL_CLAMP) value = GL_CLAMP_TO_EDGE;
+		
+		ITextureGL boundTex = GlStateManager.getCurrentBoundTexture();
+		if(/*GlStateManager.activeTexture == GL_TEXTURE0 &&*/ boundTex != null && param == GL_TEXTURE_MAG_FILTER) {
+			boundTex.setNearest(value == GL_NEAREST);
+		}
 		_wglTexParameteri(target, param, value);
+		GlStateManager.updateAnisotropicPatch();
 	}
 
 	public static void glTexParameterf(int target, int param, float value) {
+		ITextureGL boundTex = GlStateManager.getCurrentBoundTexture();
+		if(/*GlStateManager.activeTexture == GL_TEXTURE0 &&*/ boundTex != null && param == GL_TEXTURE_MAX_ANISOTROPY) {
+			boundTex.setAnisotropic(value > 1.0f);
+		}
 		_wglTexParameterf(target, param, value);
+		GlStateManager.updateAnisotropicPatch();
 	}
 
 	public static void glCopyTexSubImage2D(int target, int level, int sx, int sy, int dx, int dy, int w, int h) {
@@ -407,6 +418,7 @@ public class EaglercraftGPU extends GlStateManager {
 			int tv = TextureFormatHelper.trivializeInternalFormatToGLES20(internalFormat);
 			_wglTexImage2D(target, level, tv, w, h, unused, tv, type, pixels);
 		}
+		GlStateManager.updateAnisotropicPatch();
 	}
 
 	public static void glTexImage2D(int target, int level, int internalFormat, int w, int h, int unused, int format,
@@ -418,6 +430,7 @@ public class EaglercraftGPU extends GlStateManager {
 			int tv = TextureFormatHelper.trivializeInternalFormatToGLES20(internalFormat);
 			_wglTexImage2D(target, level, tv, w, h, unused, tv, type, pixels);
 		}
+		GlStateManager.updateAnisotropicPatch();
 	}
 
 	public static void glTexSubImage2D(int target, int level, int x, int y, int w, int h, int format, int type,

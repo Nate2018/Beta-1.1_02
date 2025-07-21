@@ -18,6 +18,7 @@ import com.carrotsearch.hppc.cursors.ObjectIntCursor;
 
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.beta.SpriteSheetTexture;
+import net.lax1dude.eaglercraft.internal.PlatformOpenGL;
 import net.lax1dude.eaglercraft.internal.buffer.ByteBuffer;
 import net.lax1dude.eaglercraft.internal.buffer.IntBuffer;
 import net.lax1dude.eaglercraft.opengl.ImageData;
@@ -34,14 +35,17 @@ public class RenderEngine {
 	private GameSettings options;
 	private boolean clampTexture = false;
 	private boolean blurTexture = false;
+	public TexturePackList field_6527_k;
 	
 	private Logger LOGGER = LogManager.getLogger();
 
-	public RenderEngine(GameSettings var2) {
+	public RenderEngine(TexturePackList var1, GameSettings var2) {
+		this.field_6527_k = var1;
 		this.options = var2;
 	}
 
 	public int getTexture(String var1) {
+		TexturePackBase var2 = this.field_6527_k.selectedTexturePack;
 		int var3 = this.textureMap.getOrDefault(var1, -1);
 		if (var3 >= 0) {
 			return var3;
@@ -53,20 +57,20 @@ public class RenderEngine {
 				if (var1.startsWith("##")) {
 					this.setupTexture(
 							this.unwrapImageByColumns(
-									this.readTextureImage(EagRuntime.getRequiredResourceStream(var1.substring(2)))),
+									this.readTextureImage(var2.func_6481_a(var1.substring(2)))),
 							var5);
 				} else if (var1.startsWith("%clamp%")) {
 					this.clampTexture = true;
-					this.setupTexture(this.readTextureImage(EagRuntime.getRequiredResourceStream(var1.substring(7))),
+					this.setupTexture(this.readTextureImage(var2.func_6481_a(var1.substring(7))),
 							var5);
 					this.clampTexture = false;
 				} else if (var1.startsWith("%blur%")) {
 					this.blurTexture = true;
-					this.setupTexture(this.readTextureImage(EagRuntime.getRequiredResourceStream(var1.substring(6))),
+					this.setupTexture(this.readTextureImage(var2.func_6481_a(var1.substring(6))),
 							var5);
 					this.blurTexture = false;
 				} else {
-					this.setupTexture(this.readTextureImage(EagRuntime.getRequiredResourceStream(var1)), var5);
+					this.setupTexture(this.readTextureImage(var2.func_6481_a(var1)), var5);
 				}
 
 				this.textureMap.put(var1, var5);
@@ -344,6 +348,7 @@ public class RenderEngine {
 	}
 
 	public void refreshTextures() {
+		TexturePackBase var1 = this.field_6527_k.selectedTexturePack;
 		ImageData var4;
 		for(IntObjectCursor<ImageData> cursor : textureNameToImageMap) {
 			if(cursor != null) {
@@ -360,15 +365,15 @@ public class RenderEngine {
 				try {
 					if (var8.startsWith("##")) {
 						var4 = this.unwrapImageByColumns(
-								this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(2))));
+								this.readTextureImage(var1.func_6481_a(var8.substring(2))));
 					} else if (var8.startsWith("%clamp%")) {
 						this.clampTexture = true;
-						var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(7)));
+						var4 = this.readTextureImage(var1.func_6481_a(var8.substring(7)));
 					} else if (var8.startsWith("%blur%")) {
 						this.blurTexture = true;
-						var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8.substring(6)));
+						var4 = this.readTextureImage(var1.func_6481_a(var8.substring(6)));
 					} else {
-						var4 = this.readTextureImage(EagRuntime.getRequiredResourceStream(var8));
+						var4 = this.readTextureImage(var1.func_6481_a(var8));
 					}
 
 					int var5 = ((Integer) this.textureMap.get(var8)).intValue();

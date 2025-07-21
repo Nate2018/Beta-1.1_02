@@ -105,9 +105,12 @@ public class GlStateManager extends RealOpenGLEnums {
 	static final boolean[] stateTexture = new boolean[16];
 	static final int[] boundTexture = new int[] { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
-	static float stateAnisotropicFixW = -999.0f;
-	static float stateAnisotropicFixH = -999.0f;
 	static int stateAnisotropicFixSerial = 0;
+	static float stateAnisotropicFixW = 1024.0f;
+	static float stateAnisotropicFixH = 1024.0f;
+	static boolean enableAnisotropicFix = false;
+	static boolean enableAnisotropicPatch = false;
+	static boolean hintAnisotropicPatch = false;
 
 	static boolean stateTexGen = false;
 
@@ -165,6 +168,14 @@ public class GlStateManager extends RealOpenGLEnums {
 	static boolean stateUseExtensionPipeline = false;
 
 	private static final Matrix4f tmpInvertedMatrix = new Matrix4f();
+	
+	public static final void anisotropicPatch(boolean e) {
+		enableAnisotropicPatch = e;
+	}
+	
+	public static final void hintAnisotropicFix(boolean hint) {
+		hintAnisotropicPatch = hint;
+	}
 
 	static {
 		populateStack(modelMatrixStack);
@@ -651,11 +662,32 @@ public class GlStateManager extends RealOpenGLEnums {
 			_wglActiveTexture(GL_TEXTURE0 + activeTexture);
 		}
 	}
+	
+	public static ITextureGL getCurrentBoundTexture() {
+		return EaglercraftGPU.getNativeTexture(getBoundTexture());
+	}
+	
+	protected static final void updateAnisotropicPatch() {
+		stateAnisotropicFixSerial++;
+		//if(activeTexture == GL_TEXTURE0) {
+			enableAnisotropicFix = false;
+			ITextureGL boundTexture = getCurrentBoundTexture();
+			if(enableAnisotropicPatch && boundTexture != null && boundTexture.isAnisotropic() && boundTexture.isNearest()) {
+				enableAnisotropicFix = true;
+				stateAnisotropicFixW = boundTexture.getWidth();
+				stateAnisotropicFixH = boundTexture.getHeight();
+			}
+		//}
+	}
 
 	public static void bindTexture(int texture) {
 		if (texture != boundTexture[activeTexture]) {
 			_wglBindTexture(GL_TEXTURE_2D, EaglercraftGPU.mapTexturesGL.get(texture));
 			boundTexture[activeTexture] = texture;
+			
+			//if(activeTexture == GL_TEXTURE0) {
+				updateAnisotropicPatch();
+			//}
 		}
 	}
 

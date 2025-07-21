@@ -19,7 +19,7 @@ public class TexturePackDefault extends TexturePackBase {
 		this.firstDescriptionLine = "The default look of Minecraft";
 
 		try {
-			this.texturePackThumbnail = ImageData.loadImageFile("/pack.png");
+			this.texturePackThumbnail = ImageData.loadImageFile("/pack.png").swapRB();
 		} catch (Exception var2) {
 			LOGGER.error(var2);
 		}

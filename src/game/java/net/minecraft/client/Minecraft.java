@@ -7,6 +7,7 @@ import net.lax1dude.eaglercraft.internal.PlatformOpenGL;
 import net.lax1dude.eaglercraft.internal.vfs2.VFile2;
 import net.lax1dude.eaglercraft.minecraft.EaglerFontRenderer;
 import net.lax1dude.eaglercraft.opengl.EaglercraftGPU;
+import net.lax1dude.eaglercraft.opengl.GlStateManager;
 import net.minecraft.src.AxisAlignedBB;
 import net.minecraft.src.Block;
 import net.minecraft.src.EffectRenderer;
@@ -46,12 +47,14 @@ import net.minecraft.src.ScaledResolution;
 import net.minecraft.src.Session;
 import net.minecraft.src.SoundManager;
 import net.minecraft.src.Teleporter;
+import net.minecraft.src.TexturePackList;
 import net.minecraft.src.Timer;
 import net.minecraft.src.Vec3D;
 import net.minecraft.src.World;
 import net.minecraft.src.WorldProvider;
 import net.minecraft.src.WorldProviderHell;
 import net.minecraft.src.WorldRenderer;
+import net.peyton.eagler.minecraft.DetectAnisotropicGlitch;
 import net.peyton.eagler.minecraft.FontRenderer;
 import net.peyton.eagler.minecraft.Tessellator;
 
@@ -93,6 +96,7 @@ public class Minecraft {
 	public GameSettings gameSettings;
 	public SoundManager sndManager = new SoundManager();
 	public MouseHelper mouseHelper;
+	public TexturePackList texturePackList;
 	public VFile2 mcDataDir;
 	public static long[] frameTimes = new long[512];
 	public static long[] tickTimes = new long[512];
@@ -176,7 +180,8 @@ public class Minecraft {
 		RenderManager.instance.field_4236_f = new ItemRenderer(this);
 		this.mcDataDir = getMinecraftDir();
 		this.gameSettings = new GameSettings(this, this.mcDataDir);
-		this.renderEngine = new RenderEngine(this.gameSettings);
+		this.texturePackList = new TexturePackList(this, this.mcDataDir);
+		this.renderEngine = new RenderEngine(this.texturePackList, this.gameSettings);
 		this.fontRenderer = EaglerFontRenderer.createSupportedFontRenderer(this.gameSettings, "/font/default.png", this.renderEngine);
 		this.loadScreen();
 		this.mouseHelper = new MouseHelper();
@@ -212,8 +217,8 @@ public class Minecraft {
 
 		this.checkGLError("Post startup");
 		this.ingameGUI = new GuiIngame(this);
+		GlStateManager.anisotropicPatch(PlatformOpenGL.checkAnisotropicFilteringSupport() && DetectAnisotropicGlitch.hasGlitch());
 		this.displayGuiScreen(new GuiMainMenu());
-
 	}
 	
 	private void updateDisplayMode() {

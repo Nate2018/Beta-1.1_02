@@ -9,6 +9,8 @@ import java.util.Date;
 import net.lax1dude.eaglercraft.EagRuntime;
 import net.lax1dude.eaglercraft.EaglercraftVersion;
 import net.lax1dude.eaglercraft.Random;
+import net.minecraft.client.Minecraft;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 
@@ -19,7 +21,6 @@ public class GuiMainMenu extends GuiScreen {
 	private static final Random rand = new Random();
 	String[] minecraftLogo = new String[]{" *   * * *   * *** *** *** *** *** ***", " ** ** * **  * *   *   * * * * *    * ", " * * * * * * * **  *   **  *** **   * ", " *   * * *  ** *   *   * * * * *    * ", " *   * * *   * *** *** * * * * *    * "};
 	private LogoEffectRandomizer[][] logoEffects;
-	private float updateCounter = 0.0F;
 	private String splashText = "missingno";
 	
 	private TextureLocation blackTex = new TextureLocation("/title/black.png");
@@ -27,8 +28,13 @@ public class GuiMainMenu extends GuiScreen {
 
 	public GuiMainMenu() {
 		try {
-			ArrayList var1 = new ArrayList();
-			BufferedReader var2 = new BufferedReader(new InputStreamReader(EagRuntime.getResourceStream("/title/splashes.txt")));
+			ArrayList<String> var1 = new ArrayList<>();
+			if(this.mc == null) {
+				this.mc = Minecraft.getMinecraft(); //(sob)
+			}
+			TexturePackBase base = this.mc.renderEngine.field_6527_k.selectedTexturePack;
+			String name = "/title/splashes.txt";
+			BufferedReader var2 = new BufferedReader(new InputStreamReader(base != null ? base.func_6481_a(name) : EagRuntime.getRequiredResourceStream(name)));
 			String var3 = "";
 
 			while(true) {
@@ -44,13 +50,11 @@ public class GuiMainMenu extends GuiScreen {
 				}
 			}
 		} catch (Exception var4) {
+			this.splashText = "Finally beta!";
 		}
-
-		this.splashText = "Finally beta!";
 	}
 
 	public void updateScreen() {
-		++this.updateCounter;
 		if(this.logoEffects != null) {
 			for(int var1 = 0; var1 < this.logoEffects.length; ++var1) {
 				for(int var2 = 0; var2 < this.logoEffects[var1].length; ++var2) {
@@ -81,9 +85,7 @@ public class GuiMainMenu extends GuiScreen {
 		int var4 = this.height / 4 + 48;
 		this.controlList.add(new GuiButton(1, this.width / 2 - 100, var4, var2.func_20163_a("menu.singleplayer")));
 		this.controlList.add(new GuiButton(2, this.width / 2 - 100, var4 + 24, var2.func_20163_a("menu.multiplayer")));
-		GuiButton button;
-		this.controlList.add(button = new GuiButton(3, this.width / 2 - 100, var4 + 48, var2.func_20163_a("menu.mods")));
-		button.enabled = false;
+		this.controlList.add(new GuiButton(3, this.width / 2 - 100, var4 + 48, var2.func_20163_a("menu.mods")));
 		if(this.mc.field_6317_l) {
 			this.controlList.add(new GuiButton(0, this.width / 2 - 100, var4 + 72, var2.func_20163_a("menu.options")));
 		} else {
@@ -111,7 +113,7 @@ public class GuiMainMenu extends GuiScreen {
 		}
 
 		if(var1.id == 3) {
-			//this.mc.displayGuiScreen(new GuiTexturePacks(this));
+			this.mc.displayGuiScreen(new GuiTexturePacks(this));
 		}
 
 		if(var1.id == 4) {
